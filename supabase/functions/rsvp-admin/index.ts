@@ -36,19 +36,21 @@ Deno.serve(async (req: Request) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const [rsvpsRes, invRes] = await Promise.all([
+    const [rsvpsRes, invRes, catRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id")
         .order("submitted_at", { ascending: false }),
       supabase
         .from("invitaciones")
-        .select("id, codigo, nombre, nombre_interno, cupos, notas, creada_en")
-        .order("nombre_interno", { ascending: true }),
+        .select("id, codigo, nombre, categoria, cupos, notas, creada_en")
+        .order("nombre", { ascending: true }),
+      supabase.from("categorias").select("nombre, orden").order("orden", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
     if (invRes.error) return json({ error: invRes.error.message }, 500);
+    if (catRes.error) return json({ error: catRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -59,7 +61,7 @@ Deno.serve(async (req: Request) => {
       return {
         codigo: i.codigo,
         nombre: i.nombre,
-        nombreInterno: i.nombre_interno,
+        categoria: i.categoria,
         cupos: i.cupos,
         notas: i.notas,
         respuesta: r
@@ -92,6 +94,22 @@ Deno.serve(async (req: Request) => {
       respuestasSinInvitacion: antiguas.length,
     };
 
+    // Resumen por categoría (en el orden de la hoja DATOS); "Sin categoría" al final
+    const nombresCat = [...(catRes.data ?? []).map((c) => c.nombre), null];
+    const porCategoria = nombresCat
+      .map((cat) => {
+        const grupo = invitaciones.filter((i) => (i.categoria ?? null) === cat);
+        const resp = grupo.filter((i) => i.respuesta);
+        return {
+          categoria: cat ?? "Sin categoría",
+          invitaciones: grupo.length,
+          cupos: grupo.reduce((n, i) => n + i.cupos, 0),
+          personasConfirmadas: resp.reduce((n, i) => n + (i.respuesta!.asiste ? i.respuesta!.asistentes : 0), 0),
+          pendientes: grupo.length - resp.length,
+        };
+      })
+      .filter((c) => c.invitaciones > 0);
+
     // Compatibilidad con el panel anterior (página publicada hoy)
     const confirmed = rsvps.filter((r) => r.attending).length;
     const plusOnes = rsvps.filter((r) => r.attending && r.plus_one).length;
@@ -106,6 +124,7 @@ Deno.serve(async (req: Request) => {
       invitaciones,
       antiguas: antiguas.map(filaSimple),
       resumen,
+      porCategoria,
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
