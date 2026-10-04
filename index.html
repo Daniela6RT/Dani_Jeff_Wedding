@@ -395,9 +395,18 @@
   .btn-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; }
   
   .stay-grid { display: grid; gap: 14px; max-width: 760px; margin: 0 auto; }
-  .stay-card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra-suave); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .stay-card .stay-name { font-family: var(--serif); font-size: 20px; color: var(--verde-profundo); font-weight: 500; }
-  .stay-card .stay-note { font-size: 13px; color: var(--texto-suave); }
+  @media (min-width: 700px) { .stay-grid { grid-template-columns: 1fr 1fr; } }
+  .stay-card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra-suave); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .stay-tipo { font-size: 10px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--terracotta-deep); }
+  .stay-card .stay-name { font-family: var(--serif); font-size: 21px; line-height: 1.25; color: var(--verde-profundo); font-weight: 500; margin: 2px 0 0; }
+  .stay-datos { display: flex; flex-wrap: wrap; gap: 8px; }
+  .stay-dato { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; background: var(--marfil); border: 1px solid var(--linea); font-size: 13px; color: var(--madera); }
+  .stay-dato svg { width: 18px; height: 18px; color: var(--verde-olivo); flex: 0 0 auto; }
+  .stay-dato b { font-weight: 600; }
+  .stay-link { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--terracotta-deep); text-decoration: none; }
+  .stay-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .stay-link svg { width: 16px; height: 16px; flex: 0 0 auto; }
+  .stay-nota { text-align: center; font-size: 12px; color: var(--texto-suave); margin: 14px auto 0; max-width: 520px; }
   
   .faq-list { max-width: 640px; margin: 0 auto; }
   details { border-bottom: 1px solid var(--linea); padding: 16px 0; }
@@ -822,20 +831,50 @@
       <div class="info-card"><h3>Parqueadero</h3><p>Por definir — les avisaremos pronto.</p></div>
     </div>
     <div class="map-embed">
-      <iframe title="Mapa de Finca San José" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Finca+San+Jose+Los+Naranjos+Santa+Marta&amp;output=embed"></iframe>
+      <iframe title="Mapa de Finca San José" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=11.2839858,-73.9018452&amp;z=16&amp;output=embed"></iframe>
     </div>
     <div class="btn-row">
-      <a class="btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=Finca+San+Jose+Los+Naranjos+Santa+Marta" target="_blank" rel="noopener">Google Maps</a>
-      <a class="btn-outline" href="https://waze.com/ul?q=Finca%20San%20Jos%C3%A9%20Los%20Naranjos%20Santa%20Marta&amp;navigate=yes" target="_blank" rel="noopener">Waze</a>
+      <a class="btn-outline" href="https://www.google.com/maps/place/Finca+San+Jos%C3%A9/@11.2839858,-73.9044201,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4951b80c61561:0xb5cc1684205f0156!5m2!4m1!1i2!8m2!3d11.2839858!4d-73.9018452!16s%2Fg%2F11fmc48g47!18m1!1e1" target="_blank" rel="noopener">Google Maps</a>
+      <a class="btn-outline" href="https://waze.com/ul?ll=11.2839858,-73.9018452&amp;navigate=yes" target="_blank" rel="noopener">Waze</a>
     </div>
 
     <h3 class="subhead" id="hospedaje">Hospedaje</h3>
-    <p class="section-sub" style="text-align:center; margin-top:-10px; margin-bottom:24px;">La finca tiene cupo limitado — estas opciones cercanas quedan a 3-5 min caminando.</p>
+    <p class="section-sub" style="text-align:center; margin-top:-10px; margin-bottom:24px;">La finca tiene cupo limitado. Estas son las opciones que les sugerimos, todas muy cerca.</p>
     <div class="stay-grid">
-      <div class="stay-card">
-        <div><div class="stay-name">Por definir</div><div class="stay-note">Nombre, ubicación, rango de precios y enlace de reserva</div></div>
-      </div>
+      <article class="stay-card">
+        <div><div class="stay-tipo">Cabañas</div><h4 class="stay-name">Cabañas Orlando y Más Na´</h4></div>
+        <div class="stay-datos">
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>2 min</b> a pie</span></span>
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16h14v-4l-2-5H7l-2 5v4z"/><path d="M5 12h14"/><circle cx="8" cy="16.5" r="1.5"/><circle cx="16" cy="16.5" r="1.5"/></svg><span><b>1 min</b> en carro</span></span>
+        </div>
+        <a class="stay-link" href="https://www.google.com/maps/place/Caba%C3%B1as+Orlando+y+M%C3%A1s+Na%C2%B4+-+Tayrona/@11.2837569,-73.9010472,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4950900ccb45f:0xd9a8034976d4e319!5m2!4m1!1i2!8m2!3d11.2837569!4d-73.9010472!16s%2Fg%2F11jk_8klqb!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
+      </article>
+      <article class="stay-card">
+        <div><div class="stay-tipo">Eco finca</div><h4 class="stay-name">Zelandia Eco Finca</h4></div>
+        <div class="stay-datos">
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>2 min</b> a pie</span></span>
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16h14v-4l-2-5H7l-2 5v4z"/><path d="M5 12h14"/><circle cx="8" cy="16.5" r="1.5"/><circle cx="16" cy="16.5" r="1.5"/></svg><span><b>1 min</b> en carro</span></span>
+        </div>
+        <a class="stay-link" href="https://www.google.com/maps/place/Zelandia+Eco+Finca/@11.2833171,-73.902784,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4959914499367:0x1cd719edbc3b0fb5!5m2!4m1!1i2!8m2!3d11.2833171!4d-73.902784!16s%2Fg%2F11w3zdmdmt!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
+      </article>
+      <article class="stay-card">
+        <div><div class="stay-tipo">Hostel</div><h4 class="stay-name">Journey Hostel Tayrona</h4></div>
+        <div class="stay-datos">
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>8 min</b> a pie</span></span>
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16h14v-4l-2-5H7l-2 5v4z"/><path d="M5 12h14"/><circle cx="8" cy="16.5" r="1.5"/><circle cx="16" cy="16.5" r="1.5"/></svg><span><b>2 min</b> en carro</span></span>
+        </div>
+        <a class="stay-link" href="https://www.google.com/maps/place/Journey+Hostel+Tayrona/@11.2846914,-73.8982484,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef494e65d2774fb:0xf72d60c7eb2001f8!5m2!4m1!1i2!8m2!3d11.2846914!4d-73.8982484!16s%2Fg%2F11clv_pr65!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
+      </article>
+      <article class="stay-card">
+        <div><div class="stay-tipo">Hostal</div><h4 class="stay-name">Hostal Cristal Tayrona</h4></div>
+        <div class="stay-datos">
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>11 min</b> a pie</span></span>
+          <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16h14v-4l-2-5H7l-2 5v4z"/><path d="M5 12h14"/><circle cx="8" cy="16.5" r="1.5"/><circle cx="16" cy="16.5" r="1.5"/></svg><span><b>3 min</b> en carro</span></span>
+        </div>
+        <a class="stay-link" href="https://www.google.com/maps/place/Hostal+Cristal+Tayrona/@11.2882669,-73.8990828,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4957dc848a691:0x6f2c576136d734ed!5m2!4m1!1i2!8m2!3d11.2882669!4d-73.8965079!16s%2Fg%2F11fr6wt3n6!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
+      </article>
     </div>
+    <p class="stay-nota">Tiempos aproximados desde la Finca San José.</p>
 
     <h3 class="subhead" id="faq">Preguntas Frecuentes</h3>
     <div class="faq-list">
