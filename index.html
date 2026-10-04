@@ -11,11 +11,18 @@
 <meta name="theme-color" content="#5D6846">
 <link rel="preload" as="image" href="img/entrada-poster.jpg">
 <script>
+// El sobre sale siempre, también al recargar. Solo se omite cuando se llega
+// por primera vez con un enlace directo a una sección (p. ej. …/#rsvp).
 (function(d){
   d.classList.add('js');
-  var visto = false;
-  try { visto = sessionStorage.getItem('sobreAbierto') === '1'; } catch(e) {}
-  if(!location.hash && !visto) d.classList.add('con-sobre');
+  var nav = window.performance && performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  var recarga = nav && nav.type === 'reload';
+  if(!location.hash || recarga){
+    d.classList.add('con-sobre');
+    // Al abrir el sobre, que se vea la entrada con el video, no el punto donde se quedó
+    if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if(location.hash) history.replaceState(null, '', location.pathname + location.search);
+  }
 })(document.documentElement);
 </script>
 
@@ -912,12 +919,12 @@
   if(!html.classList.contains('con-sobre')){ iniciarVideo(); return; }
 
   var sobre = document.getElementById('sobre');
+  window.scrollTo(0, 0);
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var abierto = false;
 
   function terminar(){
     html.classList.remove('con-sobre');
-    try { sessionStorage.setItem('sobreAbierto', '1'); } catch(e) {}
   }
   function abrir(){
     if(abierto) return;
