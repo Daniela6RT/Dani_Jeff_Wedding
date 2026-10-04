@@ -1,1 +1,14 @@
 .DS_Store
+.claude/
+
+# Referencias y borradores locales (no se publican)
+carruselfotos.html
+entrada.html
+estilo.html
+gemini-code-*.html
+index2.html
+inicio.html
+new.html
+sobre.html
+sobre2.html
+videoEntrada.html
