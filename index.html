@@ -224,52 +224,68 @@
   .quick-lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
 
   /* ---------- Sobre de entrada (CSS/SVG, solo transform y opacity) ---------- */
-  .sobre { display: none; position: fixed; inset: 0; z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 24px 16px;
+  .sobre { display: none; position: fixed; inset: 0; z-index: 200; overflow: hidden; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 24px 16px;
     background:
-      radial-gradient(1px 54px at 18% 40%, rgba(58, 70, 44, .07), transparent 70%),
-      radial-gradient(1px 44px at 72% 66%, rgba(58, 70, 44, .07), transparent 70%),
-      radial-gradient(120% 80% at 50% 30%, #E4E8DC, #D3DAC8 55%, #C3CCB5);
-    color: #2D3823; transition: opacity .7s ease; }
+      radial-gradient(60% 40% at 88% 8%, rgba(233, 163, 126, .38), transparent 70%),
+      radial-gradient(55% 38% at 6% 92%, rgba(200, 138, 135, .32), transparent 70%),
+      radial-gradient(70% 45% at 50% 55%, rgba(164, 176, 149, .30), transparent 72%),
+      #F8F1E6;
+    color: var(--verde-profundo); transition: opacity .7s ease; }
   .con-sobre .sobre { display: flex; }
   .con-sobre body { overflow: hidden; }
   .sobre.fuera { opacity: 0; pointer-events: none; }
-  .sobre-saltar { position: absolute; top: 12px; right: 12px; min-height: 44px; padding: 0 18px; border: 1px solid rgba(45, 56, 35, .2); border-radius: 30px; background: rgba(246, 243, 232, .82);
-    font: 600 11px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: #2D3823; cursor: pointer; }
-  .sobre-cabeza { text-align: center; transition: opacity .4s ease; }
-  .sobre-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: #3B4530; margin: 0; }
-  .sobre-nombres { font-family: var(--script); font-size: clamp(40px, 11vw, 58px); color: #2D3823; line-height: 1.1; margin: 6px 0 0; font-weight: 400; }
 
-  .env { position: relative; width: min(86vw, 400px); aspect-ratio: 7 / 5; perspective: 1400px; cursor: pointer; }
-  .env-fondo { position: absolute; inset: 0; border-radius: 6px; background: #8F9F80; box-shadow: 0 26px 50px rgba(45, 56, 35, .28); }
-  /* Forro crema con puntos dorados: solo se ve por dentro al abrir */
-  .env-fondo::before { content: ""; position: absolute; inset: 3% 3% 35% 3%; border-radius: 3px;
-    background: radial-gradient(rgba(173, 140, 72, .45) 1.2px, transparent 1.6px) 0 0 / 14px 14px, #EEE9D8; }
-  .env-carta { position: absolute; left: 6%; right: 6%; top: 7%; height: 86%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 9%;
-    background: #F6F3E8; border-radius: 4px; box-shadow: 0 2px 10px rgba(45, 56, 35, .18); text-align: center; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .5s; }
-  .env-carta b { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 7vw, 34px); color: #2D3823; letter-spacing: .06em; }
-  .env-carta b i { font-family: var(--script); font-style: normal; color: #AD8C48; padding: 0 .1em; }
-  .env-carta small { margin-top: 6px; font-size: 10px; font-weight: 600; letter-spacing: .4em; color: #8A6C33; }
-  .env-frente, .env-solapa { position: absolute; left: 0; top: 0; width: 100%; display: block; }
-  .env-frente { height: 100%; z-index: 2; }
-  .env-solapa { height: 62%; z-index: 3; transform-origin: 50% 0; transition: transform .7s cubic-bezier(.5, 0, .3, 1), z-index 0s .35s; }
-  .env-sello { position: absolute; left: 50%; top: 62%; z-index: 4; width: 78px; height: 78px; margin: -39px 0 0 -39px; border: 0; border-radius: 50%; cursor: pointer; padding: 0;
-    background: radial-gradient(circle at 36% 30%, #E2C08A, #C39858 48%, #A87D45 100%);
-    box-shadow: 0 0 0 4px #B98C52, 0 0 0 6px rgba(226, 192, 138, .55), 0 7px 14px rgba(45, 56, 35, .38), inset 0 -3px 6px rgba(90, 63, 22, .25);
-    font-family: var(--script); font-size: 30px; color: #5A3F16; line-height: 78px; transition: opacity .25s ease, transform .25s ease; }
-  .env-sello:focus-visible, .sobre-saltar:focus-visible { outline: 3px solid #2D3823; outline-offset: 3px; }
-  .sobre-pista { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: #3B4530; transition: opacity .3s ease; }
+  /* Sombras de hojas de palma, como luz de tarde entre palmeras */
+  .sobre-palma { position: absolute; width: min(78vw, 420px); height: auto; color: var(--verde-olivo); opacity: .13; filter: blur(2px); pointer-events: none; will-change: transform; }
+  .sobre-palma.p1 { top: -6%; left: -18%; transform: rotate(8deg); transform-origin: 0 100%; }
+  .sobre-palma.p2 { bottom: -12%; right: -24%; transform: rotate(160deg); transform-origin: 50% 50%; }
   @media (prefers-reduced-motion: no-preference) {
-    .sobre-pista svg { animation: subir 2.4s ease-in-out infinite; }
+    .sobre-palma.p1 { animation: mecer1 7s ease-in-out infinite; }
+    .sobre-palma.p2 { animation: mecer2 8s ease-in-out infinite; }
+    .env-flota { animation: flotar 4.5s ease-in-out infinite; }
     .env-sello { animation: latir 2.8s ease-in-out infinite; }
+    .sobre-pista svg { animation: subir 2.4s ease-in-out infinite; }
   }
+  @keyframes mecer1 { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(12deg); } }
+  @keyframes mecer2 { 0%, 100% { transform: rotate(160deg); } 50% { transform: rotate(155deg); } }
+  @keyframes flotar { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-7px) rotate(-1deg); } }
+  @keyframes latir { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
   @keyframes subir { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-  @keyframes latir { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+  .sobre-saltar { position: absolute; top: 12px; right: 12px; z-index: 2; min-height: 44px; padding: 0 18px; border: 1px solid var(--linea); border-radius: 30px; background: rgba(255, 255, 255, .8);
+    font: 600 11px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--madera); cursor: pointer; }
+  .sobre-cabeza { position: relative; text-align: center; transition: opacity .4s ease; }
+  .sobre-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: var(--verde-olivo); margin: 0; }
+  .sobre-nombres { font-family: var(--script); font-size: clamp(42px, 11.5vw, 60px); color: var(--terracotta); line-height: 1.1; margin: 6px 0 0; font-weight: 400; }
+
+  .env-flota { position: relative; transform: rotate(-2deg); }
+  .env { position: relative; width: min(86vw, 400px); aspect-ratio: 700 / 480; perspective: 1400px; cursor: pointer; filter: drop-shadow(0 22px 26px rgba(61, 72, 43, .22)); }
+  .env > svg { position: absolute; left: 0; top: 0; width: 100%; display: block; overflow: visible; }
+  .env-atras, .env-frente { height: 100%; }
+  .env-atras { z-index: 0; }
+  .env-frente { z-index: 2; pointer-events: none; }
+  .env-solapa { height: 70.8%; z-index: 3; transform-origin: 50% 0; transition: transform .75s cubic-bezier(.5, 0, .3, 1), z-index 0s .38s; }
+  .env-carta { position: absolute; left: 7%; right: 7%; top: 8%; height: 84%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 8%;
+    background: #FFFDF8; border-radius: 10px; box-shadow: 0 2px 12px rgba(58, 46, 43, .14); text-align: center; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .5s; }
+  .env-carta b { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 7vw, 34px); color: var(--verde-profundo); letter-spacing: .06em; }
+  .env-carta b i { font-family: var(--script); font-style: normal; color: var(--terracotta); padding: 0 .1em; }
+  .env-carta small { margin-top: 6px; font-size: 10px; font-weight: 600; letter-spacing: .4em; color: var(--terracotta-deep); }
+
+  .env-sello { position: absolute; left: 50%; top: 66%; z-index: 4; width: 96px; height: 96px; margin: -48px 0 0 -48px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; transition: opacity .3s ease, transform .3s ease; }
+  .env-sello svg { position: absolute; display: block; overflow: visible; pointer-events: none; }
+  .env-sello .ramita { width: 175%; left: -72%; top: -62%; }
+  .env-sello .cera { inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 4px 5px rgba(90, 63, 22, .35)); }
+  .env-sello span { position: relative; font-family: var(--script); font-size: 34px; line-height: 96px; color: #6B4A1C; text-shadow: 0 1px 0 rgba(255, 236, 200, .55); }
+  .env-sello:focus-visible, .sobre-saltar:focus-visible { outline: 3px solid var(--verde-olivo); outline-offset: 4px; }
+
+  .sobre-pista { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: var(--verde-olivo); transition: opacity .3s ease; }
 
   /* Apertura: se va el sello, sube la solapa, sale la carta, se desvanece todo */
+  .abierto .env-flota { animation: none; transform: none; transition: transform .6s ease; }
   .abierto .env-sello { animation: none; opacity: 0; transform: scale(.6); pointer-events: none; }
   .abierto .sobre-pista, .abierto .sobre-cabeza { opacity: 0; }
   .abierto .env-solapa { transform: rotateX(180deg); z-index: 0; }
-  .abierto .env-carta { transform: translateY(-58%); }
+  .abierto .env-carta { transform: translateY(-56%); }
 
   /* ---------- Historia ---------- */
   .moments { display: grid; gap: 40px; }
@@ -391,32 +407,94 @@
 
 <!-- Sobre de entrada: tocar el sello abre la invitación (y arranca el video) -->
 <div class="sobre" id="sobre" role="dialog" aria-modal="true" aria-labelledby="sobre-titulo">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="palma" viewBox="0 0 400 400"><path d="M20 380Q120 120 360 40" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M39.3 334.2Q95.7 314 153.4 309.9Q97 330.1 39.3 334.2ZM39.3 334.2Q18.3 278.2 -15.9 231.6Q5.1 287.6 39.3 334.2ZM49.9 312.4Q113 293.1 177 289.9Q113.8 309.2 49.9 312.4ZM49.9 312.4Q28 250.2 -7.3 196.7Q14.6 259 49.9 312.4ZM61 291.4Q130.2 273.6 199.7 272Q130.5 289.8 61 291.4ZM61 291.4Q39.1 223.3 3.5 163.7Q25.4 231.7 61 291.4ZM72.7 271.1Q147.3 255.5 221.5 255.9Q146.9 271.6 72.7 271.1ZM72.7 271.1Q51.6 197.9 16.4 132.6Q37.5 205.8 72.7 271.1ZM85 251.6Q164 238.5 242 241.6Q163 254.6 85 251.6ZM85 251.6Q65.4 173.9 31.4 103.6Q51 181.3 85 251.6ZM97.8 232.8Q180.2 222.8 261.1 228.8Q178.6 238.8 97.8 232.8ZM97.8 232.8Q80.4 151.6 48.3 77.1Q65.7 158.3 97.8 232.8ZM111.2 214.7Q196.1 208.1 278.6 217.4Q193.8 224.1 111.2 214.7ZM111.2 214.7Q96.6 130.9 67 53.2Q81.7 137.1 111.2 214.7ZM125.2 197.4Q211.4 194.3 294.6 207.1Q208.5 210.2 125.2 197.4ZM125.2 197.4Q113.8 112 87.2 32.1Q98.6 117.5 125.2 197.4ZM139.8 180.8Q226.1 181.4 308.9 197.7Q222.6 197.1 139.8 180.8ZM139.8 180.8Q131.9 94.9 108.7 13.8Q116.6 99.8 139.8 180.8ZM155 165Q240.4 169.1 321.5 188.8Q236.1 184.7 155 165ZM155 165Q150.9 79.6 131.2 -1.5Q135.3 83.9 155 165ZM170.7 149.9Q254.1 157.4 332.5 180.2Q249.1 172.7 170.7 149.9ZM170.7 149.9Q170.5 66.3 154.5 -13.8Q154.8 69.8 170.7 149.9ZM187.1 135.6Q267.3 146 341.9 171.5Q261.7 161.1 187.1 135.6ZM187.1 135.6Q190.6 54.8 178.2 -23.2Q174.7 57.7 187.1 135.6ZM204 122Q280.1 134.9 350.1 162.7Q273.9 149.8 204 122ZM204 122Q211 45.1 202.1 -29.7Q195.1 47.3 204 122ZM221.4 109.1Q292.7 123.9 357 153.3Q285.8 138.5 221.4 109.1ZM221.4 109.1Q231.7 37.1 225.9 -33.4Q215.6 38.6 221.4 109.1ZM239.5 97Q305 113 363.1 143.3Q297.5 127.3 239.5 97ZM239.5 97Q252.5 30.8 249.3 -34.6Q236.4 31.6 239.5 97ZM258.1 85.7Q317.3 102.1 368.5 132.5Q309.3 116 258.1 85.7ZM258.1 85.7Q273.2 26.1 272.2 -33.4Q257.1 26.2 258.1 85.7ZM277.4 75Q329.8 91.1 373.5 120.7Q321.1 104.7 277.4 75ZM277.4 75Q293.9 22.8 294.3 -30Q277.8 22.2 277.4 75ZM297.1 65.2Q342.4 80 378.4 108Q333.2 93.2 297.1 65.2ZM297.1 65.2Q314.4 20.8 315.5 -24.9Q298.3 19.5 297.1 65.2ZM317.5 56Q355.4 68.8 383.6 94.4Q345.7 81.6 317.5 56ZM317.5 56Q334.7 19.9 335.9 -18.1Q318.7 18 317.5 56ZM338.5 47.6Q369 57.6 389.3 79.9Q358.7 70 338.5 47.6ZM338.5 47.6Q354.8 20 355.3 -10.2Q338.9 17.5 338.5 47.6Z" fill="currentColor"/></symbol>
+  </svg>
+  <svg class="sobre-palma p1" viewBox="0 0 400 400" aria-hidden="true"><use href="#palma"/></svg>
+  <svg class="sobre-palma p2" viewBox="0 0 400 400" aria-hidden="true"><use href="#palma"/></svg>
+
   <button type="button" class="sobre-saltar" id="sobre-saltar">Saltar</button>
   <div class="sobre-cabeza">
     <p class="sobre-eyebrow">Una invitación para ti</p>
     <h2 class="sobre-nombres" id="sobre-titulo">Daniela &amp; Jeferson</h2>
   </div>
+
+  <div class="env-flota">
   <div class="env" id="sobre-env">
-    <div class="env-fondo"></div>
+    <!-- Parte de atrás con forro durazno estampado -->
+    <svg class="env-atras" viewBox="0 0 700 480" aria-hidden="true">
+      <defs>
+        <linearGradient id="g-atras" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9DAC8A"/><stop offset="1" stop-color="#8E9E7C"/></linearGradient>
+        <pattern id="g-forro" width="34" height="34" patternUnits="userSpaceOnUse">
+          <rect width="34" height="34" fill="#F2C9A8"/>
+          <path d="M17 6c4 5 4 11 0 16-4-5-4-11 0-16z" fill="#E7A982"/>
+          <circle cx="0" cy="0" r="2.2" fill="#FFF6EC"/><circle cx="34" cy="34" r="2.2" fill="#FFF6EC"/><circle cx="34" cy="0" r="2.2" fill="#FFF6EC"/><circle cx="0" cy="34" r="2.2" fill="#FFF6EC"/>
+        </pattern>
+      </defs>
+      <rect width="700" height="480" rx="26" fill="url(#g-atras)"/>
+      <path d="M22 18 H678 C600 110 430 270 380 312 Q350 336 320 312 C270 270 100 110 22 18 Z" fill="url(#g-forro)"/>
+    </svg>
+
     <div class="env-carta" aria-hidden="true"><b>D<i>&amp;</i>J</b><small>20 · 03 · 2027</small></div>
-    <svg class="env-frente" viewBox="0 0 700 500" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 0 L350 290 L0 500 Z" fill="#8F9F80"/>
-      <path d="M700 0 L350 290 L700 500 Z" fill="#8F9F80"/>
-      <path d="M0 500 L350 255 L700 500 Z" fill="#97A688"/>
-      <path d="M0 500 L350 255 L700 500" fill="none" stroke="#6F8063" stroke-width="2"/>
+
+    <!-- Bolsillo delantero con bordes curvos -->
+    <svg class="env-frente" viewBox="0 0 700 480" aria-hidden="true">
+      <defs>
+        <clipPath id="c-env"><rect width="700" height="480" rx="26"/></clipPath>
+        <linearGradient id="g-izq" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A3B191"/><stop offset="1" stop-color="#B4C0A3"/></linearGradient>
+        <linearGradient id="g-der" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#9AA988"/><stop offset="1" stop-color="#AEBB9D"/></linearGradient>
+        <linearGradient id="g-abajo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C3CDB4"/><stop offset="1" stop-color="#ABB89A"/></linearGradient>
+        <filter id="f-sombra" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur stdDeviation="7"/></filter>
+      </defs>
+      <g clip-path="url(#c-env)">
+        <path d="M0 0 C120 110 290 215 326 246 Q350 266 326 288 C260 340 120 420 0 480 Z" fill="url(#g-izq)"/>
+        <path d="M700 0 C580 110 410 215 374 246 Q350 266 374 288 C440 340 580 420 700 480 Z" fill="url(#g-der)"/>
+        <path d="M0 492 C120 410 260 300 322 266 Q350 250 378 266 C440 300 580 410 700 492 Z" fill="#000" opacity=".16" filter="url(#f-sombra)"/>
+        <path d="M0 480 C120 404 262 300 324 264 Q350 249 376 264 C438 300 580 404 700 480 Z" fill="url(#g-abajo)"/>
+        <path d="M0 480 C120 404 262 300 324 264 Q350 249 376 264 C438 300 580 404 700 480" fill="none" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="2"/>
+      </g>
     </svg>
-    <svg class="env-solapa" viewBox="0 0 700 310" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 0 L700 0 L350 310 Z" fill="#A4B095"/>
-      <path d="M0 0 L350 310 L700 0" fill="none" stroke="#6F8063" stroke-width="2"/>
+
+    <!-- Solapa superior curva con punta redondeada -->
+    <svg class="env-solapa" viewBox="0 0 700 340" aria-hidden="true">
+      <defs>
+        <linearGradient id="g-solapa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9C4A8"/><stop offset="1" stop-color="#A2B08F"/></linearGradient>
+        <clipPath id="c-solapa"><rect width="700" height="400" rx="26"/></clipPath>
+      </defs>
+      <g clip-path="url(#c-solapa)">
+        <path d="M0 8 H700 C600 100 430 280 380 322 Q350 346 320 322 C270 280 100 100 0 8 Z" fill="#000" opacity=".16" filter="url(#f-sombra)"/>
+        <path d="M0 0 H700 C600 92 430 270 380 312 Q350 336 320 312 C270 270 100 92 0 0 Z" fill="url(#g-solapa)"/>
+        <path d="M0 0 C100 92 270 270 320 312 Q350 336 380 312 C430 270 600 92 700 0" fill="none" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="2"/>
+      </g>
     </svg>
-    <button type="button" class="env-sello" id="sobre-sello" aria-label="Abrir la invitación">D&amp;J</button>
+
+    <button type="button" class="env-sello" id="sobre-sello" aria-label="Abrir la invitación">
+      <!-- Ramita con hojas de olivo y florecitas de la paleta -->
+      <svg class="ramita" viewBox="0 0 132 90" aria-hidden="true">
+        <path d="M30 70 C50 52 72 40 100 22" fill="none" stroke="#5D6846" stroke-width="1.6" stroke-linecap="round"/>
+        <g fill="#6E7A54"><ellipse cx="46" cy="56" rx="11" ry="4" transform="rotate(-50 46 56)"/><ellipse cx="62" cy="44" rx="11" ry="4" transform="rotate(-20 62 44)"/><ellipse cx="80" cy="34" rx="10" ry="3.6" transform="rotate(-60 80 34)"/></g>
+        <g fill="#8D9A6E"><ellipse cx="56" cy="56" rx="10" ry="3.6" transform="rotate(10 56 56)"/><ellipse cx="74" cy="44" rx="10" ry="3.6" transform="rotate(30 74 44)"/><ellipse cx="94" cy="28" rx="9" ry="3.4" transform="rotate(-10 94 28)"/></g>
+        <g transform="translate(102 20)"><g fill="#E9A37E"><circle cx="0" cy="-6" r="5"/><circle cx="5.7" cy="-1.9" r="5"/><circle cx="3.5" cy="4.9" r="5"/><circle cx="-3.5" cy="4.9" r="5"/><circle cx="-5.7" cy="-1.9" r="5"/></g><circle r="3" fill="#C05C37"/></g>
+        <g transform="translate(88 12) scale(.7)"><g fill="#C88A87"><circle cx="0" cy="-6" r="5"/><circle cx="5.7" cy="-1.9" r="5"/><circle cx="3.5" cy="4.9" r="5"/><circle cx="-3.5" cy="4.9" r="5"/><circle cx="-5.7" cy="-1.9" r="5"/></g><circle r="3" fill="#9E4322"/></g>
+        <g transform="translate(116 36) scale(.6)"><g fill="#F3D9C4"><circle cx="0" cy="-6" r="5"/><circle cx="5.7" cy="-1.9" r="5"/><circle cx="3.5" cy="4.9" r="5"/><circle cx="-3.5" cy="4.9" r="5"/><circle cx="-5.7" cy="-1.9" r="5"/></g><circle r="3" fill="#E9A37E"/></g>
+      </svg>
+      <!-- Lacre dorado de borde irregular -->
+      <svg class="cera" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><radialGradient id="g-cera" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#F0D49E"/><stop offset=".45" stop-color="#D2A866"/><stop offset="1" stop-color="#A87D45"/></radialGradient></defs>
+        <path d="M96.8 50C97 52.7 96.5 55.5 95.8 58.1C95 60.6 93.6 63.1 92.3 65.4C91 67.7 89.4 69.8 87.9 71.9C86.4 74 84.9 76 83.3 77.9C81.7 79.9 80 81.8 78 83.4C76.1 85 73.8 86 71.7 87.5C69.6 89.1 67.8 91.4 65.5 92.6C63.2 93.8 60.4 94.4 57.9 94.5C55.3 94.7 52.6 93.5 50 93.4C47.4 93.2 44.8 93.9 42.3 93.7C39.8 93.4 37.2 92.7 34.8 91.8C32.4 90.9 30.2 89.5 28 88.1C25.8 86.8 23.8 85.2 21.8 83.6C19.7 82.1 17.6 80.6 15.7 78.8C13.8 77 11.8 75.1 10.3 72.9C8.8 70.8 7.5 68.2 6.8 65.7C6.1 63.2 6 60.4 6 57.8C6 55.1 6.5 52.5 6.9 50C7.3 47.5 7.8 45.1 8.4 42.7C8.9 40.3 9.5 37.9 10.3 35.6C11.1 33.2 12.1 31 13.3 28.8C14.5 26.7 16 24.7 17.5 22.8C19 20.8 20.7 19 22.4 17.1C24.1 15.2 25.8 13.4 27.7 11.3C29.5 9.2 31.1 5.8 33.4 4.4C35.8 3.1 39 3.3 41.7 3.2C44.5 3 47.3 3 50 3.5C52.7 4 55.3 5.2 57.7 6.3C60.1 7.3 62.4 8.6 64.6 9.9C66.8 11.1 69 12.2 71 13.6C73.1 14.9 75.1 16.3 76.9 17.9C78.8 19.5 80.5 21.3 82 23.1C83.6 25 85 26.9 86.5 28.9C88 30.9 89.5 32.9 90.8 35.1C92.2 37.3 93.8 39.6 94.8 42.1C95.8 44.6 96.6 47.3 96.8 50Z" fill="url(#g-cera)"/>
+        <circle cx="50" cy="50" r="33" fill="none" stroke="#9C7340" stroke-opacity=".55" stroke-width="2.4"/>
+        <circle cx="50" cy="50" r="33" fill="none" stroke="#FBE6BF" stroke-opacity=".5" stroke-width="1" transform="translate(-.8 -.8)"/>
+      </svg>
+      <span aria-hidden="true">D&amp;J</span>
+    </button>
   </div>
+  </div>
+
   <div class="sobre-pista" aria-hidden="true">
     <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 17V2M2 7l5-5 5 5"/></svg>
     Toca el sello para abrir
   </div>
 </div>
-
 
 <!-- Navegación Principal -->
 <nav class="nav">
