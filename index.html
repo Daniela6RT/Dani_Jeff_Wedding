@@ -307,6 +307,36 @@
     .moment-text { text-align: left; }
   }
 
+  /* ---------- Carrusel "Nuestros Momentos" (scroll-snap nativo, sin librerías) ---------- */
+  .momentos { margin-top: 96px; scroll-margin-top: calc(var(--nav-h) + 16px); }
+  .carrusel { list-style: none; margin: 0 -24px; padding: 10px 24px 26px; display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 24px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .carrusel::-webkit-scrollbar { display: none; }
+  .carrusel li { flex: 0 0 auto; scroll-snap-align: center; }
+  .mom-item { display: block; width: min(240px, 66vw); aspect-ratio: 3 / 4; padding: 0; border: 6px solid #fff; border-radius: 999px 999px var(--radio) var(--radio); overflow: hidden; background: var(--marfil-warm); box-shadow: var(--sombra); cursor: zoom-in; }
+  .carrusel li:nth-child(3n+2) .mom-item { border-radius: var(--radio); }
+  .mom-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+  @media (hover: hover) { .mom-item:hover img { transform: scale(1.04); } }
+  .mom-item:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
+  .carrusel-ctrl { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 4px; }
+  .carrusel-btn { width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--terracota); background: #fff; color: var(--terracota-deep); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s ease, color .2s ease; }
+  .carrusel-btn:hover { background: var(--terracota); color: #fff; }
+  .carrusel-btn:disabled { opacity: .35; pointer-events: none; }
+  .carrusel-cont { min-width: 64px; text-align: center; font-family: var(--serif); font-size: 17px; color: var(--verde-profundo); font-variant-numeric: tabular-nums; }
+  .carrusel-pista { text-align: center; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 10px 0 0; }
+  @media (min-width: 900px) { .carrusel { margin: 0; padding-left: 0; padding-right: 0; } .mom-item { width: 260px; } }
+
+  /* Visor a pantalla completa */
+  .visor { border: 0; padding: 0; margin: 0; width: 100%; max-width: 100%; height: 100%; max-height: 100%; background: rgba(32, 27, 23, .94); color: #fff; }
+  .visor[open] { display: flex; align-items: center; justify-content: center; }
+  .visor::backdrop { background: rgba(32, 27, 23, .94); }
+  .visor img { max-width: 94vw; max-height: 82vh; width: auto; height: auto; border-radius: 6px; box-shadow: 0 20px 60px rgba(0, 0, 0, .4); }
+  .visor-btn { position: absolute; width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .35); background: rgba(255, 255, 255, .1); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .visor-cerrar { top: 14px; right: 14px; }
+  .visor-ant { left: 12px; top: 50%; transform: translateY(-50%); }
+  .visor-sig { right: 12px; top: 50%; transform: translateY(-50%); }
+  .visor-cont { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; font-size: 12px; letter-spacing: .3em; }
+  @media (max-width: 600px) { .visor-ant, .visor-sig { top: auto; bottom: 8px; transform: none; } .visor-cont { bottom: 22px; } }
+
   /* ---------- Detalles ---------- */
   .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px; }
   .card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 28px 16px; text-align: center; box-shadow: var(--sombra-suave); }
@@ -504,6 +534,7 @@
     <div class="nav-links" id="nav-links">
       <a href="#detalles">El gran día</a>
       <a href="#historia">Historia</a>
+      <a href="#momentos">Momentos</a>
       <a href="#dresscode">Dress Code</a>
       <a href="#viaje">Cómo llegar</a>
       <a href="#hospedaje">Hospedaje</a>
@@ -603,8 +634,43 @@
         </div>
       </div>
     </div>
+
+    <!-- Nuestros Momentos: carrusel de la sesión save the date -->
+    <div class="momentos" id="momentos">
+      <div class="head">
+        <div class="eyebrow-script">Nuestros Momentos</div>
+        <h2 class="section-title">Sesión save the date</h2>
+      </div>
+      <ul class="carrusel" id="carrusel" aria-label="Fotos de la sesión save the date">
+      <li><button type="button" class="mom-item" data-i="0"><img src="img/preboda-01.jpg" alt="Daniela y Jeferson conversando frente a una puerta verde" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item" data-i="1"><img src="img/preboda-04.jpg" alt="Foto en blanco y negro: Jeferson le habla al oído a Daniela mientras ella ríe" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
+      <li><button type="button" class="mom-item" data-i="2"><img src="img/preboda-06.jpg" alt="Daniela con los brazos abiertos junto a Jeferson, frente a una puerta verde" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item" data-i="3"><img src="img/preboda-05.jpg" alt="Daniela y Jeferson frente a una casa colonial" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:42% 60%"></button></li>
+      <li><button type="button" class="mom-item" data-i="4"><img src="img/preboda-07.jpg" alt="Daniela y Jeferson abrazados entre plantas tropicales" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 55%"></button></li>
+      <li><button type="button" class="mom-item" data-i="5"><img src="img/preboda-03.jpg" alt="Foto en blanco y negro: Daniela y Jeferson riendo en la calle" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:62% 50%"></button></li>
+      <li><button type="button" class="mom-item" data-i="6"><img src="img/preboda-08.jpg" alt="Daniela y Jeferson abrazados en la playa" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 55%"></button></li>
+      <li><button type="button" class="mom-item" data-i="7"><img src="img/preboda-09.jpg" alt="Jeferson carga a Daniela en la orilla del mar" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:56% 60%"></button></li>
+      <li><button type="button" class="mom-item" data-i="8"><img src="img/preboda-12.jpg" alt="Daniela abraza a Jeferson por la espalda frente a las olas" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item" data-i="9"><img src="img/preboda-10.jpg" alt="Daniela y Jeferson a contraluz, a punto de besarse" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
+      <li><button type="button" class="mom-item" data-i="10"><img src="img/preboda-14.jpg" alt="Daniela y Jeferson en una mesa al aire libre junto a una fogata, con un perrito" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 30%"></button></li>
+      </ul>
+      <div class="carrusel-ctrl">
+        <button type="button" class="carrusel-btn" id="car-ant" aria-label="Foto anterior"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 3 5 9l6 6"/></svg></button>
+        <div class="carrusel-cont" id="car-cont" aria-live="polite">1 / 11</div>
+        <button type="button" class="carrusel-btn" id="car-sig" aria-label="Foto siguiente"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m7 3 6 6-6 6"/></svg></button>
+      </div>
+      <p class="carrusel-pista">Desliza o toca una foto para verla en grande</p>
+    </div>
   </div>
 </section>
+
+<dialog class="visor" id="visor" aria-label="Foto en grande">
+  <img id="visor-img" src="" alt="">
+  <button type="button" class="visor-btn visor-cerrar" id="visor-cerrar" aria-label="Cerrar"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l12 12M15 3 3 15"/></svg></button>
+  <button type="button" class="visor-btn visor-ant" id="visor-ant" aria-label="Foto anterior"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 3 5 9l6 6"/></svg></button>
+  <button type="button" class="visor-btn visor-sig" id="visor-sig" aria-label="Foto siguiente"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m7 3 6 6-6 6"/></svg></button>
+  <div class="visor-cont" id="visor-cont"></div>
+</dialog>
 
 <!-- El Gran Día -->
 <section id="detalles" class="bg-warm">
@@ -879,9 +945,83 @@
 })();
 </script>
 <script>
+// ---- Carrusel "Nuestros Momentos" y visor ----
+(function(){
+  var lista = document.getElementById('carrusel');
+  var items = lista.querySelectorAll('.mom-item');
+  var total = items.length;
+  var cont = document.getElementById('car-cont');
+  var ant = document.getElementById('car-ant');
+  var sig = document.getElementById('car-sig');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var actual = 0;
+
+  function indiceVisible(){
+    var centro = lista.scrollLeft + lista.clientWidth / 2, mejor = 0, dist = Infinity;
+    items.forEach(function(it, i){
+      var li = it.parentNode, c = li.offsetLeft + li.offsetWidth / 2, d = Math.abs(c - centro);
+      if(d < dist){ dist = d; mejor = i; }
+    });
+    return mejor;
+  }
+  function pintar(){
+    actual = indiceVisible();
+    cont.textContent = (actual + 1) + ' / ' + total;
+    ant.disabled = actual === 0;
+    sig.disabled = actual === total - 1;
+  }
+  function ir(i){
+    actual = Math.max(0, Math.min(total - 1, i));
+    var li = items[actual].parentNode;
+    lista.scrollTo({ left: li.offsetLeft - (lista.clientWidth - li.offsetWidth) / 2, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  var pend = false;
+  lista.addEventListener('scroll', function(){
+    if(pend) return; pend = true;
+    requestAnimationFrame(function(){ pend = false; pintar(); });
+  }, { passive: true });
+  ant.addEventListener('click', function(){ ir(actual - 1); });
+  sig.addEventListener('click', function(){ ir(actual + 1); });
+  pintar();
+
+  // Visor
+  var visor = document.getElementById('visor');
+  if(!visor.showModal) return; // navegadores muy viejos: sin visor
+  var vImg = document.getElementById('visor-img');
+  var vCont = document.getElementById('visor-cont');
+  var vi = 0;
+  function mostrar(i){
+    vi = (i + total) % total;
+    var img = items[vi].querySelector('img');
+    vImg.src = img.getAttribute('src');
+    vImg.alt = img.alt;
+    vCont.textContent = (vi + 1) + ' / ' + total;
+  }
+  items.forEach(function(it, i){
+    it.addEventListener('click', function(){ mostrar(i); visor.showModal(); });
+  });
+  document.getElementById('visor-cerrar').addEventListener('click', function(){ visor.close(); });
+  document.getElementById('visor-ant').addEventListener('click', function(){ mostrar(vi - 1); });
+  document.getElementById('visor-sig').addEventListener('click', function(){ mostrar(vi + 1); });
+  visor.addEventListener('click', function(e){ if(e.target === visor) visor.close(); });
+  visor.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowLeft') mostrar(vi - 1);
+    if(e.key === 'ArrowRight') mostrar(vi + 1);
+  });
+  visor.addEventListener('close', function(){ ir(vi); });
+  var x0 = null;
+  visor.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, { passive: true });
+  visor.addEventListener('touchend', function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 50) mostrar(vi + (dx < 0 ? 1 : -1));
+  });
+})();
+</script>
+<script>
 // ---- Aparición suave al hacer scroll ----
 (function(){
-  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-card, .faq-list, .palette, .form-wrap, .center-box, footer > *');
+  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-card, .faq-list, .palette, .form-wrap, .center-box, .carrusel, footer > *');
   if(!('IntersectionObserver' in window)){ return document.documentElement.classList.remove('js'); }
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(en){
