@@ -225,35 +225,39 @@
 
   /* ---------- Sobre de entrada (CSS/SVG, solo transform y opacity) ---------- */
   .sobre { display: none; position: fixed; inset: 0; z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 24px 16px;
-    background: radial-gradient(120% 80% at 50% 28%, #FCFAF5, var(--marfil-warm)); transition: opacity .7s ease; }
+    background:
+      radial-gradient(1px 54px at 18% 40%, rgba(58, 70, 44, .07), transparent 70%),
+      radial-gradient(1px 44px at 72% 66%, rgba(58, 70, 44, .07), transparent 70%),
+      radial-gradient(120% 80% at 50% 30%, #E4E8DC, #D3DAC8 55%, #C3CCB5);
+    color: #2D3823; transition: opacity .7s ease; }
   .con-sobre .sobre { display: flex; }
   .con-sobre body { overflow: hidden; }
   .sobre.fuera { opacity: 0; pointer-events: none; }
-  .sobre-saltar { position: absolute; top: 12px; right: 12px; min-height: 44px; padding: 0 18px; border: 1px solid var(--linea); border-radius: 30px; background: rgba(255, 255, 255, .75);
-    font: 600 11px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--madera); cursor: pointer; }
+  .sobre-saltar { position: absolute; top: 12px; right: 12px; min-height: 44px; padding: 0 18px; border: 1px solid rgba(45, 56, 35, .2); border-radius: 30px; background: rgba(246, 243, 232, .82);
+    font: 600 11px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: #2D3823; cursor: pointer; }
   .sobre-cabeza { text-align: center; transition: opacity .4s ease; }
-  .sobre-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: var(--texto-suave); margin: 0; }
-  .sobre-nombres { font-family: var(--script); font-size: clamp(40px, 11vw, 58px); color: var(--terracotta); line-height: 1.1; margin: 6px 0 0; font-weight: 400; }
+  .sobre-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: #3B4530; margin: 0; }
+  .sobre-nombres { font-family: var(--script); font-size: clamp(40px, 11vw, 58px); color: #2D3823; line-height: 1.1; margin: 6px 0 0; font-weight: 400; }
 
   .env { position: relative; width: min(86vw, 400px); aspect-ratio: 7 / 5; perspective: 1400px; cursor: pointer; }
-  .env-fondo { position: absolute; inset: 0; border-radius: 6px; background: #E6C3A6; box-shadow: 0 26px 50px rgba(58, 46, 43, .18); }
-  /* Forro verde olivo: solo se ve por dentro al abrir */
+  .env-fondo { position: absolute; inset: 0; border-radius: 6px; background: #8F9F80; box-shadow: 0 26px 50px rgba(45, 56, 35, .28); }
+  /* Forro crema con puntos dorados: solo se ve por dentro al abrir */
   .env-fondo::before { content: ""; position: absolute; inset: 3% 3% 35% 3%; border-radius: 3px;
-    background: radial-gradient(rgba(248, 245, 238, .22) 1.2px, transparent 1.6px) 0 0 / 14px 14px, var(--verde-olivo); }
+    background: radial-gradient(rgba(173, 140, 72, .45) 1.2px, transparent 1.6px) 0 0 / 14px 14px, #EEE9D8; }
   .env-carta { position: absolute; left: 6%; right: 6%; top: 7%; height: 86%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 9%;
-    background: var(--marfil); border-radius: 4px; box-shadow: 0 2px 10px rgba(58, 46, 43, .12); text-align: center; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .5s; }
-  .env-carta b { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 7vw, 34px); color: var(--verde-profundo); letter-spacing: .06em; }
-  .env-carta b i { font-family: var(--script); font-style: normal; color: var(--terracotta); padding: 0 .1em; }
-  .env-carta small { margin-top: 6px; font-size: 10px; font-weight: 600; letter-spacing: .4em; color: var(--terracotta-deep); }
+    background: #F6F3E8; border-radius: 4px; box-shadow: 0 2px 10px rgba(45, 56, 35, .18); text-align: center; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .5s; }
+  .env-carta b { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 7vw, 34px); color: #2D3823; letter-spacing: .06em; }
+  .env-carta b i { font-family: var(--script); font-style: normal; color: #AD8C48; padding: 0 .1em; }
+  .env-carta small { margin-top: 6px; font-size: 10px; font-weight: 600; letter-spacing: .4em; color: #8A6C33; }
   .env-frente, .env-solapa { position: absolute; left: 0; top: 0; width: 100%; display: block; }
   .env-frente { height: 100%; z-index: 2; }
   .env-solapa { height: 62%; z-index: 3; transform-origin: 50% 0; transition: transform .7s cubic-bezier(.5, 0, .3, 1), z-index 0s .35s; }
   .env-sello { position: absolute; left: 50%; top: 62%; z-index: 4; width: 78px; height: 78px; margin: -39px 0 0 -39px; border: 0; border-radius: 50%; cursor: pointer; padding: 0;
-    background: radial-gradient(circle at 35% 30%, #D9774F, var(--terracota) 55%, var(--terracota-deep));
-    box-shadow: 0 0 0 4px rgba(192, 92, 55, .35), 0 6px 14px rgba(58, 46, 43, .3), inset 0 -3px 6px rgba(0, 0, 0, .18);
-    font-family: var(--script); font-size: 30px; color: #FBE7D9; line-height: 78px; transition: opacity .25s ease, transform .25s ease; }
-  .env-sello:focus-visible, .sobre-saltar:focus-visible { outline: 3px solid var(--verde-olivo); outline-offset: 3px; }
-  .sobre-pista { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: var(--texto-suave); transition: opacity .3s ease; }
+    background: radial-gradient(circle at 36% 30%, #E2C08A, #C39858 48%, #A87D45 100%);
+    box-shadow: 0 0 0 4px #B98C52, 0 0 0 6px rgba(226, 192, 138, .55), 0 7px 14px rgba(45, 56, 35, .38), inset 0 -3px 6px rgba(90, 63, 22, .25);
+    font-family: var(--script); font-size: 30px; color: #5A3F16; line-height: 78px; transition: opacity .25s ease, transform .25s ease; }
+  .env-sello:focus-visible, .sobre-saltar:focus-visible { outline: 3px solid #2D3823; outline-offset: 3px; }
+  .sobre-pista { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: #3B4530; transition: opacity .3s ease; }
   @media (prefers-reduced-motion: no-preference) {
     .sobre-pista svg { animation: subir 2.4s ease-in-out infinite; }
     .env-sello { animation: latir 2.8s ease-in-out infinite; }
@@ -396,14 +400,14 @@
     <div class="env-fondo"></div>
     <div class="env-carta" aria-hidden="true"><b>D<i>&amp;</i>J</b><small>20 · 03 · 2027</small></div>
     <svg class="env-frente" viewBox="0 0 700 500" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 0 L350 290 L0 500 Z" fill="#E6C3A6"/>
-      <path d="M700 0 L350 290 L700 500 Z" fill="#E6C3A6"/>
-      <path d="M0 500 L350 255 L700 500 Z" fill="#EDCFB6"/>
-      <path d="M0 500 L350 255 L700 500" fill="none" stroke="#D2A98A" stroke-width="2"/>
+      <path d="M0 0 L350 290 L0 500 Z" fill="#8F9F80"/>
+      <path d="M700 0 L350 290 L700 500 Z" fill="#8F9F80"/>
+      <path d="M0 500 L350 255 L700 500 Z" fill="#97A688"/>
+      <path d="M0 500 L350 255 L700 500" fill="none" stroke="#6F8063" stroke-width="2"/>
     </svg>
     <svg class="env-solapa" viewBox="0 0 700 310" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 0 L700 0 L350 310 Z" fill="#F1D8C3"/>
-      <path d="M0 0 L350 310 L700 0" fill="none" stroke="#D2A98A" stroke-width="2"/>
+      <path d="M0 0 L700 0 L350 310 Z" fill="#A4B095"/>
+      <path d="M0 0 L350 310 L700 0" fill="none" stroke="#6F8063" stroke-width="2"/>
     </svg>
     <button type="button" class="env-sello" id="sobre-sello" aria-label="Abrir la invitación">D&amp;J</button>
   </div>
