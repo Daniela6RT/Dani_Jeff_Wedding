@@ -308,7 +308,11 @@
   /* ---------- Historia ---------- */
   .moments { display: grid; gap: 40px; }
   .moment { display: grid; gap: 20px; align-items: center; }
-  .moment .photo { aspect-ratio: 4/5; width: 100%; max-width: 420px; margin: 0 auto; border-radius: 999px 999px var(--radio) var(--radio); overflow: hidden; background: var(--marfil-warm); border: 6px solid #fff; box-shadow: var(--sombra); }
+  .moment .photo { aspect-ratio: 4/5; width: 100%; max-width: 420px; margin: 0 auto; overflow: hidden; background: var(--marfil-warm); border: 6px solid #fffdf9; box-shadow: 0 14px 34px rgba(70, 58, 53, .18);
+    border-radius: 50% 50% 50% 50% / 38% 38% 62% 62%; }
+  /* Formas orgánicas, de la misma familia que el carrusel */
+  .moment:nth-child(2) .photo { border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%; }
+  .moment:nth-child(3) .photo { border-radius: 42% 58% 38% 62% / 52% 36% 64% 48%; }
   .moment .photo img { width: 100%; height: 100%; object-fit: cover; }
   .moment-text { text-align: center; }
   .moment-num { font-family: var(--script); font-size: 32px; color: var(--terracotta); }
@@ -620,7 +624,7 @@
     <div class="moments">
       <div class="moment">
         <div class="photo">
-          <img src="img/preboda-02.jpg" alt="Daniela y Jeferson abrazados frente a una pared rosada" width="1000" height="1500" loading="lazy">
+          <img src="img/historia-1.jpg" alt="Daniela y Jeferson a punto de besarse, vistos desde un hueco en forma de corazón en la arena" width="1112" height="1500" loading="lazy" style="object-position:50% 38%">
         </div>
         <div class="moment-text">
           <div class="moment-num">01</div>
@@ -656,17 +660,18 @@
         <div class="eyebrow-script">Nuestros Momentos</div>
       </div>
       <ul class="carrusel" id="carrusel" aria-label="Fotos de nuestros momentos">
-      <li><button type="button" class="mom-item" data-i="0"><img src="img/preboda-01.jpg" alt="Daniela y Jeferson conversando frente a una puerta verde" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
-      <li><button type="button" class="mom-item" data-i="1"><img src="img/preboda-04.jpg" alt="Foto en blanco y negro: Jeferson le habla al oído a Daniela mientras ella ríe" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
-      <li><button type="button" class="mom-item" data-i="2"><img src="img/preboda-06.jpg" alt="Daniela con los brazos abiertos junto a Jeferson, frente a una puerta verde" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
-      <li><button type="button" class="mom-item" data-i="3"><img src="img/preboda-05.jpg" alt="Daniela y Jeferson frente a una casa colonial" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:42% 60%"></button></li>
-      <li><button type="button" class="mom-item" data-i="4"><img src="img/preboda-07.jpg" alt="Daniela y Jeferson abrazados entre plantas tropicales" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 55%"></button></li>
-      <li><button type="button" class="mom-item" data-i="5"><img src="img/preboda-03.jpg" alt="Foto en blanco y negro: Daniela y Jeferson riendo en la calle" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:62% 50%"></button></li>
-      <li><button type="button" class="mom-item" data-i="6"><img src="img/preboda-08.jpg" alt="Daniela y Jeferson abrazados en la playa" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 55%"></button></li>
-      <li><button type="button" class="mom-item" data-i="7"><img src="img/preboda-09.jpg" alt="Jeferson carga a Daniela en la orilla del mar" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:56% 60%"></button></li>
-      <li><button type="button" class="mom-item" data-i="8"><img src="img/preboda-12.jpg" alt="Daniela abraza a Jeferson por la espalda frente a las olas" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
-      <li><button type="button" class="mom-item" data-i="9"><img src="img/preboda-10.jpg" alt="Daniela y Jeferson a contraluz, a punto de besarse" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
-      <li><button type="button" class="mom-item" data-i="10"><img src="img/preboda-14.jpg" alt="Daniela y Jeferson en una mesa al aire libre junto a una fogata, con un perrito" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 30%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-02.jpg" alt="Daniela y Jeferson abrazados frente a una pared rosada" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-01.jpg" alt="Daniela y Jeferson conversando frente a una puerta verde" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-04.jpg" alt="Foto en blanco y negro: Jeferson le habla al oído a Daniela mientras ella ríe" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-06.jpg" alt="Daniela con los brazos abiertos junto a Jeferson, frente a una puerta verde" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-05.jpg" alt="Daniela y Jeferson frente a una casa colonial" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:42% 60%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-07.jpg" alt="Daniela y Jeferson abrazados entre plantas tropicales" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 55%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-03.jpg" alt="Foto en blanco y negro: Daniela y Jeferson riendo en la calle" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:62% 50%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-08.jpg" alt="Daniela y Jeferson abrazados en la playa" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 55%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-09.jpg" alt="Jeferson carga a Daniela en la orilla del mar" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:56% 60%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-12.jpg" alt="Daniela abraza a Jeferson por la espalda frente a las olas" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 50%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-10.jpg" alt="Daniela y Jeferson a contraluz, a punto de besarse" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
+      <li><button type="button" class="mom-item"><img src="img/preboda-14.jpg" alt="Daniela y Jeferson en una mesa al aire libre junto a una fogata, con un perrito" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 30%"></button></li>
       </ul>
       <p class="carrusel-pista">Desliza para ver más →</p>
     </div>
