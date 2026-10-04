@@ -1377,7 +1377,48 @@
     detailRows.innerHTML = html || '<tr><td colspan="5" style="border:1px solid var(--linea); padding:6px;">Aún no hay respuestas.</td></tr>';
   }
 
+  // Panel nuevo: estado de cada invitación (pendiente / confirmada / no asiste)
+  var LINK_BASE = 'https://daniela6rt.github.io/Dani_Jeff_Wedding/?i=';
+  var TD = '<td style="border:1px solid var(--linea); padding:6px;">';
+  var TH = '<th style="border:1px solid var(--linea); padding:6px; background:var(--marfil-warm);">';
+  function renderInvitaciones(data){
+    var r = data.resumen;
+    detailSummary.textContent = r.personasConfirmadas + ' personas confirmadas de ' + r.cupos + ' cupos · ' +
+      r.respondidas + ' de ' + r.invitaciones + ' invitaciones respondidas · ' + r.pendientes + (r.pendientes === 1 ? ' pendiente · ' : ' pendientes · ') +
+      r.invitacionesNoAsisten + (r.invitacionesNoAsisten === 1 ? ' no asiste' : ' no asisten');
+    document.querySelector('#detail-table thead').innerHTML = '<tr>' + TH + 'Invitación</th>' + TH + 'Cupos</th>' +
+      TH + 'Estado</th>' + TH + 'Restricción</th>' + TH + 'Mensaje</th>' + TH + 'Link</th></tr>';
+    var orden = function(i){ return !i.respuesta ? 0 : (i.respuesta.asiste ? 1 : 2); };
+    var invs = data.invitaciones.slice().sort(function(x, y){ return orden(x) - orden(y); });
+    var html = '';
+    invs.forEach(function(i){
+      var res = i.respuesta;
+      var estado = !res ? '<b style="color:var(--terracotta-deep)">Pendiente</b>'
+        : res.asiste ? 'Vienen ' + res.asistentes : 'No asiste';
+      html += '<tr>' + TD + escapeHtml(i.nombre) + '</td>' + TD + i.cupos + '</td>' + TD + estado + '</td>' +
+        TD + escapeHtml((res && res.diet) || '—') + '</td>' + TD + escapeHtml((res && res.note) || '—') + '</td>' +
+        TD + '<button type="button" class="copiar-link" data-link="' + escapeHtml(LINK_BASE + i.codigo) + '" style="min-height:36px; padding:0 10px; border:1px solid var(--linea); background:#fff; border-radius:6px; cursor:pointer;">Copiar</button></td></tr>';
+    });
+    if(data.antiguas && data.antiguas.length){
+      html += '<tr><td colspan="6" style="border:1px solid var(--linea); padding:8px 6px; background:var(--marfil); font-weight:600;">Respuestas sin invitación (formulario anterior)</td></tr>';
+      data.antiguas.forEach(function(a){
+        html += '<tr>' + TD + escapeHtml(a.name) + '</td>' + TD + '—</td>' + TD + (a.attending ? 'Sí' + (a.plus_one ? ' +1' : '') : 'No asiste') + '</td>' +
+          TD + escapeHtml(a.diet || '—') + '</td>' + TD + escapeHtml(a.note || '—') + '</td>' + TD + '—</td></tr>';
+      });
+    }
+    detailRows.innerHTML = html || '<tr><td colspan="6" style="border:1px solid var(--linea); padding:6px;">Aún no hay invitaciones.</td></tr>';
+  }
+  detailRows.addEventListener('click', function(e){
+    var b = e.target.closest('.copiar-link');
+    if(!b) return;
+    var link = b.getAttribute('data-link');
+    var listo = function(){ b.textContent = '¡Copiado!'; setTimeout(function(){ b.textContent = 'Copiar'; }, 1500); };
+    if(navigator.clipboard) navigator.clipboard.writeText(link).then(listo, function(){ prompt('Copia el link:', link); });
+    else prompt('Copia el link:', link);
+  });
+
   function showSummary(data){
+    if(data.invitaciones){ renderInvitaciones(data); return; }
     detailSummary.textContent = data.summary.confirmed + ' confirmados, ' + data.summary.plusOnes + ' acompañantes, ' + data.summary.declined + ' no asisten.';
     renderRows(data.rows);
   }
