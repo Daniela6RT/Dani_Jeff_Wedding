@@ -43,8 +43,8 @@ Deno.serve(async (req: Request) => {
         .order("submitted_at", { ascending: false }),
       supabase
         .from("invitaciones")
-        .select("id, codigo, nombre, cupos, notas, creada_en")
-        .order("nombre", { ascending: true }),
+        .select("id, codigo, nombre, nombre_interno, cupos, notas, creada_en")
+        .order("nombre_interno", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -59,6 +59,7 @@ Deno.serve(async (req: Request) => {
       return {
         codigo: i.codigo,
         nombre: i.nombre,
+        nombreInterno: i.nombre_interno,
         cupos: i.cupos,
         notas: i.notas,
         respuesta: r
