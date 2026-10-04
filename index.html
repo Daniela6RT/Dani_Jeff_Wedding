@@ -408,6 +408,9 @@
   }
   .stay-pista { text-align: center; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 4px 0 0; }
   .stay-card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra-suave); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .stay-plan { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 30px; font-size: 12px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
+  .stay-plan-tranquilo { background: rgba(93, 104, 70, .12); color: var(--verde-profundo); }
+  .stay-plan-ambiente { background: rgba(233, 163, 126, .25); color: var(--terracotta-deep); }
   .stay-tipo { font-size: 10px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--terracotta-deep); }
   .stay-card .stay-name { font-family: var(--serif); font-size: 21px; line-height: 1.25; color: var(--verde-profundo); font-weight: 500; margin: 2px 0 0; }
   .stay-datos { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -853,6 +856,7 @@
     <p class="section-sub" style="text-align:center; margin-top:-10px; margin-bottom:24px;">Estas son las opciones de hospedaje que les sugerimos, todas muy cerca de la finca.</p>
     <div class="stay-grid">
       <article class="stay-card">
+        <span class="stay-plan stay-plan-tranquilo"><span aria-hidden="true">🌿</span>Tranquilo · para familias</span>
         <div><div class="stay-tipo">Cabañas</div><h4 class="stay-name">Cabañas Orlando y Más Na´</h4></div>
         <div class="stay-datos">
           <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>2 min</b> a pie</span></span>
@@ -861,6 +865,7 @@
         <a class="stay-link" href="https://www.google.com/maps/place/Caba%C3%B1as+Orlando+y+M%C3%A1s+Na%C2%B4+-+Tayrona/@11.2837569,-73.9010472,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4950900ccb45f:0xd9a8034976d4e319!5m2!4m1!1i2!8m2!3d11.2837569!4d-73.9010472!16s%2Fg%2F11jk_8klqb!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
       </article>
       <article class="stay-card">
+        <span class="stay-plan stay-plan-tranquilo"><span aria-hidden="true">🌿</span>Tranquilo · para familias</span>
         <div><div class="stay-tipo">Eco finca</div><h4 class="stay-name">Zelandia Eco Finca</h4></div>
         <div class="stay-datos">
           <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>2 min</b> a pie</span></span>
@@ -869,6 +874,7 @@
         <a class="stay-link" href="https://www.google.com/maps/place/Zelandia+Eco+Finca/@11.2833171,-73.902784,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4959914499367:0x1cd719edbc3b0fb5!5m2!4m1!1i2!8m2!3d11.2833171!4d-73.902784!16s%2Fg%2F11w3zdmdmt!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
       </article>
       <article class="stay-card">
+        <span class="stay-plan stay-plan-ambiente"><span aria-hidden="true">🎉</span>Con ambiente · para amigos</span>
         <div><div class="stay-tipo">Hostel</div><h4 class="stay-name">Journey Hostel Tayrona</h4></div>
         <div class="stay-datos">
           <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>8 min</b> a pie</span></span>
@@ -877,6 +883,7 @@
         <a class="stay-link" href="https://www.google.com/maps/place/Journey+Hostel+Tayrona/@11.2846914,-73.8982484,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef494e65d2774fb:0xf72d60c7eb2001f8!5m2!4m1!1i2!8m2!3d11.2846914!4d-73.8982484!16s%2Fg%2F11clv_pr65!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
       </article>
       <article class="stay-card">
+        <span class="stay-plan stay-plan-ambiente"><span aria-hidden="true">🎉</span>Con ambiente · para amigos</span>
         <div><div class="stay-tipo">Hostal</div><h4 class="stay-name">Hostal Cristal Tayrona</h4></div>
         <div class="stay-datos">
           <span class="stay-dato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M7.5 12.5l2-4.5 3.5 1 2 3 2.5 1"/><path d="M12.5 15l-1-5"/></svg><span><b>11 min</b> a pie</span></span>
