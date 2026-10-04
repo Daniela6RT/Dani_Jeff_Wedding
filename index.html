@@ -394,14 +394,25 @@
   .map-embed iframe { width: 100%; height: 100%; border: 0; display: block; }
   .btn-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; }
   
-  .stay-grid { display: grid; gap: 14px; max-width: 760px; margin: 0 auto; }
-  @media (min-width: 700px) { .stay-grid { grid-template-columns: 1fr 1fr; } }
+  /* Hospedajes: tarjetas que se deslizan hacia el costado */
+  .stay-grid { display: flex; gap: 14px; margin: 0 -24px; padding: 6px 24px 18px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 24px; -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; scrollbar-color: rgba(192, 92, 55, .45) transparent; }
+  .stay-grid::-webkit-scrollbar { height: 5px; }
+  .stay-grid::-webkit-scrollbar-thumb { background: rgba(192, 92, 55, .45); border-radius: 3px; }
+  .stay-grid > .stay-card { flex: 0 0 min(78vw, 290px); scroll-snap-align: start; }
+  /* En pantallas anchas caben las 4 en una fila: sin deslizar */
+  @media (min-width: 1000px) {
+    .stay-grid { margin: 0; padding-left: 0; padding-right: 0; overflow: visible; }
+    .stay-grid > .stay-card { flex: 1 1 0; min-width: 0; }
+    .stay-pista { display: none; }
+  }
+  .stay-pista { text-align: center; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 4px 0 0; }
   .stay-card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra-suave); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
   .stay-tipo { font-size: 10px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--terracotta-deep); }
   .stay-card .stay-name { font-family: var(--serif); font-size: 21px; line-height: 1.25; color: var(--verde-profundo); font-weight: 500; margin: 2px 0 0; }
-  .stay-datos { display: flex; flex-wrap: wrap; gap: 8px; }
-  .stay-dato { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 30px; background: var(--marfil); border: 1px solid var(--linea); font-size: 13px; color: var(--madera); }
-  .stay-dato svg { width: 18px; height: 18px; color: var(--verde-olivo); flex: 0 0 auto; }
+  .stay-datos { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stay-dato { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 30px; background: var(--marfil); border: 1px solid var(--linea); font-size: 12.5px; color: var(--madera); white-space: nowrap; }
+  .stay-dato svg { width: 16px; height: 16px; color: var(--verde-olivo); flex: 0 0 auto; }
   .stay-dato b { font-weight: 600; }
   .stay-link { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--terracotta-deep); text-decoration: none; }
   .stay-link:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -874,6 +885,7 @@
         <a class="stay-link" href="https://www.google.com/maps/place/Hostal+Cristal+Tayrona/@11.2882669,-73.8990828,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef4957dc848a691:0x6f2c576136d734ed!5m2!4m1!1i2!8m2!3d11.2882669!4d-73.8965079!16s%2Fg%2F11fr6wt3n6!18m1!1e1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Ver en Google Maps</a>
       </article>
     </div>
+    <p class="stay-pista">Desliza para ver más →</p>
     <p class="stay-nota">Tiempos aproximados desde la Finca San José.</p>
 
     <h3 class="subhead" id="faq">Preguntas Frecuentes</h3>
@@ -1173,7 +1185,7 @@
 <script>
 // ---- Aparición suave al hacer scroll ----
 (function(){
-  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-card, .faq-list, .palette, .form-wrap, .center-box, .carrusel, footer > *');
+  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-grid, .faq-list, .palette, .form-wrap, .center-box, .carrusel, footer > *');
   if(!('IntersectionObserver' in window)){ return document.documentElement.classList.remove('js'); }
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(en){
