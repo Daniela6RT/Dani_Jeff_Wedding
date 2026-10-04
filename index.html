@@ -80,17 +80,19 @@
   /* ---------- Navegación ---------- */
   .nav { position: sticky; top: 0; z-index: 50; height: var(--nav-h); background: rgba(248, 245, 238, 0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--linea); }
   .nav .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; }
-  .nav-mono { font-family: var(--serif); font-size: 24px; letter-spacing: 2px; color: var(--verde-olivo); text-decoration: none; font-weight: 600; }
+  .nav-mono { font-family: var(--serif); font-size: 24px; letter-spacing: 2px; color: var(--verde-olivo); text-decoration: none; font-weight: 600; white-space: nowrap; }
   .nav-right { display: flex; align-items: center; gap: 12px; }
   .nav-cta { background: var(--terracotta); color: #ffffff !important; padding: 9px 18px; border-radius: 30px; text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px; font-weight: 600; text-decoration: none; transition: background 0.2s ease; }
   .nav-cta:hover { background: var(--terracotta-deep); }
-  .nav-toggle { background: none; border: 1px solid var(--verde-olivo); color: var(--verde-olivo); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .nav-toggle { background: none; border: 1px solid var(--verde-olivo); color: var(--verde-olivo); width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .nav-links { display: none; position: absolute; left: 0; right: 0; top: var(--nav-h); background: var(--marfil); padding: 12px 24px 20px; flex-direction: column; border-bottom: 1px solid var(--linea); }
   .nav-links.open { display: flex; }
   .nav-links a { color: var(--madera); text-decoration: none; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight: 500; }
-  @media (min-width: 900px) {
-    .nav-links { display: flex; position: static; flex-direction: row; gap: 24px; padding: 0; border: none; background: none; }
-    .nav-links a { font-size: 11px; padding: 0; border: none; opacity: 0.9; }
+  .nav-cta { white-space: nowrap; }
+  /* El menú horizontal solo aparece cuando cabe en una línea; antes, botón ☰ */
+  @media (min-width: 1180px) {
+    .nav-links { display: flex; position: static; flex-direction: row; gap: 22px; padding: 0; border: none; background: none; }
+    .nav-links a { font-size: 11px; letter-spacing: .16em; white-space: nowrap; padding: 0; border: none; opacity: 0.9; }
     .nav-links a:hover { opacity: 1; color: var(--terracotta); }
     .nav-toggle { display: none; }
   }
@@ -540,7 +542,6 @@
       <a href="#dresscode">Dress Code</a>
       <a href="#viaje">Cómo llegar</a>
       <a href="#hospedaje">Hospedaje</a>
-      <a href="#rsvp">RSVP</a>
       <a href="#playlist">Playlist</a>
       <a href="#regalos">Regalos</a>
     </div>
