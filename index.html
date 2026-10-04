@@ -9,6 +9,7 @@
 <meta property="og:title" content="Daniela & Jeferson — 20.03.2027">
 <meta property="og:description" content="Nos casamos el 20 de marzo de 2027 en Santa Marta. Confirma tu asistencia y mira todos los detalles.">
 <meta name="theme-color" content="#5D6846">
+<script>document.documentElement.classList.add('js');</script>
 
 <!-- Fuentes según el Moodboard: Playfair Display, Allura, Montserrat -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,29 +36,38 @@
     --script: 'Allura', cursive;
     --sans: 'Montserrat', sans-serif;
     --nav-h: 65px;
+
+    --sec-y: clamp(64px, 9vw, 104px);
+    --radio: 14px;
+    --sombra: 0 18px 50px rgba(58, 46, 43, 0.08);
+    --sombra-suave: 0 6px 20px rgba(58, 46, 43, 0.06);
   }
 
   * { box-sizing: border-box; }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
   html, body { margin: 0; padding: 0; }
-  
+
   body {
     background-color: var(--marfil);
-    background-image: radial-gradient(rgba(192, 92, 55, 0.03) 1px, transparent 0);
-    background-size: 24px 24px;
     color: var(--madera);
     font-family: var(--sans);
     font-weight: 400;
-    line-height: 1.6;
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
   img { max-width: 100%; display: block; }
   .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-  section { padding: 64px 0; scroll-margin-top: var(--nav-h); }
-  
-  .bg-olivo { background-color: var(--verde-olivo); color: var(--marfil); }
+  section { padding: var(--sec-y) 0; scroll-margin-top: var(--nav-h); }
+
+  .bg-olivo { background: linear-gradient(180deg, var(--verde-olivo), var(--verde-profundo)); color: var(--marfil); }
   .bg-warm { background-color: var(--marfil-warm); }
+
+  /* Aparición suave al hacer scroll (solo si hay JS y no se pidió menos movimiento) */
+  .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .9s ease, transform .9s ease; }
+  .js .reveal.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; transform: none; transition: none; } }
 
   /* ---------- Navegación ---------- */
   .nav { position: sticky; top: 0; z-index: 50; height: var(--nav-h); background: rgba(248, 245, 238, 0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--linea); }
@@ -78,17 +88,27 @@
   }
 
   /* ---------- Títulos y Secciones ---------- */
-  .head { text-align: center; margin-bottom: 40px; }
-  .eyebrow-script { font-family: var(--script); font-size: clamp(32px, 6vw, 48px); color: var(--terracotta); margin: 0; line-height: 1; }
-  .section-title { font-family: var(--serif); font-size: clamp(28px, 5vw, 42px); font-weight: 500; color: var(--verde-profundo); margin: 6px 0 0; }
-  .section-sub { color: var(--texto-suave); font-size: 14px; margin: 12px auto 0; max-width: 540px; font-weight: 400; }
-  .subhead { font-family: var(--serif); font-size: 28px; font-weight: 500; text-align: center; color: var(--verde-profundo); margin: 56px 0 24px; }
+  .head { text-align: center; margin-bottom: 44px; display: flex; flex-direction: column; align-items: center; }
+  .head::after { order: 2; }
+  /* Filete con rombo bajo cada título (ritmo de estilo.html) */
+  .head::after, .subhead::after {
+    content: ""; display: block; width: 150px; height: 10px; margin: 20px auto 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 10'%3E%3Cpath d='M0 5h62M88 5h62' stroke='%23C05C37' stroke-opacity='.45'/%3E%3Cpath d='M75 0l5 5-5 5-5-5z' fill='%23C05C37'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .bg-olivo .head::after { filter: brightness(1.7) saturate(.6); }
+  .eyebrow-script { font-family: var(--script); font-size: clamp(34px, 7vw, 50px); color: var(--terracotta); margin: 0; line-height: 1; }
+  .section-title { font-family: var(--serif); font-size: clamp(21px, 4.6vw, 32px); font-weight: 500; text-transform: uppercase; letter-spacing: .12em; line-height: 1.35; color: var(--verde-profundo); margin: 10px auto 0; max-width: 22ch; }
+  .section-sub { color: var(--texto-suave); font-size: 15px; margin: 18px auto 0; max-width: 540px; font-weight: 400; }
+  .head .section-sub { order: 3; }
+  .subhead { font-family: var(--serif); font-size: clamp(19px, 4vw, 24px); font-weight: 500; text-transform: uppercase; letter-spacing: .14em; text-align: center; color: var(--verde-profundo); margin: 72px 0 28px; }
+  .subhead::after { margin-top: 16px; width: 120px; }
   .bg-olivo .eyebrow-script { color: var(--durazno); }
   .bg-olivo .section-title { color: var(--marfil); }
   .bg-olivo .section-sub { color: rgba(248, 245, 238, 0.9); }
 
   /* ---------- Botones Optimizado Contraste ---------- */
   .btn, .submit-btn {
+    min-height: 48px;
     display: inline-block;
     background-color: var(--terracota);
     color: #ffffff !important;
@@ -202,7 +222,8 @@
   /* ---------- Historia ---------- */
   .moments { display: grid; gap: 40px; }
   .moment { display: grid; gap: 20px; align-items: center; }
-  .moment .photo { aspect-ratio: 4/5; width: 100%; max-width: 420px; margin: 0 auto; border-radius: 8px; overflow: hidden; background: var(--marfil-warm); border: 1px solid var(--linea); }
+  .moment .photo { aspect-ratio: 4/5; width: 100%; max-width: 420px; margin: 0 auto; border-radius: 999px 999px var(--radio) var(--radio); overflow: hidden; background: var(--marfil-warm); border: 6px solid #fff; box-shadow: var(--sombra); }
+  .moment .photo img { width: 100%; height: 100%; object-fit: cover; }
   .moment-text { text-align: center; }
   .moment-num { font-family: var(--script); font-size: 32px; color: var(--terracotta); }
   .moment h3 { font-family: var(--serif); font-size: 26px; font-weight: 500; margin: 0 0 8px; color: var(--verde-profundo); }
@@ -217,14 +238,14 @@
 
   /* ---------- Detalles ---------- */
   .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px; }
-  .card { background: #fff; border: 1px solid var(--linea); border-radius: 8px; padding: 24px 16px; text-align: center; }
-  .card .card-label { text-transform: uppercase; letter-spacing: 2px; font-size: 10px; color: var(--terracotta-deep); font-weight: 600; margin-bottom: 8px; }
+  .card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 28px 16px; text-align: center; box-shadow: var(--sombra-suave); }
+  .card .card-label { text-transform: uppercase; letter-spacing: .28em; font-size: 10px; color: var(--terracotta-deep); font-weight: 600; margin-bottom: 8px; }
   .card .card-value { font-family: var(--serif); font-size: 22px; color: var(--verde-profundo); line-height: 1.2; font-weight: 500; }
   
-  .schedule { max-width: 540px; margin: 40px auto 0; background: #fff; border: 1px solid var(--linea); border-radius: 8px; padding: 12px 28px; }
+  .schedule { max-width: 540px; margin: 48px auto 0; background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 16px 28px; box-shadow: var(--sombra); }
   .schedule-item { display: flex; align-items: baseline; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--linea); }
   .schedule-item:last-child { border-bottom: none; }
-  .schedule-time { font-family: var(--serif); font-size: 20px; color: var(--terracotta-deep); font-weight: 600; min-width: 80px; }
+  .schedule-time { font-family: var(--serif); font-size: 19px; color: var(--terracotta-deep); font-weight: 500; min-width: 84px; font-variant-numeric: tabular-nums; }
   .schedule-label { font-size: 14px; color: var(--madera); }
 
   /* ---------- Dress Code ---------- */
@@ -235,21 +256,21 @@
   /* ---------- Viaje & Hospedaje ---------- */
   .info-grid { display: grid; gap: 16px; max-width: 760px; margin: 0 auto 28px; }
   @media (min-width: 700px) { .info-grid { grid-template-columns: 1fr 1fr; } }
-  .info-card { background: #fff; border: 1px solid var(--linea); border-radius: 8px; padding: 24px; text-align: center; }
+  .info-card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 28px 24px; text-align: center; box-shadow: var(--sombra-suave); }
   .info-card h3 { font-family: var(--serif); font-size: 22px; font-weight: 500; margin: 0 0 8px; color: var(--verde-profundo); }
   .info-card p { margin: 0; font-size: 14px; color: var(--texto-suave); line-height: 1.6; }
-  .map-embed { max-width: 760px; margin: 0 auto; aspect-ratio: 16/9; border: 1px solid var(--linea); border-radius: 8px; overflow: hidden; background: var(--marfil-warm); }
+  .map-embed { max-width: 760px; margin: 0 auto; aspect-ratio: 16/9; border: 6px solid #fff; box-shadow: var(--sombra); border-radius: var(--radio); overflow: hidden; background: var(--marfil-warm); }
   .map-embed iframe { width: 100%; height: 100%; border: 0; display: block; }
   .btn-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 24px; }
   
   .stay-grid { display: grid; gap: 14px; max-width: 760px; margin: 0 auto; }
-  .stay-card { background: #fff; border: 1px solid var(--linea); border-radius: 8px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .stay-card { background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: var(--sombra-suave); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .stay-card .stay-name { font-family: var(--serif); font-size: 20px; color: var(--verde-profundo); font-weight: 500; }
   .stay-card .stay-note { font-size: 13px; color: var(--texto-suave); }
   
   .faq-list { max-width: 640px; margin: 0 auto; }
   details { border-bottom: 1px solid var(--linea); padding: 16px 0; }
-  details summary { cursor: pointer; font-family: var(--serif); font-size: 20px; color: var(--verde-profundo); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 500; }
+  details summary { cursor: pointer; min-height: 44px; font-family: var(--serif); font-size: 19px; color: var(--verde-profundo); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 500; }
   details summary::-webkit-details-marker { display: none; }
   details summary::after { content: '+'; color: var(--terracotta); font-size: 22px; font-weight: 600; }
   details[open] summary::after { content: '–'; }
@@ -257,7 +278,7 @@
 
   /* ---------- RSVP Form ---------- */
   .rsvp { background: var(--marfil-warm); }
-  .form-wrap { max-width: 480px; margin: 0 auto; background: #fff; border: 1px solid var(--linea); border-radius: 12px; padding: 36px 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.02); }
+  .form-wrap { max-width: 480px; margin: 0 auto; background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 36px 28px; box-shadow: var(--sombra); }
   label { display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--verde-profundo); font-weight: 600; margin: 18px 0 6px; }
   label:first-of-type { margin-top: 0; }
   input[type="text"], input[type="password"], textarea { width: 100%; font-family: var(--sans); font-size: 15px; color: var(--madera); background: var(--marfil); border: 1px solid var(--linea); padding: 12px 14px; border-radius: 6px; outline: none; }
@@ -265,7 +286,7 @@
   textarea { resize: vertical; min-height: 72px; }
   
   .attend-toggle { display: flex; gap: 10px; margin-top: 6px; }
-  .attend-btn { flex: 1; padding: 14px 8px; border: 1px solid var(--linea); background-color: var(--marfil); font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--madera) !important; cursor: pointer; border-radius: 6px; transition: all .2s ease; }
+  .attend-btn { flex: 1; min-height: 48px; padding: 14px 8px; border: 1px solid var(--linea); background-color: var(--marfil); font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--madera) !important; cursor: pointer; border-radius: 6px; transition: all .2s ease; }
   .attend-btn.active-yes { background-color: var(--verde-profundo) !important; border-color: var(--verde-profundo) !important; color: #ffffff !important; }
   .attend-btn.active-no { background-color: var(--terracotta-deep) !important; border-color: var(--terracotta-deep) !important; color: #ffffff !important; }
   
@@ -273,12 +294,13 @@
   .plus-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--terracotta); }
   .plus-row span { font-size: 13px; color: var(--madera); font-weight: 500; }
 
+  #submit-btn { width: 100%; margin-top: 24px; }
   .confirm-state { text-align: center; padding: 20px 6px 6px; }
   .confirm-state h3 { font-family: var(--serif); font-size: 26px; margin: 0 0 8px; color: var(--verde-profundo); }
   .confirm-state p { color: var(--texto-suave); font-size: 15px; margin: 0; }
 
   /* ---------- Playlist & Regalos ---------- */
-  .center-box { max-width: 520px; margin: 0 auto; text-align: center; background: #fff; border: 1px solid var(--linea); border-radius: 12px; padding: 32px 24px; }
+  .center-box { max-width: 520px; margin: 0 auto; text-align: center; background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 36px 26px; box-shadow: var(--sombra-suave); }
   .center-box p { font-size: 14px; color: var(--texto-suave); line-height: 1.7; margin: 0 0 20px; }
   .center-box p:last-child { margin-bottom: 0; }
 
@@ -343,7 +365,7 @@
   <div class="hero-card">
     <div class="hero-grid">
       <div class="hero-photo">
-        <img src="images/portada.png" alt="Daniela y Jeferson" onerror="this.onerror=function(){this.remove()}; this.src='images/portada.jpg'">
+        <img src="img/portada.jpg" alt="Daniela y Jeferson" width="1200" height="800">
       </div>
       <div>
         <div class="eyebrow-script">Nuestra Boda</div>
@@ -392,7 +414,7 @@
     <div class="moments">
       <div class="moment">
         <div class="photo">
-          <img src="images/historia-1.jpg" alt="El comienzo" loading="lazy" onerror="this.remove()">
+          <img src="img/preboda-02.jpg" alt="Daniela y Jeferson abrazados frente a una pared rosada" width="1000" height="1500" loading="lazy">
         </div>
         <div class="moment-text">
           <div class="moment-num">01</div>
@@ -402,7 +424,7 @@
       </div>
       <div class="moment">
         <div class="photo">
-          <img src="images/historia-2.jpg" alt="El camino recorrido" loading="lazy" onerror="this.remove()">
+          <img src="img/preboda-13.jpg" alt="Daniela y Jeferson sentados en la arena frente al mar" width="1000" height="1500" loading="lazy">
         </div>
         <div class="moment-text">
           <div class="moment-num">02</div>
@@ -412,7 +434,7 @@
       </div>
       <div class="moment">
         <div class="photo">
-          <img src="images/historia-3.jpg" alt="Lo que viene" loading="lazy" onerror="this.remove()">
+          <img src="img/preboda-11.jpg" alt="Daniela y Jeferson caminando a lo lejos por la orilla de la playa" width="1000" height="1500" loading="lazy">
         </div>
         <div class="moment-text">
           <div class="moment-num">03</div>
@@ -449,9 +471,9 @@
       <div class="schedule-item"><div class="schedule-time">3:00 AM</div><div class="schedule-label">Cierre del evento</div></div>
     </div>
 
-    <div style="text-align: center; margin-top: 36px;">
+    <div class="btn-row" style="margin-top: 36px;">
       <a class="btn-outline" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Boda+Daniela+%26+Jeferson&amp;dates=20270320T210000Z/20270321T080000Z&amp;details=Ceremonia+a+las+4:00+pm.+Llegada+sugerida+3:30+pm.&amp;location=Finca+San+Jos%C3%A9,+Los+Naranjos,+Santa+Marta,+Colombia" target="_blank" rel="noopener">Google Calendar</a>
-      <a class="btn-outline" href="boda.ics" download="boda-daniela-jeferson.ics" style="margin-left: 10px;">Apple / Outlook (.ics)</a>
+      <a class="btn-outline" href="boda.ics" download="boda-daniela-jeferson.ics">Apple / Outlook (.ics)</a>
     </div>
   </div>
 </section>
@@ -634,6 +656,19 @@
   </div>
 </div>
 
+<script>
+// ---- Aparición suave al hacer scroll ----
+(function(){
+  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-card, .faq-list, .palette, .form-wrap, .center-box, footer > *');
+  if(!('IntersectionObserver' in window)){ return document.documentElement.classList.remove('js'); }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('visible'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  els.forEach(function(el){ el.classList.add('reveal'); io.observe(el); });
+})();
+</script>
 <script>
 (function(){
   var SUPABASE_URL = 'https://ejuwrotykcyuuofklvqc.supabase.co';
