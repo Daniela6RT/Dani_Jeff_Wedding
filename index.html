@@ -10,7 +10,14 @@
 <meta property="og:description" content="Nos casamos el 20 de marzo de 2027 en Santa Marta. Confirma tu asistencia y mira todos los detalles.">
 <meta name="theme-color" content="#5D6846">
 <link rel="preload" as="image" href="img/entrada-poster.jpg">
-<script>document.documentElement.classList.add('js');</script>
+<script>
+(function(d){
+  d.classList.add('js');
+  var visto = false;
+  try { visto = sessionStorage.getItem('sobreAbierto') === '1'; } catch(e) {}
+  if(!location.hash && !visto) d.classList.add('con-sobre');
+})(document.documentElement);
+</script>
 
 <!-- Fuentes según el Moodboard: Playfair Display, Allura, Montserrat -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -216,6 +223,50 @@
   .quick-item:hover .quick-icon { transform: translateY(-3px); }
   .quick-lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
 
+  /* ---------- Sobre de entrada (CSS/SVG, solo transform y opacity) ---------- */
+  .sobre { display: none; position: fixed; inset: 0; z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 26px; padding: 24px 16px;
+    background: radial-gradient(120% 80% at 50% 28%, #FCFAF5, var(--marfil-warm)); transition: opacity .7s ease; }
+  .con-sobre .sobre { display: flex; }
+  .con-sobre body { overflow: hidden; }
+  .sobre.fuera { opacity: 0; pointer-events: none; }
+  .sobre-saltar { position: absolute; top: 12px; right: 12px; min-height: 44px; padding: 0 18px; border: 1px solid var(--linea); border-radius: 30px; background: rgba(255, 255, 255, .75);
+    font: 600 11px/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; color: var(--madera); cursor: pointer; }
+  .sobre-cabeza { text-align: center; transition: opacity .4s ease; }
+  .sobre-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: var(--texto-suave); margin: 0; }
+  .sobre-nombres { font-family: var(--script); font-size: clamp(40px, 11vw, 58px); color: var(--terracotta); line-height: 1.1; margin: 6px 0 0; font-weight: 400; }
+
+  .env { position: relative; width: min(86vw, 400px); aspect-ratio: 7 / 5; perspective: 1400px; cursor: pointer; }
+  .env-fondo { position: absolute; inset: 0; border-radius: 6px; background: #E6C3A6; box-shadow: 0 26px 50px rgba(58, 46, 43, .18); }
+  /* Forro verde olivo: solo se ve por dentro al abrir */
+  .env-fondo::before { content: ""; position: absolute; inset: 3% 3% 35% 3%; border-radius: 3px;
+    background: radial-gradient(rgba(248, 245, 238, .22) 1.2px, transparent 1.6px) 0 0 / 14px 14px, var(--verde-olivo); }
+  .env-carta { position: absolute; left: 6%; right: 6%; top: 7%; height: 86%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 9%;
+    background: var(--marfil); border-radius: 4px; box-shadow: 0 2px 10px rgba(58, 46, 43, .12); text-align: center; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .5s; }
+  .env-carta b { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 7vw, 34px); color: var(--verde-profundo); letter-spacing: .06em; }
+  .env-carta b i { font-family: var(--script); font-style: normal; color: var(--terracotta); padding: 0 .1em; }
+  .env-carta small { margin-top: 6px; font-size: 10px; font-weight: 600; letter-spacing: .4em; color: var(--terracotta-deep); }
+  .env-frente, .env-solapa { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+  .env-frente { height: 100%; z-index: 2; }
+  .env-solapa { height: 62%; z-index: 3; transform-origin: 50% 0; transition: transform .7s cubic-bezier(.5, 0, .3, 1), z-index 0s .35s; }
+  .env-sello { position: absolute; left: 50%; top: 62%; z-index: 4; width: 78px; height: 78px; margin: -39px 0 0 -39px; border: 0; border-radius: 50%; cursor: pointer; padding: 0;
+    background: radial-gradient(circle at 35% 30%, #D9774F, var(--terracota) 55%, var(--terracota-deep));
+    box-shadow: 0 0 0 4px rgba(192, 92, 55, .35), 0 6px 14px rgba(58, 46, 43, .3), inset 0 -3px 6px rgba(0, 0, 0, .18);
+    font-family: var(--script); font-size: 30px; color: #FBE7D9; line-height: 78px; transition: opacity .25s ease, transform .25s ease; }
+  .env-sello:focus-visible, .sobre-saltar:focus-visible { outline: 3px solid var(--verde-olivo); outline-offset: 3px; }
+  .sobre-pista { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: var(--texto-suave); transition: opacity .3s ease; }
+  @media (prefers-reduced-motion: no-preference) {
+    .sobre-pista svg { animation: subir 2.4s ease-in-out infinite; }
+    .env-sello { animation: latir 2.8s ease-in-out infinite; }
+  }
+  @keyframes subir { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes latir { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+  /* Apertura: se va el sello, sube la solapa, sale la carta, se desvanece todo */
+  .abierto .env-sello { animation: none; opacity: 0; transform: scale(.6); pointer-events: none; }
+  .abierto .sobre-pista, .abierto .sobre-cabeza { opacity: 0; }
+  .abierto .env-solapa { transform: rotateX(180deg); z-index: 0; }
+  .abierto .env-carta { transform: translateY(-58%); }
+
   /* ---------- Historia ---------- */
   .moments { display: grid; gap: 40px; }
   .moment { display: grid; gap: 20px; align-items: center; }
@@ -333,6 +384,35 @@
 </style>
 </head>
 <body>
+
+<!-- Sobre de entrada: tocar el sello abre la invitación (y arranca el video) -->
+<div class="sobre" id="sobre" role="dialog" aria-modal="true" aria-labelledby="sobre-titulo">
+  <button type="button" class="sobre-saltar" id="sobre-saltar">Saltar</button>
+  <div class="sobre-cabeza">
+    <p class="sobre-eyebrow">Una invitación para ti</p>
+    <h2 class="sobre-nombres" id="sobre-titulo">Daniela &amp; Jeferson</h2>
+  </div>
+  <div class="env" id="sobre-env">
+    <div class="env-fondo"></div>
+    <div class="env-carta" aria-hidden="true"><b>D<i>&amp;</i>J</b><small>20 · 03 · 2027</small></div>
+    <svg class="env-frente" viewBox="0 0 700 500" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 0 L350 290 L0 500 Z" fill="#E6C3A6"/>
+      <path d="M700 0 L350 290 L700 500 Z" fill="#E6C3A6"/>
+      <path d="M0 500 L350 255 L700 500 Z" fill="#EDCFB6"/>
+      <path d="M0 500 L350 255 L700 500" fill="none" stroke="#D2A98A" stroke-width="2"/>
+    </svg>
+    <svg class="env-solapa" viewBox="0 0 700 310" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 0 L700 0 L350 310 Z" fill="#F1D8C3"/>
+      <path d="M0 0 L350 310 L700 0" fill="none" stroke="#D2A98A" stroke-width="2"/>
+    </svg>
+    <button type="button" class="env-sello" id="sobre-sello" aria-label="Abrir la invitación">D&amp;J</button>
+  </div>
+  <div class="sobre-pista" aria-hidden="true">
+    <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 17V2M2 7l5-5 5 5"/></svg>
+    Toca el sello para abrir
+  </div>
+</div>
+
 
 <!-- Navegación Principal -->
 <nav class="nav">
@@ -678,7 +758,41 @@
       }).observe(v);
     }
   };
-  window.iniciarVideoEntrada();
+})();
+</script>
+<script>
+// ---- Sobre de entrada ----
+// El toque que abre el sobre es también el gesto que arranca el video.
+(function(){
+  var html = document.documentElement;
+  var iniciarVideo = window.iniciarVideoEntrada;
+  if(!html.classList.contains('con-sobre')){ iniciarVideo(); return; }
+
+  var sobre = document.getElementById('sobre');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var abierto = false;
+
+  function terminar(){
+    html.classList.remove('con-sobre');
+    try { sessionStorage.setItem('sobreAbierto', '1'); } catch(e) {}
+  }
+  function abrir(rapido){
+    if(abierto) return;
+    abierto = true;
+    iniciarVideo();
+    if(rapido || reduce){
+      sobre.classList.add('fuera');
+      setTimeout(terminar, 700);
+      return;
+    }
+    sobre.classList.add('abierto');
+    setTimeout(function(){ sobre.classList.add('fuera'); }, 1750);
+    setTimeout(terminar, 2450);
+  }
+
+  document.getElementById('sobre-env').addEventListener('click', function(){ abrir(false); });
+  document.getElementById('sobre-saltar').addEventListener('click', function(){ abrir(true); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') abrir(true); });
 })();
 </script>
 <script>
