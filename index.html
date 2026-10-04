@@ -309,21 +309,24 @@
 
   /* ---------- Carrusel "Nuestros Momentos" (scroll-snap nativo, sin librerías) ---------- */
   .momentos { margin-top: 96px; scroll-margin-top: calc(var(--nav-h) + 16px); }
-  .carrusel { list-style: none; margin: 0 -24px; padding: 10px 24px 26px; display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 24px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .carrusel::-webkit-scrollbar { display: none; }
+  .carrusel { list-style: none; margin: 0 -24px; padding: 14px 24px 30px; display: flex; align-items: flex-start; gap: 18px; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding: 0 24px; -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; scrollbar-color: rgba(192, 92, 55, .45) transparent; }
+  .carrusel::-webkit-scrollbar { height: 5px; }
+  .carrusel::-webkit-scrollbar-thumb { background: rgba(192, 92, 55, .45); border-radius: 3px; }
   .carrusel li { flex: 0 0 auto; scroll-snap-align: center; }
-  .mom-item { display: block; width: min(240px, 66vw); aspect-ratio: 3 / 4; padding: 0; border: 6px solid #fff; border-radius: 999px 999px var(--radio) var(--radio); overflow: hidden; background: var(--marfil-warm); box-shadow: var(--sombra); cursor: zoom-in; }
-  .carrusel li:nth-child(3n+2) .mom-item { border-radius: var(--radio); }
+  /* Formas orgánicas que se alternan (la primera es el óvalo de carruselfotos.html),
+     con tamaños y alturas distintas para un ritmo de álbum, no de catálogo */
+  .mom-item { display: block; width: min(230px, 64vw); aspect-ratio: 3 / 4; padding: 0; border: 5px solid #fffdf9; overflow: hidden; background: var(--marfil-warm); box-shadow: 0 10px 28px rgba(70, 58, 53, .18); cursor: zoom-in;
+    border-radius: 50% 50% 50% 50% / 38% 38% 62% 62%; }
+  .carrusel li:nth-child(5n+2) .mom-item { width: min(200px, 56vw); margin-top: 38px; border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%; }
+  .carrusel li:nth-child(5n+3) .mom-item { width: min(250px, 68vw); aspect-ratio: 4 / 5; border-radius: 42% 58% 38% 62% / 52% 36% 64% 48%; }
+  .carrusel li:nth-child(5n+4) .mom-item { width: min(190px, 54vw); margin-top: 24px; aspect-ratio: 1; border-radius: 50%; }
+  .carrusel li:nth-child(5n+5) .mom-item { width: min(220px, 62vw); margin-top: 10px; border-radius: 34% 66% 61% 39% / 40% 44% 56% 60%; }
   .mom-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
   @media (hover: hover) { .mom-item:hover img { transform: scale(1.04); } }
   .mom-item:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
-  .carrusel-ctrl { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 4px; }
-  .carrusel-btn { width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--terracota); background: #fff; color: var(--terracota-deep); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s ease, color .2s ease; }
-  .carrusel-btn:hover { background: var(--terracota); color: #fff; }
-  .carrusel-btn:disabled { opacity: .35; pointer-events: none; }
-  .carrusel-cont { min-width: 64px; text-align: center; font-family: var(--serif); font-size: 17px; color: var(--verde-profundo); font-variant-numeric: tabular-nums; }
-  .carrusel-pista { text-align: center; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 10px 0 0; }
-  @media (min-width: 900px) { .carrusel { margin: 0; padding-left: 0; padding-right: 0; } .mom-item { width: 260px; } }
+  .carrusel-pista { text-align: center; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 6px 0 0; }
+  @media (min-width: 900px) { .carrusel { margin: 0; padding-left: 0; padding-right: 0; } }
 
   /* Visor a pantalla completa */
   .visor { border: 0; padding: 0; margin: 0; width: 100%; max-width: 100%; height: 100%; max-height: 100%; background: rgba(32, 27, 23, .94); color: #fff; }
@@ -334,8 +337,7 @@
   .visor-cerrar { top: 14px; right: 14px; }
   .visor-ant { left: 12px; top: 50%; transform: translateY(-50%); }
   .visor-sig { right: 12px; top: 50%; transform: translateY(-50%); }
-  .visor-cont { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; font-size: 12px; letter-spacing: .3em; }
-  @media (max-width: 600px) { .visor-ant, .visor-sig { top: auto; bottom: 8px; transform: none; } .visor-cont { bottom: 22px; } }
+  @media (max-width: 600px) { .visor-ant, .visor-sig { top: auto; bottom: 14px; transform: none; } }
 
   /* ---------- Detalles ---------- */
   .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 32px; }
@@ -654,12 +656,7 @@
       <li><button type="button" class="mom-item" data-i="9"><img src="img/preboda-10.jpg" alt="Daniela y Jeferson a contraluz, a punto de besarse" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 40%"></button></li>
       <li><button type="button" class="mom-item" data-i="10"><img src="img/preboda-14.jpg" alt="Daniela y Jeferson en una mesa al aire libre junto a una fogata, con un perrito" width="1000" height="1500" loading="lazy" decoding="async" style="object-position:50% 30%"></button></li>
       </ul>
-      <div class="carrusel-ctrl">
-        <button type="button" class="carrusel-btn" id="car-ant" aria-label="Foto anterior"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 3 5 9l6 6"/></svg></button>
-        <div class="carrusel-cont" id="car-cont" aria-live="polite">1 / 11</div>
-        <button type="button" class="carrusel-btn" id="car-sig" aria-label="Foto siguiente"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m7 3 6 6-6 6"/></svg></button>
-      </div>
-      <p class="carrusel-pista">Desliza o toca una foto para verla en grande</p>
+      <p class="carrusel-pista">Desliza para ver más →</p>
     </div>
   </div>
 </section>
@@ -669,7 +666,6 @@
   <button type="button" class="visor-btn visor-cerrar" id="visor-cerrar" aria-label="Cerrar"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3l12 12M15 3 3 15"/></svg></button>
   <button type="button" class="visor-btn visor-ant" id="visor-ant" aria-label="Foto anterior"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 3 5 9l6 6"/></svg></button>
   <button type="button" class="visor-btn visor-sig" id="visor-sig" aria-label="Foto siguiente"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m7 3 6 6-6 6"/></svg></button>
-  <div class="visor-cont" id="visor-cont"></div>
 </dialog>
 
 <!-- El Gran Día -->
@@ -945,57 +941,19 @@
 })();
 </script>
 <script>
-// ---- Carrusel "Nuestros Momentos" y visor ----
+// ---- Visor de fotos de "Nuestros Momentos" ----
 (function(){
-  var lista = document.getElementById('carrusel');
-  var items = lista.querySelectorAll('.mom-item');
+  var items = document.querySelectorAll('#carrusel .mom-item');
   var total = items.length;
-  var cont = document.getElementById('car-cont');
-  var ant = document.getElementById('car-ant');
-  var sig = document.getElementById('car-sig');
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var actual = 0;
-
-  function indiceVisible(){
-    var centro = lista.scrollLeft + lista.clientWidth / 2, mejor = 0, dist = Infinity;
-    items.forEach(function(it, i){
-      var li = it.parentNode, c = li.offsetLeft + li.offsetWidth / 2, d = Math.abs(c - centro);
-      if(d < dist){ dist = d; mejor = i; }
-    });
-    return mejor;
-  }
-  function pintar(){
-    actual = indiceVisible();
-    cont.textContent = (actual + 1) + ' / ' + total;
-    ant.disabled = actual === 0;
-    sig.disabled = actual === total - 1;
-  }
-  function ir(i){
-    actual = Math.max(0, Math.min(total - 1, i));
-    var li = items[actual].parentNode;
-    lista.scrollTo({ left: li.offsetLeft - (lista.clientWidth - li.offsetWidth) / 2, behavior: reduce ? 'auto' : 'smooth' });
-  }
-  var pend = false;
-  lista.addEventListener('scroll', function(){
-    if(pend) return; pend = true;
-    requestAnimationFrame(function(){ pend = false; pintar(); });
-  }, { passive: true });
-  ant.addEventListener('click', function(){ ir(actual - 1); });
-  sig.addEventListener('click', function(){ ir(actual + 1); });
-  pintar();
-
-  // Visor
   var visor = document.getElementById('visor');
   if(!visor.showModal) return; // navegadores muy viejos: sin visor
   var vImg = document.getElementById('visor-img');
-  var vCont = document.getElementById('visor-cont');
   var vi = 0;
   function mostrar(i){
     vi = (i + total) % total;
     var img = items[vi].querySelector('img');
     vImg.src = img.getAttribute('src');
     vImg.alt = img.alt;
-    vCont.textContent = (vi + 1) + ' / ' + total;
   }
   items.forEach(function(it, i){
     it.addEventListener('click', function(){ mostrar(i); visor.showModal(); });
@@ -1008,7 +966,8 @@
     if(e.key === 'ArrowLeft') mostrar(vi - 1);
     if(e.key === 'ArrowRight') mostrar(vi + 1);
   });
-  visor.addEventListener('close', function(){ ir(vi); });
+  // Al cerrar, el carrusel queda en la última foto vista
+  visor.addEventListener('close', function(){ items[vi].scrollIntoView({ inline: 'center', block: 'nearest' }); });
   var x0 = null;
   visor.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, { passive: true });
   visor.addEventListener('touchend', function(e){
