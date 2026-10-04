@@ -209,15 +209,21 @@
   .entrada .countdown .lbl { font-size: 9px; letter-spacing: .22em; text-transform: uppercase; margin-top: 6px; font-weight: 600; color: rgba(255, 255, 255, .9); }
   .entrada-txt, .entrada-txt * { text-shadow: 0 1px 12px rgba(30, 24, 20, .35); }
   .entrada .btn { text-shadow: none; }
-  .entrada-scroll { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--madera); font-size: 10px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; text-decoration: none; padding: 7px 16px 6px; background: rgba(248, 245, 238, .88); border-radius: 30px; text-shadow: none; }
-  @media (prefers-reduced-motion: no-preference) { .entrada-scroll svg { animation: bajar 2.4s ease-in-out infinite; } }
-  @keyframes bajar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+  /* Pista para bajar: texto blanco y línea fina con un punto de luz que baja */
+  .entrada::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(40, 33, 27, 0), rgba(40, 33, 27, .38)); }
+  .entrada-scroll { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 6px 14px;
+    color: #fff; font-size: 10px; font-weight: 600; letter-spacing: .42em; text-indent: .42em; text-transform: uppercase; text-decoration: none; text-shadow: 0 1px 8px rgba(30, 24, 20, .55); }
+  .entrada-scroll i { position: relative; display: block; width: 1px; height: 38px; background: rgba(255, 255, 255, .45); overflow: hidden; }
+  .entrada-scroll i::after { content: ""; position: absolute; left: 0; top: 0; width: 1px; height: 12px; background: #fff; }
+  @media (prefers-reduced-motion: no-preference) { .entrada-scroll i::after { animation: bajar 2.2s cubic-bezier(.6, 0, .4, 1) infinite; } }
+  @keyframes bajar { 0% { transform: translateY(-12px); } 100% { transform: translateY(38px); } }
 
   /* Escritorio: el video vertical va en un marco de arco, texto a la izquierda */
   @media (min-width: 900px) {
     .entrada { height: auto; min-height: calc(100svh - var(--nav-h)); display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; padding: 48px max(24px, calc((100vw - 1080px) / 2)); background: var(--marfil); color: var(--verde-profundo); text-align: left; }
     .entrada-media { position: relative; order: 2; justify-self: center; height: min(calc(100svh - var(--nav-h) - 96px), 720px); aspect-ratio: 9 / 16; border-radius: 999px 999px var(--radio) var(--radio); overflow: hidden; border: 8px solid #fff; box-shadow: var(--sombra); }
-    .entrada-velo, .entrada-scroll { display: none; }
+    .entrada-velo, .entrada-scroll, .entrada::after { display: none; }
     .entrada-txt { padding: 0; }
     .entrada-txt, .entrada-txt * { text-shadow: none; }
     .entrada-eyebrow, .entrada-nombres .amp { color: var(--terracotta); }
@@ -591,9 +597,7 @@
 
     <a href="#rsvp" class="btn">Confirmar Asistencia</a>
   </div>
-  <a class="entrada-scroll" href="#historia">Desliza
-    <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M7 1v15M2 11l5 5 5-5"/></svg>
-  </a>
+  <a class="entrada-scroll" href="#historia">Desliza<i aria-hidden="true"></i></a>
 </header>
 
 <nav class="quick-menu" aria-label="Accesos rápidos">
