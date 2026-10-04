@@ -429,6 +429,34 @@
   #extra-fields label { margin-top: 20px; }
   [hidden] { display: none !important; }
 
+  /* ---------- Sugerencias de canciones ---------- */
+  .musica { text-align: left; }
+  .musica .rsvp-aviso { text-align: center; }
+  .mus-label { margin-top: 0; }
+  .mus-buscar { position: relative; }
+  .mus-buscar input { width: 100%; font: 400 16px var(--sans); color: var(--madera); background: var(--marfil); border: 1px solid var(--linea); border-radius: 30px; padding: 13px 18px 13px 44px; outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2363554D' stroke-width='1.6'%3E%3Ccircle cx='8.5' cy='8.5' r='6'/%3E%3Cpath d='M13 13l5 5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 16px center; background-size: 18px; }
+  .mus-buscar input:focus { border-color: var(--terracotta); }
+  .mus-resultados, .mus-lista { list-style: none; margin: 0; padding: 0; }
+  .mus-resultados { margin-top: 10px; }
+  .mus-cancion { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 8px; border: 0; border-radius: 10px; background: none; text-align: left; font: inherit; color: inherit; }
+  button.mus-cancion { cursor: pointer; }
+  button.mus-cancion:hover, button.mus-cancion:focus-visible { background: var(--marfil); }
+  .mus-portada { width: 44px; height: 44px; flex: 0 0 auto; border-radius: 6px; object-fit: cover; background: var(--marfil-warm); display: flex; align-items: center; justify-content: center; color: var(--terracotta); font-size: 18px; }
+  .mus-txt { flex: 1; min-width: 0; }
+  .mus-txt b { display: block; font-weight: 600; font-size: 14px; color: var(--madera); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mus-txt span { display: block; font-size: 13px; color: var(--texto-suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mus-accion { flex: 0 0 auto; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--terracotta-deep); }
+  .mus-quitar { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--linea); background: #fff; color: var(--texto-suave); font-size: 18px; line-height: 1; cursor: pointer; }
+  .mus-quitar:hover { color: var(--terracotta-deep); border-color: var(--terracotta); }
+  .mus-manual-toggle { display: block; margin: 12px auto 0; background: none; border: 0; min-height: 44px; font: 500 13px var(--sans); color: var(--terracotta-deep); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .mus-manual { margin-top: 6px; }
+  .mus-manual .submit-btn { width: 100%; margin-top: 16px; }
+  .mus-mias { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--linea); }
+  .mus-mias-titulo { margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--verde-profundo); }
+  .mus-vacio { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 6px 0 0; }
+  .mus-cargando { font-size: 13px; color: var(--texto-suave); padding: 8px; }
+
   /* ---------- Pase de invitado ---------- */
   .pase { position: relative; max-width: 400px; margin: 0 auto; color: var(--verde-profundo); text-align: center;
     filter: drop-shadow(0 22px 30px rgba(61, 72, 43, .18)); }
@@ -912,10 +940,31 @@
     <div class="head">
       <div class="eyebrow-script">Compartamos la música</div>
       <h2 class="section-title">Una canción para nuestra historia</h2>
-      <p class="section-sub">Una playlist colaborativa para agregar las canciones que te gustaría escuchar durante la celebración.</p>
+      <p class="section-sub">Sugiere hasta 5 canciones que no pueden faltar en la fiesta. Nosotros armamos la playlist.</p>
     </div>
-    <div class="center-box">
-      <a class="btn disabled" href="#" target="_blank" rel="noopener">Enlace por definir</a>
+    <div class="center-box musica" id="musica">
+      <p class="rsvp-aviso" id="mus-sin-codigo" hidden><b>Sugiere con tu link personal</b>Para sugerir canciones, abre el link de invitación que te enviamos por WhatsApp.</p>
+
+      <div id="mus-app" hidden>
+        <label for="mus-q" class="mus-label">Busca una canción o artista</label>
+        <div class="mus-buscar"><input type="search" id="mus-q" placeholder="Ej. Vivir mi vida" autocomplete="off" maxlength="100"></div>
+        <ul class="mus-resultados" id="mus-resultados" aria-live="polite"></ul>
+
+        <button type="button" class="mus-manual-toggle" id="mus-manual-toggle" aria-expanded="false">¿No la encuentras? Escríbela</button>
+        <form class="mus-manual" id="mus-manual" hidden>
+          <label for="mus-titulo">Canción</label>
+          <input type="text" id="mus-titulo" maxlength="200" autocomplete="off">
+          <label for="mus-artista">Artista</label>
+          <input type="text" id="mus-artista" maxlength="200" autocomplete="off">
+          <button type="submit" class="submit-btn">Sugerir canción</button>
+        </form>
+        <div class="form-msg" id="mus-msg" role="alert"></div>
+
+        <div class="mus-mias">
+          <p class="mus-mias-titulo" id="mus-contador">Tus canciones</p>
+          <ul class="mus-lista" id="mus-lista"></ul>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -966,6 +1015,7 @@
         <tbody id="detail-rows"></tbody>
       </table>
     </div>
+    <div id="detail-canciones" style="margin-top:22px; text-align:left;"></div>
     <button type="button" class="submit-btn" id="refresh-btn" style="margin-top:14px;">Actualizar ahora</button>
     <div style="font-size:11px; color:var(--texto-suave); margin-top:8px;">Se actualiza automáticamente cada 15 segundos.</div>
   </div>
@@ -1265,6 +1315,7 @@
     cargando.hidden = true;
     form.hidden = true;
     sinCodigo.hidden = false;
+    document.getElementById('mus-sin-codigo').hidden = false;
   }
 
   function personalizarSobre(){
@@ -1283,6 +1334,7 @@
       }
       invitacion = inv;
       personalizarSobre();
+      iniciarMusica();
       if(inv.respuesta) mostrarPase(false);
       else mostrarFormulario();
     }).catch(function(){
@@ -1331,6 +1383,173 @@
       submitBtn.textContent = 'Enviar confirmación';
     }
   });
+
+  // ---- Sugerencias de canciones (máximo 5 por invitación, solo las propias) ----
+  var MAX_CANCIONES = 5;
+  var BUSCAR_URL = SUPABASE_URL + '/functions/v1/buscar-cancion';
+  var musQ = document.getElementById('mus-q');
+  var musResultados = document.getElementById('mus-resultados');
+  var musLista = document.getElementById('mus-lista');
+  var musMsg = document.getElementById('mus-msg');
+  var musManual = document.getElementById('mus-manual');
+  var musToggle = document.getElementById('mus-manual-toggle');
+  var misCanciones = [];
+
+  function filaCancion(tag, c, extra){
+    var el = document.createElement(tag);
+    el.className = 'mus-cancion';
+    var img;
+    if(c.portada){
+      img = document.createElement('img');
+      img.className = 'mus-portada';
+      img.src = c.portada; img.alt = ''; img.width = 44; img.height = 44; img.loading = 'lazy';
+      img.onerror = function(){
+        var nota = document.createElement('span');
+        nota.className = 'mus-portada';
+        nota.setAttribute('aria-hidden', 'true');
+        nota.textContent = '♪';
+        if(img.parentNode) img.parentNode.replaceChild(nota, img);
+      };
+    } else {
+      img = document.createElement('span');
+      img.className = 'mus-portada';
+      img.setAttribute('aria-hidden', 'true');
+      img.textContent = '♪';
+    }
+    var txt = document.createElement('span');
+    txt.className = 'mus-txt';
+    var b = document.createElement('b'); b.textContent = c.titulo;
+    var a = document.createElement('span'); a.textContent = c.artista;
+    txt.appendChild(b); txt.appendChild(a);
+    el.appendChild(img); el.appendChild(txt);
+    if(extra) el.appendChild(extra);
+    return el;
+  }
+
+  function pintarMias(lista){
+    misCanciones = lista || [];
+    musLista.textContent = '';
+    document.getElementById('mus-contador').textContent = 'Tus canciones (' + misCanciones.length + ' de ' + MAX_CANCIONES + ')';
+    if(!misCanciones.length){
+      var v = document.createElement('li');
+      v.className = 'mus-vacio';
+      v.textContent = 'Aún no has sugerido canciones.';
+      musLista.appendChild(v);
+    }
+    misCanciones.forEach(function(c){
+      var quitar = document.createElement('button');
+      quitar.type = 'button';
+      quitar.className = 'mus-quitar';
+      quitar.textContent = '×';
+      quitar.setAttribute('aria-label', 'Quitar ' + c.titulo);
+      quitar.addEventListener('click', function(){ quitarCancion(c.id); });
+      var li = document.createElement('li');
+      li.appendChild(filaCancion('div', { titulo: c.titulo, artista: c.artista, portada: c.portada_url }, quitar));
+      musLista.appendChild(li);
+    });
+    var lleno = misCanciones.length >= MAX_CANCIONES;
+    document.querySelector('#mus-app .mus-label').hidden = lleno;
+    document.querySelector('#mus-app .mus-buscar').hidden = lleno;
+    musToggle.hidden = lleno;
+    if(lleno){ musManual.hidden = true; musResultados.textContent = ''; }
+  }
+
+  function errorMusica(err){
+    var m = err && err.message;
+    musMsg.className = 'form-msg error';
+    musMsg.textContent = m === 'cancion_repetida' ? 'Ya habías sugerido esa canción.'
+      : m === 'limite_canciones' ? 'Ya sugeriste ' + MAX_CANCIONES + ' canciones. Si quieres cambiar una, quítala primero.'
+      : 'No pudimos guardar la canción. Intenta de nuevo.';
+  }
+
+  function sugerirCancion(c){
+    musMsg.textContent = '';
+    return rpc('sugerir_cancion', {
+      p_codigo: codigo, p_titulo: c.titulo, p_artista: c.artista,
+      p_spotify_id: c.id || null, p_spotify_url: c.url || null, p_portada_url: c.portada || null
+    }).then(function(lista){
+      pintarMias(lista);
+      musMsg.className = 'form-msg';
+      musMsg.textContent = '¡Gracias! Agregamos “' + c.titulo + '” a tus sugerencias 🎶';
+      musQ.value = '';
+      musResultados.textContent = '';
+    }).catch(errorMusica);
+  }
+
+  function quitarCancion(id){
+    musMsg.textContent = '';
+    rpc('quitar_cancion', { p_codigo: codigo, p_id: id }).then(pintarMias).catch(errorMusica);
+  }
+
+  function abrirManual(abrir){
+    musManual.hidden = !abrir;
+    musToggle.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+  }
+  musToggle.addEventListener('click', function(){ abrirManual(musManual.hidden); });
+  musManual.addEventListener('submit', function(e){
+    e.preventDefault();
+    var t = document.getElementById('mus-titulo'), a = document.getElementById('mus-artista');
+    if(!t.value.trim() || !a.value.trim()){
+      musMsg.className = 'form-msg error';
+      musMsg.textContent = 'Escribe la canción y el artista.';
+      return;
+    }
+    sugerirCancion({ titulo: t.value.trim(), artista: a.value.trim() }).then(function(){ t.value = ''; a.value = ''; });
+  });
+
+  // Búsqueda en Spotify (vía función del servidor), con espera mientras se escribe
+  var temporizador = null, pedido = 0;
+  function pintarResultados(canciones){
+    musResultados.textContent = '';
+    if(!canciones.length){
+      var v = document.createElement('li');
+      v.className = 'mus-cargando';
+      v.textContent = 'Sin resultados. Prueba con otro nombre o escríbela abajo.';
+      musResultados.appendChild(v);
+      return;
+    }
+    canciones.forEach(function(c){
+      var accion = document.createElement('span');
+      accion.className = 'mus-accion';
+      accion.textContent = 'Sugerir';
+      var btn = filaCancion('button', c, accion);
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Sugerir ' + c.titulo + ' de ' + c.artista);
+      btn.addEventListener('click', function(){ sugerirCancion(c); });
+      var li = document.createElement('li');
+      li.appendChild(btn);
+      musResultados.appendChild(li);
+    });
+  }
+  musQ.addEventListener('input', function(){
+    clearTimeout(temporizador);
+    var q = musQ.value.trim();
+    if(q.length < 2){ musResultados.textContent = ''; return; }
+    temporizador = setTimeout(function(){
+      var mio = ++pedido;
+      musResultados.innerHTML = '<li class="mus-cargando">Buscando…</li>';
+      fetch(BUSCAR_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+        body: JSON.stringify({ codigo: codigo, q: q })
+      }).then(function(resp){
+        return resp.json().then(function(d){ if(!resp.ok) throw new Error(d && d.error); return d; });
+      }).then(function(d){
+        if(mio === pedido) pintarResultados(d.canciones || []);
+      }).catch(function(){
+        if(mio !== pedido) return;
+        musResultados.textContent = '';
+        musMsg.className = 'form-msg';
+        musMsg.textContent = 'El buscador no está disponible en este momento: escribe la canción y el artista.';
+        abrirManual(true);
+      });
+    }, 350);
+  });
+
+  function iniciarMusica(){
+    document.getElementById('mus-app').hidden = false;
+    rpc('mis_canciones', { p_codigo: codigo }).then(pintarMias).catch(function(){ pintarMias([]); });
+  }
 
   // ---- Panel de Administración Protegido ----
   var FUNCTION_URL = SUPABASE_URL + '/functions/v1/rsvp-admin';
@@ -1420,6 +1639,21 @@
       });
     }
     detailRows.innerHTML = html || '<tr><td colspan="6" style="border:1px solid var(--linea); padding:6px;">Aún no hay invitaciones.</td></tr>';
+    renderCancionesAdmin(data.canciones || []);
+  }
+  function renderCancionesAdmin(canciones){
+    var caja = document.getElementById('detail-canciones');
+    var h = '<div class="admin-summary" style="margin-bottom:6px;">🎵 Canciones sugeridas (' + canciones.length + ')</div>';
+    if(!canciones.length){ caja.innerHTML = h + '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay sugerencias.</div>'; return; }
+    h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
+      TH + 'Canción</th>' + TH + 'Veces</th>' + TH + 'Sugerida por</th>' + TH + 'Spotify</th></tr></thead><tbody>';
+    canciones.forEach(function(c){
+      var abrir = c.spotify_url && /^https:\/\/open\.spotify\.com\//.test(c.spotify_url)
+        ? '<a href="' + escapeHtml(c.spotify_url) + '" target="_blank" rel="noopener">Abrir</a>' : '—';
+      h += '<tr>' + TD + '<b>' + escapeHtml(c.titulo) + '</b><br><span style="color:var(--texto-suave)">' + escapeHtml(c.artista) + '</span></td>' +
+        TD + c.quienes.length + '</td>' + TD + escapeHtml(c.quienes.join(', ')) + '</td>' + TD + abrir + '</td></tr>';
+    });
+    caja.innerHTML = h + '</tbody></table></div>';
   }
   detailRows.addEventListener('click', function(e){
     var b = e.target.closest('.copiar-link');

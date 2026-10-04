@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const [rsvpsRes, invRes, catRes] = await Promise.all([
+    const [rsvpsRes, invRes, catRes, canRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id")
@@ -46,11 +46,16 @@ Deno.serve(async (req: Request) => {
         .select("id, codigo, nombre, categoria, cupos, notas, creada_en")
         .order("nombre", { ascending: true }),
       supabase.from("categorias").select("nombre, orden").order("orden", { ascending: true }),
+      supabase
+        .from("sugerencias_canciones")
+        .select("titulo, artista, spotify_url, portada_url, creada_en, invitacion_id")
+        .order("creada_en", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
     if (invRes.error) return json({ error: invRes.error.message }, 500);
     if (catRes.error) return json({ error: catRes.error.message }, 500);
+    if (canRes.error) return json({ error: canRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -110,6 +115,19 @@ Deno.serve(async (req: Request) => {
       })
       .filter((c) => c.invitaciones > 0);
 
+    // Canciones sugeridas: agrupadas por canción, las más pedidas primero
+    const nombrePorId = new Map(invs.map((i) => [i.id, i.nombre]));
+    const grupoCanciones = new Map<string, { titulo: string; artista: string; spotify_url: string | null; portada_url: string | null; quienes: string[] }>();
+    for (const c of canRes.data ?? []) {
+      const clave = (c.titulo + "|" + c.artista).toLowerCase();
+      const g = grupoCanciones.get(clave) ?? { titulo: c.titulo, artista: c.artista, spotify_url: c.spotify_url, portada_url: c.portada_url, quienes: [] };
+      g.spotify_url ??= c.spotify_url;
+      g.portada_url ??= c.portada_url;
+      g.quienes.push(nombrePorId.get(c.invitacion_id) ?? "—");
+      grupoCanciones.set(clave, g);
+    }
+    const canciones = [...grupoCanciones.values()].sort((a, b) => b.quienes.length - a.quienes.length);
+
     // Compatibilidad con el panel anterior (página publicada hoy)
     const confirmed = rsvps.filter((r) => r.attending).length;
     const plusOnes = rsvps.filter((r) => r.attending && r.plus_one).length;
@@ -125,6 +143,7 @@ Deno.serve(async (req: Request) => {
       antiguas: antiguas.map(filaSimple),
       resumen,
       porCategoria,
+      canciones,
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
