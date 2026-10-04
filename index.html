@@ -905,7 +905,7 @@
 <script>
 // ---- Sobre de entrada ----
 // El toque que abre el sobre es también el gesto que arranca el video.
-// Si nadie lo toca en 6 segundos, se abre solo.
+// Si nadie lo toca en 8 segundos, se abre solo.
 (function(){
   var html = document.documentElement;
   var iniciarVideo = window.iniciarVideoEntrada;
@@ -935,11 +935,11 @@
   }
 
   document.getElementById('sobre-env').addEventListener('click', abrir);
-  // Los 6 segundos cuentan solo con la página a la vista
+  // Los 8 segundos cuentan solo con la página a la vista
   var auto = null;
   function programar(){
     clearTimeout(auto);
-    if(!abierto && document.visibilityState !== 'hidden') auto = setTimeout(abrir, 6000);
+    if(!abierto && document.visibilityState !== 'hidden') auto = setTimeout(abrir, 8000);
   }
   document.addEventListener('visibilitychange', programar);
   programar();
