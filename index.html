@@ -193,7 +193,7 @@
   /* ---------- Entrada con video (estilo videoEntrada.html) ---------- */
   /* Celular: video a pantalla completa, texto arriba sobre un velo; el letrero
      "D & J 20 03 27" del video queda libre en el tercio inferior. */
-  .entrada { position: relative; height: calc(100svh - var(--nav-h)); min-height: 560px; overflow: hidden; color: #fff; text-align: center; background: #d8cdbd; }
+  .entrada { position: relative; scroll-margin-top: var(--nav-h); height: calc(100svh - var(--nav-h)); min-height: 560px; overflow: hidden; color: #fff; text-align: center; background: #d8cdbd; }
   .entrada-media { position: absolute; inset: 0; margin: 0; }
   .entrada-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .entrada-velo { position: absolute; inset: 0; pointer-events: none;
