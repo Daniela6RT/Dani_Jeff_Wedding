@@ -9,6 +9,7 @@
 <meta property="og:title" content="Daniela & Jeferson — 20.03.2027">
 <meta property="og:description" content="Nos casamos el 20 de marzo de 2027 en Santa Marta. Confirma tu asistencia y mira todos los detalles.">
 <meta name="theme-color" content="#5D6846">
+<link rel="preload" as="image" href="img/entrada-poster.jpg">
 <script>document.documentElement.classList.add('js');</script>
 
 <!-- Fuentes según el Moodboard: Playfair Display, Allura, Montserrat -->
@@ -165,43 +166,47 @@
   .bg-olivo .btn-outline { border-color: var(--marfil); color: var(--marfil) !important; background-color: rgba(255, 255, 255, 0.1); }
   .bg-olivo .btn-outline:hover { background-color: var(--marfil); color: var(--verde-profundo) !important; }
 
-  /* ---------- Hero ---------- */
-  .hero { position: relative; padding: 48px 0 64px; text-align: center; overflow: hidden; }
-  .hero-card { background: #fff; border: 1px solid var(--linea); border-radius: 16px; padding: 36px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); position: relative; }
-  
-  /* Foto Translúcida */
-  .hero-photo {
-    width: min(100%, 380px);
-    margin: 0 auto 28px;
-    aspect-ratio: 3/4;
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 12px 32px rgba(93, 104, 70, 0.12);
-    padding: 10px;
-  }
-  .hero-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 38% 40%; /* encuadra a los dos en el recorte vertical de una foto horizontal */
-    border-radius: 8px;
+  /* ---------- Entrada con video (estilo videoEntrada.html) ---------- */
+  /* Celular: video a pantalla completa, texto arriba sobre un velo; el letrero
+     "D & J 20 03 27" del video queda libre en el tercio inferior. */
+  .entrada { position: relative; height: calc(100svh - var(--nav-h)); min-height: 560px; overflow: hidden; color: #fff; text-align: center; background: #d8cdbd; }
+  .entrada-media { position: absolute; inset: 0; margin: 0; }
+  .entrada-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .entrada-velo { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(40, 33, 27, .66) 0%, rgba(40, 33, 27, .46) 36%, rgba(40, 33, 27, 0) 60%); }
+  .entrada-txt { position: relative; z-index: 2; padding: 26px 20px 0; }
+  .entrada-eyebrow { font-family: var(--script); font-size: clamp(34px, 9vw, 52px); color: #F6C9AE; line-height: 1; margin: 0; }
+  .entrada-nombres { font-family: var(--serif); font-weight: 400; font-size: clamp(34px, 9.4vw, 66px); line-height: 1.1; margin: 6px 0 0; text-shadow: 0 2px 18px rgba(30, 24, 20, .45); }
+  .entrada-nombres .amp { font-family: var(--script); color: #F6C9AE; font-size: 1.05em; padding: 0 .08em; }
+  .entrada-fecha { font-size: 12px; font-weight: 600; letter-spacing: .42em; text-transform: uppercase; margin-top: 14px; }
+  .entrada-lugar { font-family: var(--serif); font-style: italic; font-size: 16px; margin-top: 4px; opacity: .95; }
+  .entrada .countdown { display: flex; justify-content: center; gap: 22px; margin: 20px 0 22px; }
+  .entrada .countdown .num { font-family: var(--serif); font-size: 30px; line-height: 1; font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; }
+  .entrada .countdown .lbl { font-size: 9px; letter-spacing: .22em; text-transform: uppercase; margin-top: 6px; font-weight: 600; color: rgba(255, 255, 255, .9); }
+  .entrada-txt, .entrada-txt * { text-shadow: 0 1px 12px rgba(30, 24, 20, .35); }
+  .entrada .btn { text-shadow: none; }
+  .entrada-scroll { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--madera); font-size: 10px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; text-decoration: none; padding: 7px 16px 6px; background: rgba(248, 245, 238, .88); border-radius: 30px; text-shadow: none; }
+  @media (prefers-reduced-motion: no-preference) { .entrada-scroll svg { animation: bajar 2.4s ease-in-out infinite; } }
+  @keyframes bajar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+  /* Escritorio: el video vertical va en un marco de arco, texto a la izquierda */
+  @media (min-width: 900px) {
+    .entrada { height: auto; min-height: calc(100svh - var(--nav-h)); display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; padding: 48px max(24px, calc((100vw - 1080px) / 2)); background: var(--marfil); color: var(--verde-profundo); text-align: left; }
+    .entrada-media { position: relative; order: 2; justify-self: center; height: min(calc(100svh - var(--nav-h) - 96px), 720px); aspect-ratio: 9 / 16; border-radius: 999px 999px var(--radio) var(--radio); overflow: hidden; border: 8px solid #fff; box-shadow: var(--sombra); }
+    .entrada-velo, .entrada-scroll { display: none; }
+    .entrada-txt { padding: 0; }
+    .entrada-txt, .entrada-txt * { text-shadow: none; }
+    .entrada-eyebrow, .entrada-nombres .amp { color: var(--terracotta); }
+    .entrada-fecha { color: var(--terracotta-deep); }
+    .entrada-lugar { color: var(--texto-suave); }
+    .entrada .countdown { justify-content: flex-start; }
+    .entrada .countdown .num { color: var(--verde-olivo); }
+    .entrada .countdown .lbl { color: var(--madera); }
   }
 
-  .hero-names { font-family: var(--serif); font-size: clamp(40px, 9vw, 76px); font-weight: 400; color: var(--verde-profundo); margin: 8px 0; line-height: 1.05; }
-  .hero-names .amp { font-family: var(--script); color: var(--terracotta); display: block; font-size: 0.7em; margin: -10px 0 -5px; }
-  .hero-date { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: var(--terracotta); margin-top: 16px; font-weight: 600; }
-  .hero-place { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--texto-suave); margin-top: 6px; }
-  
-  .countdown { display: flex; justify-content: center; gap: 20px; margin: 28px 0 32px; }
-  .countdown .num { font-family: var(--serif); font-size: 32px; color: var(--verde-olivo); line-height: 1; font-weight: 600; }
-  .countdown .lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--madera); margin-top: 6px; font-weight: 500; }
-
-  .quick-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--linea); }
-  .quick-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--madera); width: 72px; }
+  /* Accesos rápidos bajo la entrada */
+  .quick-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; padding: 28px 16px; border-bottom: 1px solid var(--linea); }
+  .quick-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--madera); width: 64px; }
   .quick-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--durazno); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: transform 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
   .quick-item:nth-child(1) .quick-icon { background: var(--verde-olivo); }
   .quick-item:nth-child(2) .quick-icon { background: var(--terracotta); }
@@ -210,14 +215,6 @@
   .quick-item:nth-child(5) .quick-icon { background: #C8B097; }
   .quick-item:hover .quick-icon { transform: translateY(-3px); }
   .quick-lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-
-  @media (min-width: 900px) {
-    .hero-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; text-align: left; }
-    .hero-card { padding: 48px; }
-    .hero-photo { width: 100%; margin: 0; }
-    .countdown { justify-content: flex-start; }
-    .quick-menu { justify-content: flex-start; }
-  }
 
   /* ---------- Historia ---------- */
   .moments { display: grid; gap: 40px; }
@@ -360,39 +357,39 @@
   </div>
 </nav>
 
-<!-- Hero Section -->
-<header class="hero wrap" id="inicio">
-  <div class="hero-card">
-    <div class="hero-grid">
-      <div class="hero-photo">
-        <img src="img/portada.jpg" alt="Daniela y Jeferson" width="1200" height="800">
-      </div>
-      <div>
-        <div class="eyebrow-script">Nuestra Boda</div>
-        <h1 class="hero-names">Daniela<span class="amp">&amp;</span>Jeferson</h1>
-        <div class="hero-date">20 · Marzo · 2027</div>
-        <div class="hero-place">Finca San José, Los Naranjos — Santa Marta</div>
-        
-        <div class="countdown" id="countdown">
-          <div><div class="num" id="cd-months">–</div><div class="lbl">Meses</div></div>
-          <div><div class="num" id="cd-days">–</div><div class="lbl">Días</div></div>
-          <div><div class="num" id="cd-hours">–</div><div class="lbl">Horas</div></div>
-          <div><div class="num" id="cd-mins">–</div><div class="lbl">Min</div></div>
-        </div>
-        
-        <a href="#rsvp" class="btn">Confirmar Asistencia</a>
-        
-        <div class="quick-menu">
-          <a href="#detalles" class="quick-item"><div class="quick-icon">📅</div><span class="quick-lbl">Fecha</span></a>
-          <a href="#viaje" class="quick-item"><div class="quick-icon">📍</div><span class="quick-lbl">Lugar</span></a>
-          <a href="#historia" class="quick-item"><div class="quick-icon">🥂</div><span class="quick-lbl">Historia</span></a>
-          <a href="#dresscode" class="quick-item"><div class="quick-icon">📷</div><span class="quick-lbl">Dresscode</span></a>
-          <a href="#regalos" class="quick-item"><div class="quick-icon">🎁</div><span class="quick-lbl">Regalos</span></a>
-        </div>
-      </div>
+<!-- Entrada con video -->
+<header class="entrada" id="inicio">
+  <figure class="entrada-media">
+    <video id="entrada-video" muted loop playsinline preload="none" poster="img/entrada-poster.jpg" data-src="video/entrada.mp4" aria-hidden="true"></video>
+  </figure>
+  <div class="entrada-velo" aria-hidden="true"></div>
+  <div class="entrada-txt">
+    <p class="entrada-eyebrow">Nos casamos</p>
+    <h1 class="entrada-nombres">Daniela <span class="amp">&amp;</span> Jeferson</h1>
+    <div class="entrada-fecha">20 · Marzo · 2027</div>
+    <div class="entrada-lugar">Finca San José, Los Naranjos — Santa Marta</div>
+
+    <div class="countdown" id="countdown" aria-label="Cuenta regresiva">
+      <div><div class="num" id="cd-months">–</div><div class="lbl">Meses</div></div>
+      <div><div class="num" id="cd-days">–</div><div class="lbl">Días</div></div>
+      <div><div class="num" id="cd-hours">–</div><div class="lbl">Horas</div></div>
+      <div><div class="num" id="cd-mins">–</div><div class="lbl">Min</div></div>
     </div>
+
+    <a href="#rsvp" class="btn">Confirmar Asistencia</a>
   </div>
+  <a class="entrada-scroll" href="#historia">Desliza
+    <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M7 1v15M2 11l5 5 5-5"/></svg>
+  </a>
 </header>
+
+<nav class="quick-menu" aria-label="Accesos rápidos">
+  <a href="#detalles" class="quick-item"><div class="quick-icon">📅</div><span class="quick-lbl">Fecha</span></a>
+  <a href="#viaje" class="quick-item"><div class="quick-icon">📍</div><span class="quick-lbl">Lugar</span></a>
+  <a href="#historia" class="quick-item"><div class="quick-icon">🥂</div><span class="quick-lbl">Historia</span></a>
+  <a href="#dresscode" class="quick-item"><div class="quick-icon">📷</div><span class="quick-lbl">Dresscode</span></a>
+  <a href="#regalos" class="quick-item"><div class="quick-icon">🎁</div><span class="quick-lbl">Regalos</span></a>
+</nav>
 
 <!-- Cita Inspiradora -->
 <section style="padding: 24px 0; text-align: center;">
@@ -656,6 +653,34 @@
   </div>
 </div>
 
+<script>
+// ---- Video de la entrada ----
+// Se carga solo si la conexión lo permite y no se pidió menos movimiento;
+// si no, queda la imagen fija (póster). Se pausa cuando no está en pantalla.
+(function(){
+  var v = document.getElementById('entrada-video');
+  var conn = navigator.connection || {};
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var lenta = conn.saveData || /2g|3g/.test(conn.effectiveType || '');
+  var activo = false;
+
+  window.iniciarVideoEntrada = function(){
+    if(activo || reduce || lenta) return;
+    activo = true;
+    v.muted = true;
+    v.src = v.getAttribute('data-src');
+    var p = v.play();
+    if(p && p.catch) p.catch(function(){ /* sin autoplay (p. ej. ahorro de batería): queda el póster */ });
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(en){
+        if(en[0].isIntersecting){ var q = v.play(); if(q && q.catch) q.catch(function(){}); }
+        else v.pause();
+      }).observe(v);
+    }
+  };
+  window.iniciarVideoEntrada();
+})();
+</script>
 <script>
 // ---- Aparición suave al hacer scroll ----
 (function(){
