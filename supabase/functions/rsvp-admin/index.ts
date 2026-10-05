@@ -39,7 +39,7 @@ Deno.serve(async (req: Request) => {
     const [rsvpsRes, invRes, catRes, canRes] = await Promise.all([
       supabase
         .from("rsvps")
-        .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id")
+        .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
         .order("submitted_at", { ascending: false }),
       supabase
         .from("invitaciones")
@@ -75,6 +75,8 @@ Deno.serve(async (req: Request) => {
               asistentes: r.asistentes ?? 0,
               diet: r.diet,
               note: r.note,
+              carro: r.lleva_carro,
+              placa: r.placa,
               fecha: r.actualizado_en ?? r.submitted_at,
             }
           : null,
@@ -97,6 +99,7 @@ Deno.serve(async (req: Request) => {
         respondidas.reduce((n, i) => n + (i.respuesta!.asiste ? i.respuesta!.asistentes : 0), 0) + personasAntiguas,
       invitacionesNoAsisten: respondidas.filter((i) => !i.respuesta!.asiste).length,
       respuestasSinInvitacion: antiguas.length,
+      carros: respondidas.filter((i) => i.respuesta!.asiste && i.respuesta!.carro).length,
     };
 
     // Resumen por categoría (en el orden de la hoja DATOS); "Sin categoría" al final
