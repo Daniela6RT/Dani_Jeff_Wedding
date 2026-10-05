@@ -495,7 +495,10 @@
   .attend-btn.active-no { background-color: var(--terracotta-deep) !important; border-color: var(--terracotta-deep) !important; color: #ffffff !important; }
   
   .rsvp-hola { text-align: center; font-family: var(--serif); font-size: 24px; color: var(--verde-profundo); margin: 0; }
-  .rsvp-cupos { text-align: center; font-size: 14px; color: var(--texto-suave); margin: 6px 0 22px; }
+  .rsvp-cupos { text-align: center; font-size: 14px; color: var(--texto-suave); margin: 6px 0 4px; }
+  .rsvp-adultos { text-align: center; font-size: 12.5px; color: var(--texto-suave); margin: 0 0 22px; }
+  .rsvp-adultos a { color: var(--terracotta-deep); }
+  #faq-ninos { scroll-margin-top: calc(var(--nav-h) + 16px); }
   .rsvp-aviso { text-align: center; color: var(--texto-suave); font-size: 15px; line-height: 1.7; margin: 0; }
   .rsvp-aviso b { display: block; font-family: var(--serif); font-weight: 500; font-size: 22px; color: var(--verde-profundo); margin-bottom: 8px; }
   .cuantos { display: flex; gap: 10px; margin-top: 6px; }
@@ -1147,9 +1150,9 @@
 
     <h3 class="subhead" id="faq">Preguntas Frecuentes</h3>
     <div class="faq-list">
-      <details>
+      <details id="faq-ninos">
         <summary>¿Puedo llevar niños?</summary>
-        <p>Por definir — les avisaremos pronto.</p>
+        <p>Nos gustan tanto los niños que no queremos que se desvelen, se aburran o pasen calor 😅 Por eso, esta vez la fiesta es solo para adultos. ¡Gracias por entendernos! 💛</p>
       </details>
       <details>
         <summary>¿Hay parqueadero en la finca?</summary>
@@ -1184,6 +1187,7 @@
       <form id="rsvp-form" hidden>
         <p class="rsvp-hola">Hola, <span id="rsvp-nombre"></span></p>
         <p class="rsvp-cupos" id="rsvp-cupos"></p>
+        <p class="rsvp-adultos"><span aria-hidden="true">🥂</span> Celebración solo para adultos · <a href="#faq-ninos" id="link-ninos">¿por qué?</a></p>
 
         <label id="lbl-acompanas">¿Nos acompañan?</label>
         <div class="attend-toggle">
@@ -1821,6 +1825,9 @@
       submitBtn.textContent = 'Enviar confirmación';
     }
   });
+
+  // "¿por qué?" (solo adultos): abre la pregunta de los niños
+  document.getElementById('link-ninos').addEventListener('click', function(){ document.getElementById('faq-ninos').open = true; });
 
   // ---- Propuesta a la corte de honor ----
   // Si la invitación tiene damas o caballeros con la pregunta pendiente, se
