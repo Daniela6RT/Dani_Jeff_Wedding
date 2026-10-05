@@ -630,6 +630,10 @@
   .center-box { max-width: 520px; margin: 0 auto; text-align: center; background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 36px 26px; box-shadow: var(--sombra-suave); }
   .center-box p { font-size: 14px; color: var(--texto-suave); line-height: 1.7; margin: 0 0 20px; }
   .center-box p:last-child { margin-bottom: 0; }
+  .regalo-card p { font-size: 15.5px; color: var(--madera); }
+  .regalo-card b { color: var(--terracotta-deep); font-weight: 600; }
+  .regalo-sobre { display: block; width: 92px; height: auto; margin: 0 auto 20px; transform: rotate(-4deg); filter: drop-shadow(0 8px 10px rgba(61, 72, 43, .2)); }
+  .regalo-card .regalo-nota { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--linea); font-size: 13px; color: var(--texto-suave); }
 
   /* ---------- Footer ---------- */
   footer { text-align: center; padding: 64px 24px; background: var(--verde-profundo); color: var(--marfil); position: relative; }
@@ -1326,11 +1330,18 @@
   <div class="wrap">
     <div class="head">
       <div class="eyebrow-script">Un detalle especial</div>
-      <h2 class="section-title">Tu compañía es nuestro mejor regalo</h2>
+      <h2 class="section-title">Tu compañía es nuestro mejor regalo 💛</h2>
     </div>
-    <div class="center-box">
-      <p>Si desean tener un detalle con nosotros, tendremos una lluvia de sobres.</p>
-      <p>Por definir — pronto compartiremos los detalles y cómo hacerlo si no pueden acompañarnos en persona.</p>
+    <div class="center-box regalo-card">
+      <svg class="regalo-sobre" viewBox="0 0 120 84" aria-hidden="true">
+        <rect x="2" y="2" width="116" height="80" rx="9" fill="#97A688"/>
+        <path d="M2 82 L52 44 Q60 38 68 44 L118 82" fill="#A4B095" stroke="#6F8063" stroke-width="1.2"/>
+        <path d="M2 4 Q2 2 6 2 H114 Q118 2 118 4 L68 46 Q60 52 52 46 Z" fill="#B9C4A8" stroke="#6F8063" stroke-width="1.2"/>
+        <circle cx="60" cy="48" r="11" fill="#C39858"/><circle cx="60" cy="48" r="7.5" fill="none" stroke="#9C7340" stroke-width="1"/>
+      </svg>
+      <p>Ya compartimos techo, cucharas y hasta la licuadora 😅. Si además quieren tener un detalle con nosotros, tendremos <b>lluvia de sobres</b> ✉️ el día de la boda.</p>
+      <p>Cada sobre será un pedacito de nuestra <b>luna de miel</b> ✈️🌴, ¡y prometemos mandarles fotos!</p>
+      <p class="regalo-nota">Por definir: pronto les contaremos cómo hacerlo si no pueden acompañarnos en persona 💌</p>
     </div>
   </div>
 </section>
