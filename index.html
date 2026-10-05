@@ -431,7 +431,14 @@
   .paleta-evitar ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .paleta-evitar li, .paleta-si { display: flex; gap: 10px; font-size: 14px; line-height: 1.5; color: rgba(248, 245, 238, .92); }
   .paleta-evitar li span { flex: 0 0 auto; color: var(--durazno); font-weight: 600; }
+  .paleta-evitar li span + span { flex: 1 1 auto; min-width: 0; color: inherit; font-weight: 400; }
   .paleta-si { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(248, 245, 238, .18); }
+  .paleta-evitar li b { color: var(--marfil); font-weight: 600; }
+  .evitar-sub { margin: 18px 0 10px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--durazno); }
+  .evitar-tonos { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 4px; }
+  .evitar-tonos div { width: 46px; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 9.5px; line-height: 1.25; text-align: center; color: rgba(248, 245, 238, .9); }
+  .evitar-tonos i { position: relative; width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(248, 245, 238, .6); }
+  .evitar-tonos i::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 2px; background: #C05C37; transform: translateX(-50%) rotate(45deg); }
   .paleta-si-2 { margin-top: 6px; padding-top: 0; border-top: 0; }
   .paleta-si span { flex: 0 0 auto; color: #B8C79A; font-weight: 700; }
 
@@ -1032,17 +1039,34 @@
     </div>
 
     <div class="dress-panel" role="tabpanel" id="panel-evitar" aria-labelledby="tab-evitar" hidden>
-      <a class="dress-img" href="img/dresscode-evitar.jpg" target="_blank" rel="noopener"><img src="img/dresscode-evitar.jpg" alt="Lo que no está permitido: blanco o tonos muy claros, amarillo, estampados, negro y metálicos; en hombres, shorts, sandalias o chanclas, camisas estampadas, tenis deportivos o de colores y looks muy informales. Sí permitido: tenis blancos limpios con traje" width="1536" height="1024" loading="lazy"><span>Toca para ver en grande 🔍</span></a>
+      <a class="dress-img" href="img/dresscode-evitar.jpg" target="_blank" rel="noopener"><img src="img/dresscode-evitar.jpg" alt="Lo que no está permitido: blanco, marfil o tonos muy claros, amarillo, estampados, negro y metálicos como color principal; para ellos, shorts, sandalias planas o chanclas, tenis deportivos o de colores y camisas estampadas; looks muy informales. Tonos reservados: blanco y marfil o champagne para los novios, vino y borgoña para la corte" width="1312" height="1199" loading="lazy"><span>Toca para ver en grande 🔍</span></a>
       <div class="paleta-evitar">
         <ul>
-          <li><span aria-hidden="true">✕</span>Blanco y tonos muy claros: marfil, hueso, champagne, beige claro, arena o lino claro</li>
-          <li><span aria-hidden="true">✕</span>Amarillo pálido o mantequilla</li>
-          <li><span aria-hidden="true">✕</span>Negro (también trajes negros) y colores neón</li>
-          <li><span aria-hidden="true">✕</span>Estampados</li>
-          <li><span aria-hidden="true">✕</span>Prendas plateadas, metálicas o muy brillantes como color principal</li>
-          <li><span aria-hidden="true">✕</span>Ellos: shorts, sandalias o chanclas, camisas estampadas, tenis deportivos o de colores, y looks muy informales</li>
-          <li><span aria-hidden="true">✕</span>Vino y borgoña: los reservamos para nuestras damas y caballeros de honor 💕</li>
+          <li><span aria-hidden="true">✕</span><span><b>Blanco, marfil o tonos muy claros:</b> incluye champagne, beige, arena, lino claro y tonos pastel muy claros (con el sol pueden verse blancos).</span></li>
+          <li><span aria-hidden="true">✕</span><span><b>Amarillo:</b> incluye amarillo claro, amarillo pastel y tonos similares que en las fotos pueden verse blancos.</span></li>
+          <li><span aria-hidden="true">✕</span><span><b>Estampados:</b> para mantener una estética elegante y armoniosa.</span></li>
+          <li><span aria-hidden="true">✕</span><span><b>Negro</b> y colores neón.</span></li>
+          <li><span aria-hidden="true">✕</span><span><b>Plateado u otros metálicos</b> como color principal (los metálicos, solo en accesorios).</span></li>
+          <li><span aria-hidden="true">✕</span><span><b>Ellos:</b> shorts, sandalias planas o chanclas, tenis deportivos o de colores, y camisas estampadas.</span></li>
+          <li><span aria-hidden="true">✕</span><span><b>Looks muy informales:</b> evitemos prendas demasiado casuales.</span></li>
         </ul>
+
+        <p class="evitar-sub">Tonos claros no permitidos</p>
+        <div class="evitar-tonos">
+          <div><i style="background:#F7F4EF"></i>Blanco</div>
+          <div><i style="background:#E2D1BE"></i>Marfil</div>
+          <div><i style="background:#D6B594"></i>Champagne</div>
+          <div><i style="background:#D2B79D"></i>Beige</div>
+          <div><i style="background:#C3AE97"></i>Arena</div>
+          <div><i style="background:#FDE2AD"></i>Amarillo claro</div>
+        </div>
+
+        <p class="evitar-sub">Tonos reservados</p>
+        <ul>
+          <li><span aria-hidden="true">🤍</span><span><b>Blanco y marfil o champagne:</b> para la novia y el novio.</span></li>
+          <li><span aria-hidden="true">🍷</span><span><b>Vino y borgoña:</b> para nuestras damas y caballeros de honor 💕</span></li>
+        </ul>
+
         <p class="paleta-si"><span aria-hidden="true">✓</span>Accesorios dorados o plateados: ¡son bienvenidos! ✨</p>
         <p class="paleta-si paleta-si-2"><span aria-hidden="true">✓</span>Ellos: tenis blancos, limpios y minimalistas, solo como parte de un traje completo 👟</p>
       </div>
