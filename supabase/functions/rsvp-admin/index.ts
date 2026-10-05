@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const [rsvpsRes, invRes, catRes, canRes] = await Promise.all([
+    const [rsvpsRes, invRes, catRes, canRes, corteRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -50,12 +50,18 @@ Deno.serve(async (req: Request) => {
         .from("sugerencias_canciones")
         .select("titulo, artista, spotify_url, portada_url, creada_en, invitacion_id")
         .order("creada_en", { ascending: true }),
+      supabase
+        .from("corte")
+        .select("nombre, rol, de_parte, acepto, respondido_en, invitacion_id")
+        .order("rol", { ascending: true })
+        .order("nombre", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
     if (invRes.error) return json({ error: invRes.error.message }, 500);
     if (catRes.error) return json({ error: catRes.error.message }, 500);
     if (canRes.error) return json({ error: canRes.error.message }, 500);
+    if (corteRes.error) return json({ error: corteRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -131,6 +137,16 @@ Deno.serve(async (req: Request) => {
     }
     const canciones = [...grupoCanciones.values()].sort((a, b) => b.quienes.length - a.quienes.length);
 
+    // Corte de honor con el nombre de su invitación
+    const corte = (corteRes.data ?? []).map((c) => ({
+      nombre: c.nombre,
+      rol: c.rol,
+      de_parte: c.de_parte,
+      acepto: c.acepto,
+      respondido_en: c.respondido_en,
+      invitacion: nombrePorId.get(c.invitacion_id) ?? "—",
+    }));
+
     // Compatibilidad con el panel anterior (página publicada hoy)
     const confirmed = rsvps.filter((r) => r.attending).length;
     const plusOnes = rsvps.filter((r) => r.attending && r.plus_one).length;
@@ -147,6 +163,7 @@ Deno.serve(async (req: Request) => {
       resumen,
       porCategoria,
       canciones,
+      corte,
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);

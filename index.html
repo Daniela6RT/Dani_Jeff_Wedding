@@ -546,6 +546,26 @@
   .mus-vacio { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--texto-suave); margin: 6px 0 0; }
   .mus-cargando { font-size: 13px; color: var(--texto-suave); padding: 8px; }
 
+  /* ---------- Propuesta a la corte de honor ---------- */
+  .propuesta { position: fixed; inset: 0; z-index: 190; display: flex; align-items: center; justify-content: center; padding: 20px 16px; overflow-y: auto;
+    background: radial-gradient(60% 40% at 88% 8%, rgba(233, 163, 126, .38), transparent 70%), radial-gradient(55% 38% at 6% 92%, rgba(200, 138, 135, .32), transparent 70%), rgba(248, 241, 230, .97);
+    transition: opacity .5s ease; }
+  .propuesta.fuera { opacity: 0; pointer-events: none; }
+  .propuesta-card { position: relative; width: min(100%, 420px); padding: 34px 26px 28px; border-radius: 22px; background: #FFFDF8; text-align: center; box-shadow: 0 26px 60px rgba(61, 72, 43, .18); }
+  .propuesta-card::before { content: ""; position: absolute; inset: 10px; border: 1px solid rgba(194, 163, 92, .55); border-radius: 15px; pointer-events: none; }
+  .propuesta-intro { font-size: 14px; line-height: 1.6; color: var(--texto-suave); margin: 0; }
+  .propuesta-intro b { color: var(--verde-profundo); }
+  .propuesta-pregunta { font-family: var(--script); font-weight: 400; font-size: clamp(40px, 11vw, 52px); line-height: 1.1; color: var(--terracotta); margin: 14px 0 6px; }
+  .propuesta-firma { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--verde-profundo); margin: 0 0 24px; }
+  .propuesta-si { width: 100%; }
+  .propuesta-luego { display: block; margin: 10px auto 0; min-height: 44px; background: none; border: 0; font: 500 14px var(--sans); color: var(--texto-suave); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+  .propuesta-colores { display: flex; justify-content: center; gap: 22px; margin: 18px 0 6px; }
+  .propuesta-colores div { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--madera); }
+  .propuesta-colores i { width: 52px; height: 52px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 6px 14px rgba(58, 46, 43, .25); }
+  .propuesta-gracias { font-family: var(--serif); font-size: 26px; color: var(--verde-profundo); margin: 4px 0 8px; }
+  .confeti { position: fixed; inset: 0; z-index: 195; pointer-events: none; }
+  .pase-corte { margin: 10px 0 0; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--terracotta-deep); }
+
   /* ---------- Pase de invitado ---------- */
   .pase { position: relative; max-width: 400px; margin: 0 auto; color: var(--verde-profundo); text-align: center;
     filter: drop-shadow(0 22px 30px rgba(61, 72, 43, .18)); }
@@ -704,6 +724,29 @@
   <div class="sobre-pista" aria-hidden="true">
     <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 17V2M2 7l5-5 5 5"/></svg>
     Toca el sello para abrir
+  </div>
+</div>
+
+<!-- Propuesta a la corte de honor (se rellena con textContent) -->
+<div class="propuesta" id="propuesta" role="dialog" aria-modal="true" aria-labelledby="propuesta-pregunta" hidden>
+  <div class="propuesta-card">
+    <div id="propuesta-paso1">
+      <p class="propuesta-intro"><b id="propuesta-nombre"></b>, tenemos una pregunta muy importante para ti…</p>
+      <h2 class="propuesta-pregunta" id="propuesta-pregunta"></h2>
+      <p class="propuesta-firma" id="propuesta-firma"></p>
+      <button type="button" class="btn propuesta-si" id="propuesta-si">¡Sí, acepto! 💃</button>
+      <button type="button" class="propuesta-luego" id="propuesta-luego">Déjame pensarlo 🙈</button>
+    </div>
+    <div id="propuesta-paso2" hidden>
+      <p class="propuesta-gracias">¡Gracias por decir que sí! 🥹💕</p>
+      <p class="propuesta-intro" id="propuesta-mensaje"></p>
+      <div class="propuesta-colores" aria-label="Colores de la corte de honor">
+        <div><i style="background:#6E2638"></i>Vino</div>
+        <div><i style="background:#7A3042"></i>Borgoña</div>
+      </div>
+      <p class="propuesta-intro">Estos colores son solo para la corte. Pronto te contaremos todos los detalles 💐</p>
+      <button type="button" class="btn propuesta-si" id="propuesta-ver" style="margin-top:20px">Ver la invitación</button>
+    </div>
   </div>
 </div>
 
@@ -1270,6 +1313,7 @@
         <tbody id="detail-rows"></tbody>
       </table>
     </div>
+    <div id="detail-corte" style="margin-top:22px; text-align:left;"></div>
     <div id="detail-canciones" style="margin-top:22px; text-align:left;"></div>
     <button type="button" class="submit-btn" id="refresh-btn" style="margin-top:14px;">Actualizar ahora</button>
     <div style="font-size:11px; color:var(--texto-suave); margin-top:8px;">Se actualiza automáticamente cada 15 segundos.</div>
@@ -1367,6 +1411,7 @@
 
   function terminar(){
     html.classList.remove('con-sobre');
+    window.dispatchEvent(new Event('sobre-abierto'));
   }
   function abrir(conToque){
     if(abierto) return;
@@ -1658,6 +1703,12 @@
       campo('frase').textContent = segun('Los llevaremos en el corazón ese día.', 'Te llevaremos en el corazón ese día.');
     }
     campo('cambiar').textContent = segun('Cambiar nuestra respuesta', 'Cambiar mi respuesta');
+    (inv.corte || []).filter(function(c){ return c.acepto; }).forEach(function(c){
+      var b = document.createElement('p');
+      b.className = 'pase-corte';
+      b.textContent = c.rol === 'dama' ? '💐 ' + c.nombre + ' · Dama de honor' : '🤵 ' + c.nombre + ' · Caballero de honor';
+      campo('nombre').after(b);
+    });
     if(inv.puede_cambiar) campo('cambiar').addEventListener('click', mostrarFormulario);
     else campo('cambiar').parentNode.remove();
     if(animar) tpl.querySelector('.pase').classList.add('aparece');
@@ -1692,6 +1743,7 @@
       invitacion = inv;
       personalizarSobre();
       iniciarMusica();
+      cuandoSeVeaLaInvitacion(mostrarPropuesta);
       if(inv.respuesta) mostrarPase(false);
       else mostrarFormulario();
     }).catch(function(){
@@ -1744,6 +1796,85 @@
       submitBtn.textContent = 'Enviar confirmación';
     }
   });
+
+  // ---- Propuesta a la corte de honor ----
+  // Si la invitación tiene damas o caballeros con la pregunta pendiente, se
+  // muestra una tarjeta especial apenas se abre el sobre.
+  function cuandoSeVeaLaInvitacion(fn){
+    if(!document.documentElement.classList.contains('con-sobre')) fn();
+    else window.addEventListener('sobre-abierto', fn, { once: true });
+  }
+  var propuesta = document.getElementById('propuesta');
+  var pendiente = null;
+  function cerrarPropuesta(){
+    propuesta.classList.add('fuera');
+    setTimeout(function(){ propuesta.hidden = true; propuesta.classList.remove('fuera'); mostrarPropuesta(); }, 500);
+  }
+  function mostrarPropuesta(){
+    var lista = (invitacion && invitacion.corte) || [];
+    pendiente = null;
+    for(var i = 0; i < lista.length; i++){ if(lista[i].acepto === null && !lista[i].pospuesto){ pendiente = lista[i]; break; } }
+    if(!pendiente) return;
+    var dama = pendiente.rol === 'dama';
+    document.getElementById('propuesta-nombre').textContent = pendiente.nombre;
+    document.getElementById('propuesta-pregunta').textContent = dama ? '¿Aceptas ser mi dama de honor?' : '¿Aceptas ser mi caballero de honor?';
+    document.getElementById('propuesta-firma').textContent = pendiente.de_parte === 'novia' ? '— Dani 💐' : '— Jeff 🤵';
+    document.getElementById('propuesta-paso1').hidden = false;
+    document.getElementById('propuesta-paso2').hidden = true;
+    propuesta.hidden = false;
+    document.getElementById('propuesta-si').focus();
+  }
+  document.getElementById('propuesta-luego').addEventListener('click', function(){
+    if(pendiente) pendiente.pospuesto = true; // vuelve a preguntarse la próxima vez que abran el link
+    cerrarPropuesta();
+  });
+  document.getElementById('propuesta-si').addEventListener('click', function(){
+    var p = pendiente, btn = this;
+    if(!p) return;
+    btn.disabled = true;
+    rpc('responder_corte', { p_codigo: codigo, p_id: p.id, p_acepta: true }).then(function(inv){
+      invitacion = inv;
+      lanzarConfeti();
+      document.getElementById('propuesta-mensaje').textContent = p.rol === 'dama'
+        ? 'Nos hace muy felices que seas una de nuestras damas de honor. Tus colores para ese día serán:'
+        : 'Nos hace muy felices que seas uno de nuestros caballeros de honor. Tus colores para ese día serán:';
+      document.getElementById('propuesta-paso1').hidden = true;
+      document.getElementById('propuesta-paso2').hidden = false;
+      document.getElementById('propuesta-ver').focus();
+      if(invitacion.respuesta) mostrarPase(false);
+    }).catch(function(){
+      alert('No pudimos guardar tu respuesta. Revisa tu conexión e inténtalo de nuevo 🙏');
+    }).finally(function(){ btn.disabled = false; });
+  });
+  document.getElementById('propuesta-ver').addEventListener('click', cerrarPropuesta);
+
+  // Confeti en los colores de la boda (se omite con reduced-motion)
+  function lanzarConfeti(){
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    cv.className = 'confeti';
+    cv.width = innerWidth; cv.height = innerHeight;
+    document.body.appendChild(cv);
+    var colores = ['#B85F46', '#D9856F', '#C99598', '#68734A', '#8C9A78', '#C2A35C', '#6E2638', '#F6C9AE'];
+    var piezas = [];
+    for(var i = 0; i < 160; i++){
+      piezas.push({ x: cv.width / 2 + (Math.random() - .5) * 80, y: cv.height * .45, vx: (Math.random() - .5) * 14, vy: -Math.random() * 15 - 5,
+        w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colores[i % colores.length] });
+    }
+    var inicio = performance.now();
+    (function cuadro(t){
+      var dt = t - inicio;
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      piezas.forEach(function(p){
+        p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.globalAlpha = Math.max(0, 1 - dt / 3200);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * .6);
+        ctx.restore();
+      });
+      if(dt < 3200) requestAnimationFrame(cuadro); else cv.remove();
+    })(inicio);
+  }
 
   // ---- Sugerencias de canciones (máximo 5 por invitación, solo las propias) ----
   var MAX_CANCIONES = 5;
@@ -2002,6 +2133,21 @@
     }
     detailRows.innerHTML = html || '<tr><td colspan="6" style="border:1px solid var(--linea); padding:6px;">Aún no hay invitaciones.</td></tr>';
     renderCancionesAdmin(data.canciones || []);
+    renderCorteAdmin(data.corte || []);
+  }
+  function renderCorteAdmin(corte){
+    var caja = document.getElementById('detail-corte');
+    var aceptaron = corte.filter(function(c){ return c.acepto; }).length;
+    var h = '<div class="admin-summary" style="margin-bottom:6px;">💐 Corte de honor (' + aceptaron + ' de ' + corte.length + ' aceptaron)</div>';
+    if(!corte.length){ caja.innerHTML = h + '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay damas ni caballeros registrados.</div>'; return; }
+    h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
+      TH + 'Nombre</th>' + TH + 'Rol</th>' + TH + 'Invitación</th>' + TH + 'Respuesta</th></tr></thead><tbody>';
+    corte.forEach(function(c){
+      var estado = c.acepto === true ? '✅ Aceptó' : c.acepto === false ? 'No' : '<b style="color:var(--terracotta-deep)">Pendiente</b>';
+      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + (c.rol === 'dama' ? '💐 Dama' : '🤵 Caballero') + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : 'Jeff') + ')</td>' +
+        TD + escapeHtml(c.invitacion) + '</td>' + TD + estado + '</td></tr>';
+    });
+    caja.innerHTML = h + '</tbody></table></div>';
   }
   function renderCancionesAdmin(canciones){
     var caja = document.getElementById('detail-canciones');
