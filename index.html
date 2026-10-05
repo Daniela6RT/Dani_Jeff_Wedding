@@ -404,6 +404,16 @@
   .swatch i { display: block; width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(248, 245, 238, 0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
   .paleta-nota { max-width: 520px; margin: 30px auto 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.6; color: rgba(248, 245, 238, .92); }
   .dress-codigo { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(248, 245, 238, .35); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--marfil); order: 4; }
+  .dress-corte { position: relative; max-width: 520px; margin: 34px auto 0; padding: 28px 24px 24px; border-radius: 20px; background: #FFFDF8; color: var(--madera); text-align: center; box-shadow: 0 18px 40px rgba(0, 0, 0, .25); }
+  .dress-corte::before { content: ""; position: absolute; inset: 9px; border: 1px solid rgba(194, 163, 92, .6); border-radius: 13px; pointer-events: none; }
+  .dress-corte-eyebrow { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--terracotta-deep); }
+  .dress-corte-titulo { margin: 10px 0 0; font-family: var(--serif); font-size: 21px; line-height: 1.35; color: var(--verde-profundo); }
+  .dress-corte-colores { display: flex; justify-content: center; gap: 30px; margin: 20px 0 16px; }
+  .dress-corte-colores div { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .dress-corte-colores i { width: 74px; height: 74px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 8px 18px rgba(58, 46, 43, .3); margin-bottom: 6px; }
+  .dress-corte-colores b { font-family: var(--serif); font-weight: 500; font-size: 17px; color: var(--verde-profundo); }
+  .dress-corte-colores span { font-size: 11px; letter-spacing: .08em; color: var(--texto-suave); }
+  .dress-corte-nota { margin: 0; font-size: 14px; line-height: 1.6; color: var(--texto-suave); }
   .dress-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 34px auto 18px; }
   .dress-tabs button { min-height: 44px; padding: 0 16px; border-radius: 30px; border: 1px solid rgba(248, 245, 238, .45); background: transparent; color: var(--marfil); font: 600 12.5px var(--sans); cursor: pointer; }
   .dress-tabs button[aria-selected="true"] { background: var(--marfil); color: var(--verde-profundo); border-color: var(--marfil); }
@@ -976,6 +986,17 @@
       </div>
     </div>
     <p class="paleta-nota">Los colores son una referencia: no tienen que ser exactos. Lo importante es que su ropa pertenezca a estas familias de color 🌿</p>
+
+    <!-- Solo para quienes aceptaron ser parte de la corte (se rellena con textContent) -->
+    <div class="dress-corte" id="dress-corte" hidden>
+      <p class="dress-corte-eyebrow">💐 Solo para nuestra corte</p>
+      <p class="dress-corte-titulo" id="dress-corte-titulo"></p>
+      <div class="dress-corte-colores">
+        <div><i style="background:#6E2638"></i><b>Vino</b><span>#6E2638</span></div>
+        <div><i style="background:#7A3042"></i><b>Borgoña</b><span>#7A3042</span></div>
+      </div>
+      <p class="dress-corte-nota">Estos dos colores son solo para la corte: el resto de invitados no los usará, así brillarán a nuestro lado 💕 Pronto te contaremos los detalles de tu look.</p>
+    </div>
 
     <div class="dress-tabs" role="tablist" aria-label="Guía de vestimenta">
       <button type="button" role="tab" id="tab-ellas" aria-controls="panel-ellas" aria-selected="true">👗 Para ellas</button>
@@ -1746,6 +1767,7 @@
       invitacion = inv;
       personalizarSobre();
       iniciarMusica();
+      pintarDressCorte();
       cuandoSeVeaLaInvitacion(mostrarPropuesta);
       if(inv.respuesta) mostrarPase(false);
       else mostrarFormulario();
@@ -1846,6 +1868,7 @@
     btn.disabled = true;
     rpc('responder_corte', { p_codigo: codigo, p_id: p.id, p_acepta: true }).then(function(inv){
       invitacion = inv;
+      pintarDressCorte();
       lanzarConfeti();
       document.getElementById('propuesta-mensaje').textContent = {
         dama: 'Nos hace muy felices que seas una de nuestras damas de honor. Tus colores para ese día serán:',
@@ -1862,6 +1885,26 @@
     }).finally(function(){ btn.disabled = false; });
   });
   document.getElementById('propuesta-ver').addEventListener('click', cerrarPropuesta);
+
+  // Tarjeta de colores de la corte en "Cómo vestir": solo si ya aceptaron
+  function pintarDressCorte(){
+    var lista = ((invitacion && invitacion.corte) || []).filter(function(c){ return c.acepto; });
+    var caja = document.getElementById('dress-corte');
+    caja.hidden = !lista.length;
+    if(!lista.length) return;
+    var roles = { dama: 'dama de honor', madrina: 'madrina de bodas', caballero: 'caballero de honor', padrino: 'padrino de bodas' };
+    var titulo;
+    if(lista.length === 1){
+      var c = lista[0], ella = c.rol === 'dama' || c.rol === 'madrina';
+      titulo = c.nombre + ', como ' + (c.rol === 'madrina' || c.rol === 'padrino' ? (ella ? 'nuestra ' : 'nuestro ') : '') + roles[c.rol] + ', tus colores son:';
+    } else {
+      titulo = lista.map(function(c){ return c.nombre; }).join(' y ') + ', como parte de nuestra corte, sus colores son:';
+    }
+    document.getElementById('dress-corte-titulo').textContent = titulo;
+    // Abrir la guía que les corresponde
+    var todosEllos = lista.every(function(c){ return c.rol === 'caballero' || c.rol === 'padrino'; });
+    if(todosEllos) document.getElementById('tab-ellos').click();
+  }
 
   // Confeti en los colores de la boda (se omite con reduced-motion)
   function lanzarConfeti(){
