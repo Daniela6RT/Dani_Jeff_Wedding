@@ -507,6 +507,7 @@
   #extra-fields label { margin-top: 20px; }
   .rsvp-ayuda { font-size: 12.5px; color: var(--texto-suave); margin: 6px 0 0; line-height: 1.5; }
   .pase-carro { margin: 12px 0 0; font-size: 13px; color: var(--texto-suave); }
+  .pase-carro + .pase-carro { margin-top: 4px; }
   [hidden] { display: none !important; }
 
   /* ---------- Cómo llegar: tarjetas de transporte ---------- */
@@ -1717,12 +1718,15 @@
       campo('cupo').firstChild.textContent = r.asistentes;
       campo('cupo').appendChild(document.createTextNode(r.asistentes === 1 ? 'persona' : 'personas'));
       campo('frase').textContent = r.asistentes > 1 ? '¡Nos vemos el 20 de marzo! Guarden este pase.' : '¡Nos vemos el 20 de marzo! Guarda este pase.';
-      if(r.carro){
+      // Aclaraciones del pase: solo adultos (siempre) y carro (si vienen en carro)
+      var notas = ['🥂 Celebración solo para adultos'];
+      if(r.carro) notas.push(r.placa ? '🚘 Carro registrado: ' + r.placa : '🚘 Vienen en carro: falta la placa');
+      notas.reverse().forEach(function(t){
         var c = document.createElement('p');
         c.className = 'pase-carro';
-        c.textContent = r.placa ? '🚘 Carro registrado: ' + r.placa : '🚘 Vienen en carro: falta la placa';
+        c.textContent = t;
         campo('cupo').after(c);
-      }
+      });
     } else {
       tpl.querySelector('.pase').classList.add('pase-no');
       tpl.querySelector('.pase-eyebrow').textContent = 'Gracias por avisarnos';
