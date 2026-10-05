@@ -78,3 +78,7 @@ $$;
 
 revoke all on function public.responder_corte(text, uuid, boolean) from public;
 grant execute on function public.responder_corte(text, uuid, boolean) to anon, authenticated;
+
+-- (migración corte_de_parte_ambos) La propuesta puede venir de la novia, del novio o de los dos.
+alter table public.corte drop constraint corte_de_parte_check;
+alter table public.corte add constraint corte_de_parte_check check (de_parte in ('novia', 'novio', 'ambos'));

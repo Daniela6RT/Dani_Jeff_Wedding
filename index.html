@@ -1817,8 +1817,10 @@
     if(!pendiente) return;
     var dama = pendiente.rol === 'dama';
     document.getElementById('propuesta-nombre').textContent = pendiente.nombre;
-    document.getElementById('propuesta-pregunta').textContent = dama ? '¿Aceptas ser mi dama de honor?' : '¿Aceptas ser mi caballero de honor?';
-    document.getElementById('propuesta-firma').textContent = pendiente.de_parte === 'novia' ? '— Dani 💐' : '— Jeff 🤵';
+    var ambos = pendiente.de_parte === 'ambos';
+    document.getElementById('propuesta-pregunta').textContent = '¿Aceptas ser ' + (ambos ? 'nuestra' : 'mi') + ' ' + (dama ? 'dama' : 'caballero') + ' de honor?';
+    document.getElementById('propuesta-firma').textContent = ambos ? '— Dani & Jeff 💛' : pendiente.de_parte === 'novia' ? '— Dani 💐' : '— Jeff 🤵';
+    document.getElementById('propuesta-si').textContent = dama ? '¡Sí, acepto! 💃' : '¡Sí, acepto! 🕺';
     document.getElementById('propuesta-paso1').hidden = false;
     document.getElementById('propuesta-paso2').hidden = true;
     propuesta.hidden = false;
@@ -2144,7 +2146,7 @@
       TH + 'Nombre</th>' + TH + 'Rol</th>' + TH + 'Invitación</th>' + TH + 'Respuesta</th></tr></thead><tbody>';
     corte.forEach(function(c){
       var estado = c.acepto === true ? '✅ Aceptó' : c.acepto === false ? 'No' : '<b style="color:var(--terracotta-deep)">Pendiente</b>';
-      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + (c.rol === 'dama' ? '💐 Dama' : '🤵 Caballero') + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : 'Jeff') + ')</td>' +
+      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + (c.rol === 'dama' ? '💐 Dama' : '🤵 Caballero') + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : c.de_parte === 'novio' ? 'Jeff' : 'los dos') + ')</td>' +
         TD + escapeHtml(c.invitacion) + '</td>' + TD + estado + '</td></tr>';
     });
     caja.innerHTML = h + '</tbody></table></div>';
