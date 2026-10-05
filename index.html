@@ -455,6 +455,20 @@
   #extra-fields label { margin-top: 20px; }
   [hidden] { display: none !important; }
 
+  /* ---------- Cómo llegar: tarjetas de transporte ---------- */
+  .viaje-intro { max-width: 560px; margin: 0 auto 26px; text-align: center; font-size: 15px; color: var(--texto-suave); line-height: 1.7; }
+  .viaje-intro b { color: var(--verde-profundo); font-weight: 600; }
+  .ruta-card .ruta-emoji { width: 52px; height: 52px; border-radius: 50%; background: var(--marfil); border: 1px solid var(--linea); display: flex; align-items: center; justify-content: center; font-size: 26px; }
+  .ruta-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 14px; line-height: 1.55; color: var(--madera); }
+  .ruta-lista li { position: relative; padding-left: 18px; }
+  .ruta-lista li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--durazno); }
+  .ruta-lista b { font-weight: 600; color: var(--verde-profundo); }
+  .ruta-lista li.con-emoji { padding-left: 0; }
+  .ruta-lista li.con-emoji::before { display: none; }
+  .ruta-aviso { background: rgba(233, 163, 126, .16); border: 1px solid rgba(192, 92, 55, .25); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; line-height: 1.55; color: var(--terracotta-deep); }
+  .stay-pista + .map-embed { margin-top: 30px; }
+  .stay-plan-alerta { background: rgba(192, 92, 55, .14); color: var(--terracotta-deep); }
+
   /* ---------- Sugerencias de canciones ---------- */
   .musica { text-align: left; }
   .musica .rsvp-aviso { text-align: center; }
@@ -677,7 +691,7 @@
     <p class="entrada-eyebrow">Nos casamos</p>
     <h1 class="entrada-nombres">Daniela <span class="amp">&amp;</span> Jeferson</h1>
     <div class="entrada-fecha">20 · Marzo · 2027</div>
-    <div class="entrada-lugar">Finca San José, Los Naranjos — Santa Marta</div>
+    <div class="entrada-lugar">Finca San José, Los Naranjos — Tayrona, Santa Marta</div>
 
     <div class="countdown" id="countdown" aria-label="Cuenta regresiva">
       <div><div class="num" id="cd-months">–</div><div class="lbl">Meses</div></div>
@@ -787,7 +801,7 @@
   <div class="wrap">
     <div class="head">
       <div class="eyebrow-script">El Gran Día</div>
-      <h2 class="section-title">Nos encontramos en Santa Marta</h2>
+      <h2 class="section-title">Nos encontramos en Tayrona, Santa Marta</h2>
       <p class="section-sub">Guarden la fecha: todo será al aire libre, entre palmeras 🌴</p>
     </div>
     
@@ -795,7 +809,7 @@
       <div class="card"><div class="card-label">Fecha</div><div class="card-value">20 de Marzo<br>2027</div></div>
       <div class="card"><div class="card-label">Ceremonia</div><div class="card-value">4:00 PM</div></div>
       <div class="card"><div class="card-label">Llegada Sugerida</div><div class="card-value">3:30 PM</div></div>
-      <div class="card"><div class="card-label">Lugar</div><div class="card-value">Finca San José<br>Santa Marta</div></div>
+      <div class="card"><div class="card-label">Lugar</div><div class="card-value">Finca San José<br>Tayrona, Santa Marta</div></div>
     </div>
 
     <div class="schedule">
@@ -841,10 +855,46 @@
       <div class="eyebrow-script">Planea tu Viaje</div>
       <h2 class="section-title">Todo para llegar y disfrutar</h2>
     </div>
-    <div class="info-grid">
-      <div class="info-card"><h3>Transporte</h3><p>Por definir — opciones para llegar a la finca y movilizarse.</p></div>
-      <div class="info-card"><h3>Parqueadero</h3><p>Por definir — les avisaremos pronto.</p></div>
+    <p class="viaje-intro">¡Queremos que disfrutes nuestro gran día de principio a fin! 🌿 La celebración será en la <b>Finca San José, Los Naranjos</b>: Km 32 de la Troncal del Caribe, vía a Palomino, justo 1 km después de la entrada del Parque Tayrona. Estas son las mejores formas de llegar:</p>
+
+    <div class="stay-grid" aria-label="Formas de llegar">
+      <article class="stay-card ruta-card">
+        <span class="ruta-emoji" aria-hidden="true">🚌</span>
+        <div><div class="stay-tipo">Bus intermunicipal</div><h3 class="stay-name">En bus</h3></div>
+        <span class="stay-plan stay-plan-tranquilo"><span aria-hidden="true">💸</span>Económica y directa</span>
+        <ul class="ruta-lista">
+          <li>Sale del <b>Mercado Público de Santa Marta</b> (Carrera 9 con Calle 11).</li>
+          <li>Busca los buses de <b>Cootransoriente Tayrona</b>, con el letrero <b>“Tayrona – Palomino”</b>.</li>
+          <li>Pídele al conductor que te deje en la <b>Finca San José, en Los Naranjos</b> (1 km después de la entrada de El Zaino). ¡El bus para justo enfrente!</li>
+          <li class="con-emoji">🕐 Salen cada 25 minutos, de 4:40 a.m. a 6:00 p.m.</li>
+          <li class="con-emoji">💵 Entre $10.000 y $12.000 COP por persona.</li>
+        </ul>
+      </article>
+
+      <article class="stay-card ruta-card">
+        <span class="ruta-emoji" aria-hidden="true">🚕</span>
+        <div><div class="stay-tipo">Taxi o transporte privado</div><h3 class="stay-name">En taxi</h3></div>
+        <span class="stay-plan stay-plan-ambiente"><span aria-hidden="true">🛋️</span>La más cómoda</span>
+        <ul class="ruta-lista">
+          <li>Puedes tomarlo directo desde <b>Santa Marta o el aeropuerto</b>.</li>
+          <li>Destino: <b>Finca San José, Vereda Los Naranjos</b> (Km 32, Troncal del Caribe).</li>
+          <li class="con-emoji">🕐 El viaje toma entre 45 y 60 minutos.</li>
+          <li class="con-emoji">💵 Entre $200.000 y $240.000 COP por carro, hasta 4 personas.</li>
+        </ul>
+        <p class="ruta-aviso">😉 Te sugerimos acordar el precio con el conductor antes de salir.</p>
+      </article>
+
+      <article class="stay-card ruta-card">
+        <span class="ruta-emoji" aria-hidden="true">🚘</span>
+        <div><div class="stay-tipo">Vehículo propio</div><h3 class="stay-name">En tu carro</h3></div>
+        <span class="stay-plan stay-plan-alerta"><span aria-hidden="true">⚠️</span>Requiere registro previo</span>
+        <ul class="ruta-lista">
+          <li>La finca tiene <b>parqueadero privado y seguro</b> dentro de las instalaciones.</li>
+        </ul>
+        <p class="ruta-aviso">Por seguridad, el ingreso al parqueadero necesita <b>autorización previa</b>. Si vienes en carro, cuéntanos y envíanos la <b>placa de tu vehículo</b> para que te dejen entrar sin problema.</p>
+      </article>
     </div>
+    <p class="stay-pista">Desliza para ver más →</p>
     <div class="map-embed">
       <iframe title="Mapa de Finca San José" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=11.2839858,-73.9018452&amp;z=16&amp;output=embed"></iframe>
     </div>
@@ -904,7 +954,7 @@
       </details>
       <details>
         <summary>¿Hay parqueadero en la finca?</summary>
-        <p>Por definir — les avisaremos pronto.</p>
+        <p>Sí, la finca tiene parqueadero privado y seguro. Para entrar necesitas autorización previa: si vienes en carro, envíanos la placa de tu vehículo.</p>
       </details>
       <details>
         <summary>¿Qué pasa si llueve?</summary>
@@ -1049,7 +1099,7 @@
 <footer>
   <div class="seal">D&amp;J</div>
   <h2>Daniela &amp; Jeferson</h2>
-  <p>20 · 03 · 2027 — Santa Marta, Colombia</p>
+  <p>20 · 03 · 2027 — Tayrona, Santa Marta, Colombia</p>
 </footer>
 
 <!-- Administración Protegida -->
