@@ -396,9 +396,20 @@
   .schedule-emoji { display: inline-block; width: 1.6em; }
 
   /* ---------- Dress Code ---------- */
-  .palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 36px; }
-  .swatch { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--marfil); font-weight: 500; }
-  .swatch i { display: block; width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(248, 245, 238, 0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+  .paleta { display: grid; gap: 26px; max-width: 760px; margin: 0 auto; }
+  @media (min-width: 760px) { .paleta { grid-template-columns: 1fr 1fr; gap: 30px 40px; } }
+  .paleta-nombre { text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--durazno); margin-bottom: 12px; }
+  .palette { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 10px; }
+  .swatch { width: 74px; display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 10.5px; line-height: 1.3; text-align: center; color: var(--marfil); font-weight: 500; }
+  .swatch i { display: block; width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(248, 245, 238, 0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+  .paleta-nota { max-width: 520px; margin: 30px auto 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.6; color: rgba(248, 245, 238, .92); }
+  .paleta-evitar { max-width: 560px; margin: 30px auto 0; padding: 22px 22px 20px; border-radius: var(--radio); background: rgba(248, 245, 238, .08); border: 1px solid rgba(248, 245, 238, .22); }
+  .paleta-evitar-titulo { margin: 0 0 12px; text-align: center; font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--marfil); }
+  .paleta-evitar ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .paleta-evitar li, .paleta-si { display: flex; gap: 10px; font-size: 14px; line-height: 1.5; color: rgba(248, 245, 238, .92); }
+  .paleta-evitar li span { flex: 0 0 auto; color: var(--durazno); font-weight: 600; }
+  .paleta-si { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(248, 245, 238, .18); }
+  .paleta-si span { flex: 0 0 auto; color: #B8C79A; font-weight: 700; }
 
   /* ---------- Viaje & Hospedaje ---------- */
   .info-grid { display: grid; gap: 16px; max-width: 760px; margin: 0 auto 28px; }
@@ -868,13 +879,56 @@
       <p class="section-sub">Una celebración al aire libre en tonos cálidos y naturales.</p>
     </div>
     
-    <div class="palette">
-      <div class="swatch"><i style="background:#5D6846;"></i>Verde Olivo</div>
-      <div class="swatch"><i style="background:#C05C37;"></i>Terracota</div>
-      <div class="swatch"><i style="background:#E9A37E;"></i>Durazno</div>
-      <div class="swatch"><i style="background:#C88A87;"></i>Rosa Polvo</div>
-      <div class="swatch"><i style="background:#F8F5EE;"></i>Marfil</div>
-      <div class="swatch"><i style="background:#3A2E2B;"></i>Madera</div>
+    <div class="paleta">
+      <div class="paleta-familia">
+        <div class="paleta-nombre"><span aria-hidden="true">🌿</span> Verdes</div>
+        <div class="palette">
+          <div class="swatch"><i style="background:#68734A;"></i>Verde oliva</div>
+          <div class="swatch"><i style="background:#8C9A78;"></i>Verde salvia</div>
+          <div class="swatch"><i style="background:#315844;"></i>Verde bosque</div>
+        </div>
+      </div>
+      <div class="paleta-familia">
+        <div class="paleta-nombre"><span aria-hidden="true">🍂</span> Tierras</div>
+        <div class="palette">
+          <div class="swatch"><i style="background:#B85F46;"></i>Terracota</div>
+          <div class="swatch"><i style="background:#9B4E3D;"></i>Óxido</div>
+          <div class="swatch"><i style="background:#D9856F;"></i>Durazno cálido</div>
+          <div class="swatch"><i style="background:#5A3B2E;"></i>Marrón chocolate</div>
+          <div class="swatch"><i style="background:#A87545;"></i>Caramelo tostado</div>
+        </div>
+      </div>
+      <div class="paleta-familia">
+        <div class="paleta-nombre"><span aria-hidden="true">🌸</span> Rosas</div>
+        <div class="palette">
+          <div class="swatch"><i style="background:#B87879;"></i>Rosa viejo</div>
+          <div class="swatch"><i style="background:#C99598;"></i>Rosa empolvado</div>
+          <div class="swatch"><i style="background:#9B7180;"></i>Malva</div>
+        </div>
+      </div>
+      <div class="paleta-familia">
+        <div class="paleta-nombre"><span aria-hidden="true">🌊</span> Azules</div>
+        <div class="palette">
+          <div class="swatch"><i style="background:#245866;"></i>Azul petróleo</div>
+          <div class="swatch"><i style="background:#536D78;"></i>Azul pizarra</div>
+          <div class="swatch"><i style="background:#718C9A;"></i>Azul acero</div>
+          <div class="swatch"><i style="background:#3F6F91;"></i>Azul medio</div>
+        </div>
+      </div>
+    </div>
+    <p class="paleta-nota">Los colores son una referencia: no tienen que ser exactos. Lo importante es que su ropa pertenezca a estas familias de color 🌿</p>
+
+    <div class="paleta-evitar">
+      <h3 class="paleta-evitar-titulo">Por favor, eviten</h3>
+      <ul>
+        <li><span aria-hidden="true">✕</span>Blanco y tonos muy claros: marfil, hueso, champagne, beige claro, arena o lino claro</li>
+        <li><span aria-hidden="true">✕</span>Amarillo pálido o mantequilla</li>
+        <li><span aria-hidden="true">✕</span>Negro y colores neón</li>
+        <li><span aria-hidden="true">✕</span>Estampados</li>
+        <li><span aria-hidden="true">✕</span>Prendas plateadas, metálicas o muy brillantes como color principal</li>
+        <li><span aria-hidden="true">✕</span>Vino y borgoña: los reservamos para nuestras damas y caballeros de honor 💕</li>
+      </ul>
+      <p class="paleta-si"><span aria-hidden="true">✓</span>Accesorios dorados o plateados: ¡son bienvenidos! ✨</p>
     </div>
   </div>
 </section>
@@ -1336,7 +1390,7 @@
 <script>
 // ---- Aparición suave al hacer scroll ----
 (function(){
-  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-grid, .faq-list, .palette, .form-wrap, .center-box, .carrusel, footer > *');
+  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-grid, .faq-list, .paleta, .paleta-evitar, .form-wrap, .center-box, .carrusel, footer > *');
   if(!('IntersectionObserver' in window)){ return document.documentElement.classList.remove('js'); }
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(en){
