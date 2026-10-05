@@ -328,9 +328,9 @@
   .abierto .env-carta { transform: translateY(-56%); }
 
   /* ---------- Historia ---------- */
-  .moments { display: grid; gap: 40px; }
-  .moment { display: grid; gap: 20px; align-items: center; }
-  .moment .photo { aspect-ratio: 4/5; width: 100%; max-width: 420px; margin: 0 auto; overflow: hidden; background: var(--marfil-warm); border: 6px solid #fffdf9; box-shadow: 0 14px 34px rgba(70, 58, 53, .18);
+  .moments { display: grid; gap: 34px; }
+  .moment { display: grid; gap: 16px; align-items: center; }
+  .moment .photo { aspect-ratio: 4/5; width: min(70%, 280px); max-width: 420px; margin: 0 auto; overflow: hidden; background: var(--marfil-warm); border: 6px solid #fffdf9; box-shadow: 0 14px 34px rgba(70, 58, 53, .18);
     border-radius: 50% 50% 50% 50% / 38% 38% 62% 62%; }
   /* Formas orgánicas, de la misma familia que el carrusel */
   .moment:nth-child(2) .photo { border-radius: 63% 37% 54% 46% / 55% 48% 52% 45%; }
@@ -345,7 +345,7 @@
   @media (min-width: 900px) {
     .moments { gap: 64px; }
     .moment { grid-template-columns: 1fr 1fr; gap: 56px; }
-    .moment .photo { max-width: none; }
+    .moment .photo { width: 100%; max-width: 380px; }
     .moment:nth-child(even) .photo { order: 2; }
     .moment-text { text-align: left; }
   }
