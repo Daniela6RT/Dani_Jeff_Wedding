@@ -235,6 +235,11 @@
     .entrada .countdown .lbl { color: var(--madera); }
   }
 
+  /* Botón flotante de sonido del video (prototipo) */
+  .btn-sonido { position: fixed; right: 14px; bottom: 16px; z-index: 60; min-height: 44px; padding: 0 16px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, .5);
+    background: rgba(40, 33, 27, .62); color: #fff; font: 600 12px var(--sans); letter-spacing: .04em; cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .btn-sonido[aria-pressed="true"] { padding: 0 14px; }
+
   /* Accesos rápidos bajo la entrada */
   .quick-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; padding: 28px 16px; border-bottom: 1px solid var(--linea); }
   .quick-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--madera); width: 64px; }
@@ -694,7 +699,7 @@
 <!-- Entrada con video -->
 <header class="entrada" id="inicio">
   <figure class="entrada-media">
-    <video id="entrada-video" muted loop playsinline preload="none" poster="img/entrada-poster.jpg" data-src="video/entrada.mp4" aria-hidden="true"></video>
+    <video id="entrada-video" muted playsinline preload="none" poster="img/entrada-poster.jpg" data-src="video/entrada-sonido.mp4" aria-hidden="true"></video>
   </figure>
   <div class="entrada-velo" aria-hidden="true"></div>
   <div class="entrada-txt">
@@ -714,6 +719,8 @@
   </div>
   <a class="entrada-scroll" href="#historia">Desliza<i aria-hidden="true"></i></a>
 </header>
+
+<button type="button" class="btn-sonido" id="btn-sonido" hidden aria-pressed="false">🔈 Activar sonido</button>
 
 <nav class="quick-menu" aria-label="Accesos rápidos">
   <a href="#detalles" class="quick-item"><div class="quick-icon">📅</div><span class="quick-lbl">Fecha</span></a>
@@ -1168,16 +1175,45 @@
   var lenta = conn.saveData || /2g|3g/.test(conn.effectiveType || '');
   var activo = false;
 
-  window.iniciarVideoEntrada = function(){
+  // Sonido (prototipo): suena una sola vuelta del video y luego sigue en silencio.
+  // Solo puede empezar con sonido si hubo un toque (abrir el sobre o el botón).
+  var btn = document.getElementById('btn-sonido');
+  function pintarBoton(){
+    btn.setAttribute('aria-pressed', v.muted ? 'false' : 'true');
+    btn.textContent = v.muted ? '🔈 Activar sonido' : '🔊';
+    btn.setAttribute('aria-label', v.muted ? 'Activar sonido del video' : 'Silenciar video');
+  }
+  // Repetición manual: al terminar cada vuelta se silencia y vuelve a empezar
+  v.addEventListener('ended', function(){
+    v.muted = true;
+    pintarBoton();
+    v.currentTime = 0;
+    var q = v.play(); if(q && q.catch) q.catch(function(){});
+  });
+  btn.addEventListener('click', function(){
+    if(v.muted){ v.currentTime = 0; v.muted = false; var q = v.play(); if(q && q.catch) q.catch(function(){}); }
+    else v.muted = true;
+    pintarBoton();
+  });
+
+  window.iniciarVideoEntrada = function(conSonido){
     if(activo || reduce || lenta) return;
     activo = true;
-    v.muted = true;
+    v.muted = !conSonido;
     v.src = v.getAttribute('data-src');
     var p = v.play();
-    if(p && p.catch) p.catch(function(){ /* sin autoplay (p. ej. ahorro de batería): queda el póster */ });
+    if(p && p.catch) p.catch(function(){
+      // El navegador no dejó sonar: probamos en silencio
+      v.muted = true; pintarBoton();
+      var q = v.play(); if(q && q.catch) q.catch(function(){ /* sin autoplay: queda el póster */ });
+    });
+    pintarBoton();
+    btn.hidden = false;
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(en){
-        if(en[0].isIntersecting){ var q = v.play(); if(q && q.catch) q.catch(function(){}); }
+        var visible = en[0].isIntersecting;
+        btn.hidden = !visible;
+        if(visible){ var q = v.play(); if(q && q.catch) q.catch(function(){}); }
         else v.pause();
       }).observe(v);
     }
@@ -1201,11 +1237,11 @@
   function terminar(){
     html.classList.remove('con-sobre');
   }
-  function abrir(){
+  function abrir(conToque){
     if(abierto) return;
     abierto = true;
     clearTimeout(auto);
-    iniciarVideo();
+    iniciarVideo(conToque === true);
     if(reduce){
       sobre.classList.add('fuera');
       setTimeout(terminar, 700);
@@ -1216,12 +1252,12 @@
     setTimeout(terminar, 2450);
   }
 
-  document.getElementById('sobre-env').addEventListener('click', abrir);
+  document.getElementById('sobre-env').addEventListener('click', function(){ abrir(true); });
   // Los 8 segundos cuentan solo con la página a la vista
   var auto = null;
   function programar(){
     clearTimeout(auto);
-    if(!abierto && document.visibilityState !== 'hidden') auto = setTimeout(abrir, 8000);
+    if(!abierto && document.visibilityState !== 'hidden') auto = setTimeout(function(){ abrir(false); }, 8000);
   }
   document.addEventListener('visibilitychange', programar);
   programar();
