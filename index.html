@@ -235,10 +235,20 @@
     .entrada .countdown .lbl { color: var(--madera); }
   }
 
-  /* Botón flotante de sonido del video (prototipo) */
-  .btn-sonido { position: fixed; right: 14px; bottom: 16px; z-index: 60; min-height: 44px; padding: 0 16px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, .5);
-    background: rgba(40, 33, 27, .62); color: #fff; font: 600 12px var(--sans); letter-spacing: .04em; cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-  .btn-sonido[aria-pressed="true"] { padding: 0 14px; }
+  /* Botón flotante de sonido del video */
+  .btn-sonido { position: fixed; right: 14px; bottom: 16px; z-index: 60; display: inline-flex; align-items: center; gap: 8px; min-height: 46px; min-width: 46px; padding: 0 18px 0 14px;
+    border-radius: 30px; border: 1px solid var(--linea); background: rgba(248, 245, 238, .92); color: var(--verde-profundo); font: 600 12px var(--sans); letter-spacing: .06em;
+    box-shadow: 0 8px 22px rgba(40, 33, 27, .22); cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: padding .25s ease; }
+  .btn-sonido svg { width: 20px; height: 20px; flex: 0 0 auto; }
+  .btn-sonido .onda { opacity: 1; }
+  .btn-sonido[aria-pressed="true"] { padding: 0 13px; justify-content: center; }
+  .btn-sonido[aria-pressed="true"] .btn-sonido-txt, .btn-sonido[aria-pressed="false"] .ico-on, .btn-sonido[aria-pressed="true"] .ico-off { display: none; }
+  .btn-sonido:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-sonido[aria-pressed="true"] .onda { animation: onda 1.4s ease-in-out infinite; }
+    .btn-sonido[aria-pressed="true"] .onda2 { animation-delay: .25s; }
+  }
+  @keyframes onda { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
 
   /* Accesos rápidos bajo la entrada */
   .quick-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; padding: 28px 16px; border-bottom: 1px solid var(--linea); }
@@ -720,7 +730,11 @@
   <a class="entrada-scroll" href="#historia">Desliza<i aria-hidden="true"></i></a>
 </header>
 
-<button type="button" class="btn-sonido" id="btn-sonido" hidden aria-pressed="false">🔈 Activar sonido</button>
+<button type="button" class="btn-sonido" id="btn-sonido" hidden aria-pressed="false" aria-label="Activar sonido del video">
+  <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" fill-opacity=".15"/><path class="onda" d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path class="onda onda2" d="M18 6.8a7.5 7.5 0 0 1 0 10.4"/></svg>
+  <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" fill-opacity=".15"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+  <span class="btn-sonido-txt">Escuchar</span>
+</button>
 
 <nav class="quick-menu" aria-label="Accesos rápidos">
   <a href="#detalles" class="quick-item"><div class="quick-icon">📅</div><span class="quick-lbl">Fecha</span></a>
@@ -1175,23 +1189,31 @@
   var lenta = conn.saveData || /2g|3g/.test(conn.effectiveType || '');
   var activo = false;
 
-  // Sonido (prototipo): suena una sola vuelta del video y luego sigue en silencio.
+  // Sonido: suena una sola vuelta del video y luego sigue en silencio.
   // Solo puede empezar con sonido si hubo un toque (abrir el sobre o el botón).
   var btn = document.getElementById('btn-sonido');
   function pintarBoton(){
     btn.setAttribute('aria-pressed', v.muted ? 'false' : 'true');
-    btn.textContent = v.muted ? '🔈 Activar sonido' : '🔊';
     btn.setAttribute('aria-label', v.muted ? 'Activar sonido del video' : 'Silenciar video');
   }
+  // Desvanecer el sonido en el último segundo y medio (en iPhone el volumen no se
+  // puede cambiar por código: ahí simplemente se silencia al terminar la vuelta)
+  var FUNDIDO = 1.5;
+  v.addEventListener('timeupdate', function(){
+    if(v.muted || !v.duration) return;
+    var resta = v.duration - v.currentTime;
+    v.volume = resta < FUNDIDO ? Math.max(0, resta / FUNDIDO) : 1;
+  });
   // Repetición manual: al terminar cada vuelta se silencia y vuelve a empezar
   v.addEventListener('ended', function(){
     v.muted = true;
+    v.volume = 1;
     pintarBoton();
     v.currentTime = 0;
     var q = v.play(); if(q && q.catch) q.catch(function(){});
   });
   btn.addEventListener('click', function(){
-    if(v.muted){ v.currentTime = 0; v.muted = false; var q = v.play(); if(q && q.catch) q.catch(function(){}); }
+    if(v.muted){ v.currentTime = 0; v.volume = 1; v.muted = false; var q = v.play(); if(q && q.catch) q.catch(function(){}); }
     else v.muted = true;
     pintarBoton();
   });
