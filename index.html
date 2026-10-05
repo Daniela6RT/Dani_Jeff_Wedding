@@ -1181,13 +1181,15 @@
 <script>
 // ---- Video de la entrada ----
 // Se carga solo si la conexión lo permite y no se pidió menos movimiento;
-// si no, queda la imagen fija (póster). Se pausa cuando no está en pantalla.
+// si no, queda la imagen fija (póster). Fuera de pantalla se pausa, salvo
+// mientras suena la canción: esa vuelta termina aunque bajen por la página.
 (function(){
   var v = document.getElementById('entrada-video');
   var conn = navigator.connection || {};
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var lenta = conn.saveData || /2g|3g/.test(conn.effectiveType || '');
   var activo = false;
+  var enPantalla = true;
 
   // Sonido: suena una sola vuelta del video y luego sigue en silencio.
   // Solo puede empezar con sonido si hubo un toque (abrir el sobre o el botón).
@@ -1195,6 +1197,12 @@
   function pintarBoton(){
     btn.setAttribute('aria-pressed', v.muted ? 'false' : 'true');
     btn.setAttribute('aria-label', v.muted ? 'Activar sonido del video' : 'Silenciar video');
+  }
+  // Con la entrada fuera de pantalla y sin sonido: pausar y esconder el botón
+  function ajustarFueraDePantalla(){
+    if(enPantalla || !v.muted) return;
+    v.pause();
+    btn.hidden = true;
   }
   // Desvanecer el sonido en el último segundo y medio (en iPhone el volumen no se
   // puede cambiar por código: ahí simplemente se silencia al terminar la vuelta)
@@ -1210,12 +1218,14 @@
     v.volume = 1;
     pintarBoton();
     v.currentTime = 0;
+    if(!enPantalla){ ajustarFueraDePantalla(); return; }
     var q = v.play(); if(q && q.catch) q.catch(function(){});
   });
   btn.addEventListener('click', function(){
     if(v.muted){ v.currentTime = 0; v.volume = 1; v.muted = false; var q = v.play(); if(q && q.catch) q.catch(function(){}); }
     else v.muted = true;
     pintarBoton();
+    ajustarFueraDePantalla();
   });
 
   window.iniciarVideoEntrada = function(conSonido){
@@ -1233,10 +1243,11 @@
     btn.hidden = false;
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(en){
-        var visible = en[0].isIntersecting;
-        btn.hidden = !visible;
-        if(visible){ var q = v.play(); if(q && q.catch) q.catch(function(){}); }
-        else v.pause();
+        enPantalla = en[0].isIntersecting;
+        if(enPantalla){
+          btn.hidden = false;
+          var q = v.play(); if(q && q.catch) q.catch(function(){});
+        } else ajustarFueraDePantalla(); // si está sonando, sigue sonando
       }).observe(v);
     }
   };
