@@ -403,6 +403,19 @@
   .swatch { width: 74px; display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 10.5px; line-height: 1.3; text-align: center; color: var(--marfil); font-weight: 500; }
   .swatch i { display: block; width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(248, 245, 238, 0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
   .paleta-nota { max-width: 520px; margin: 30px auto 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.6; color: rgba(248, 245, 238, .92); }
+  .dress-codigo { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(248, 245, 238, .35); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--marfil); order: 4; }
+  .dress-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 34px auto 18px; }
+  .dress-tabs button { min-height: 44px; padding: 0 16px; border-radius: 30px; border: 1px solid rgba(248, 245, 238, .45); background: transparent; color: var(--marfil); font: 600 12.5px var(--sans); cursor: pointer; }
+  .dress-tabs button[aria-selected="true"] { background: var(--marfil); color: var(--verde-profundo); border-color: var(--marfil); }
+  .dress-tabs button:focus-visible { outline: 3px solid var(--durazno); outline-offset: 3px; }
+  .dress-panel { max-width: 760px; margin: 0 auto; }
+  .dress-img { position: relative; display: block; border-radius: var(--radio); overflow: hidden; border: 5px solid rgba(248, 245, 238, .92); box-shadow: 0 14px 34px rgba(0, 0, 0, .25); }
+  .dress-img img { width: 100%; height: auto; }
+  .dress-img span { position: absolute; right: 10px; bottom: 10px; padding: 5px 11px; border-radius: 30px; background: rgba(40, 33, 27, .7); color: #fff; font-size: 11.5px; font-weight: 600; }
+  .dress-lista { list-style: none; margin: 20px auto 0; padding: 0; max-width: 560px; display: grid; gap: 10px; }
+  .dress-lista li { display: flex; gap: 10px; font-size: 14.5px; line-height: 1.55; color: rgba(248, 245, 238, .94); }
+  .dress-lista li span { flex: 0 0 auto; width: 1.4em; text-align: center; }
+  .dress-panel .paleta-evitar { margin-top: 20px; }
   .paleta-evitar { max-width: 560px; margin: 30px auto 0; padding: 22px 22px 20px; border-radius: var(--radio); background: rgba(248, 245, 238, .08); border: 1px solid rgba(248, 245, 238, .22); }
   .paleta-evitar-titulo { margin: 0 0 12px; text-align: center; font-family: var(--serif); font-weight: 500; font-size: 20px; color: var(--marfil); }
   .paleta-evitar ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -877,8 +890,9 @@
       <div class="eyebrow-script">Cómo Vestir</div>
       <h2 class="section-title">Paleta de la Celebración</h2>
       <p class="section-sub">Una celebración al aire libre en tonos cálidos y naturales.</p>
+      <span class="dress-codigo">Código: formal de jardín 🌿</span>
     </div>
-    
+
     <div class="paleta">
       <div class="paleta-familia">
         <div class="paleta-nombre"><span aria-hidden="true">🌿</span> Verdes</div>
@@ -918,17 +932,47 @@
     </div>
     <p class="paleta-nota">Los colores son una referencia: no tienen que ser exactos. Lo importante es que su ropa pertenezca a estas familias de color 🌿</p>
 
-    <div class="paleta-evitar">
-      <h3 class="paleta-evitar-titulo">Por favor, eviten</h3>
-      <ul>
-        <li><span aria-hidden="true">✕</span>Blanco y tonos muy claros: marfil, hueso, champagne, beige claro, arena o lino claro</li>
-        <li><span aria-hidden="true">✕</span>Amarillo pálido o mantequilla</li>
-        <li><span aria-hidden="true">✕</span>Negro y colores neón</li>
-        <li><span aria-hidden="true">✕</span>Estampados</li>
-        <li><span aria-hidden="true">✕</span>Prendas plateadas, metálicas o muy brillantes como color principal</li>
-        <li><span aria-hidden="true">✕</span>Vino y borgoña: los reservamos para nuestras damas y caballeros de honor 💕</li>
+    <div class="dress-tabs" role="tablist" aria-label="Guía de vestimenta">
+      <button type="button" role="tab" id="tab-ellas" aria-controls="panel-ellas" aria-selected="true">👗 Para ellas</button>
+      <button type="button" role="tab" id="tab-ellos" aria-controls="panel-ellos" aria-selected="false" tabindex="-1">🤵 Para ellos</button>
+      <button type="button" role="tab" id="tab-evitar" aria-controls="panel-evitar" aria-selected="false" tabindex="-1">🚫 Eviten</button>
+    </div>
+
+    <div class="dress-panel" role="tabpanel" id="panel-ellas" aria-labelledby="tab-ellas">
+      <a class="dress-img" href="img/dresscode-ellas.jpg" target="_blank" rel="noopener"><img src="img/dresscode-ellas.jpg" alt="Guía de vestimenta para ellas: vestidos largos en los 15 tonos de la paleta y siluetas de referencia" width="1536" height="1024" loading="lazy"><span>Toca para ver en grande 🔍</span></a>
+      <ul class="dress-lista">
+        <li><span aria-hidden="true">👗</span>Vestido largo o midi formal, en los tonos de la paleta.</li>
+        <li><span aria-hidden="true">👠</span>Calzado adecuado para césped: tacón grueso, plataforma o cuña.</li>
+        <li><span aria-hidden="true">🌸</span>Siluetas de inspiración: un hombro, halter, escote en V, strapless, drapeados, con abertura, espalda elegante o mangas fluidas.</li>
+        <li><span aria-hidden="true">☀️</span>Eviten los tonos muy claros: con el sol pueden verse blancos.</li>
+        <li><span aria-hidden="true">✨</span>Accesorios dorados o plateados: ¡libres!</li>
       </ul>
-      <p class="paleta-si"><span aria-hidden="true">✓</span>Accesorios dorados o plateados: ¡son bienvenidos! ✨</p>
+    </div>
+
+    <div class="dress-panel" role="tabpanel" id="panel-ellos" aria-labelledby="tab-ellos" hidden>
+      <a class="dress-img" href="img/dresscode-ellos.jpg" target="_blank" rel="noopener"><img src="img/dresscode-ellos.jpg" alt="Guía de vestimenta para ellos: trajes en los 15 tonos de la paleta y combinaciones de referencia" width="1536" height="1024" loading="lazy"><span>Toca para ver en grande 🔍</span></a>
+      <ul class="dress-lista">
+        <li><span aria-hidden="true">🤵</span>Traje en los tonos de la paleta.</li>
+        <li><span aria-hidden="true">👔</span>Camisa blanca permitida, o en los tonos de la paleta.</li>
+        <li><span aria-hidden="true">👞</span>Zapatos formales: mocasines, derby u oxford, en cuero o gamuza.</li>
+        <li><span aria-hidden="true">🧣</span>Detalles que suman: pañuelo, correa y accesorios en tonos tierra o metálicos.</li>
+      </ul>
+    </div>
+
+    <div class="dress-panel" role="tabpanel" id="panel-evitar" aria-labelledby="tab-evitar" hidden>
+      <a class="dress-img" href="img/dresscode-evitar.jpg" target="_blank" rel="noopener"><img src="img/dresscode-evitar.jpg" alt="Lo que no está permitido: blanco o tonos muy claros, amarillo, estampados, negro, metálicos, shorts, tenis, sandalias planas, camisas estampadas y looks muy informales" width="1536" height="1024" loading="lazy"><span>Toca para ver en grande 🔍</span></a>
+      <div class="paleta-evitar">
+        <ul>
+          <li><span aria-hidden="true">✕</span>Blanco y tonos muy claros: marfil, hueso, champagne, beige claro, arena o lino claro</li>
+          <li><span aria-hidden="true">✕</span>Amarillo pálido o mantequilla</li>
+          <li><span aria-hidden="true">✕</span>Negro (también trajes negros) y colores neón</li>
+          <li><span aria-hidden="true">✕</span>Estampados, en vestidos y camisas</li>
+          <li><span aria-hidden="true">✕</span>Prendas plateadas, metálicas o muy brillantes como color principal</li>
+          <li><span aria-hidden="true">✕</span>Shorts, tenis, sandalias planas o chanclas, y looks muy informales</li>
+          <li><span aria-hidden="true">✕</span>Vino y borgoña: los reservamos para nuestras damas y caballeros de honor 💕</li>
+        </ul>
+        <p class="paleta-si"><span aria-hidden="true">✓</span>Accesorios dorados o plateados: ¡son bienvenidos! ✨</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1388,9 +1432,31 @@
 })();
 </script>
 <script>
+// ---- Pestañas del dress code ----
+(function(){
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.dress-tabs [role="tab"]'));
+  function elegir(t, enfocar){
+    tabs.forEach(function(x){
+      var activa = x === t;
+      x.setAttribute('aria-selected', activa ? 'true' : 'false');
+      x.tabIndex = activa ? 0 : -1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden = !activa;
+    });
+    if(enfocar) t.focus();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ elegir(t); });
+    t.addEventListener('keydown', function(e){
+      if(e.key === 'ArrowRight') elegir(tabs[(i + 1) % tabs.length], true);
+      if(e.key === 'ArrowLeft') elegir(tabs[(i - 1 + tabs.length) % tabs.length], true);
+    });
+  });
+})();
+</script>
+<script>
 // ---- Aparición suave al hacer scroll ----
 (function(){
-  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-grid, .faq-list, .paleta, .paleta-evitar, .form-wrap, .center-box, .carrusel, footer > *');
+  var els = document.querySelectorAll('.head, .subhead, .card, .schedule, .moment, .info-card, .map-embed, .stay-grid, .faq-list, .paleta, .dress-tabs, .form-wrap, .center-box, .carrusel, footer > *');
   if(!('IntersectionObserver' in window)){ return document.documentElement.classList.remove('js'); }
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(en){
