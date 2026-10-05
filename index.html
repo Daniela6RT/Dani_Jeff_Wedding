@@ -254,11 +254,11 @@
   .quick-menu { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; padding: 28px 16px; border-bottom: 1px solid var(--linea); }
   .quick-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--madera); width: 64px; }
   .quick-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--durazno); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: transform 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-  .quick-item:nth-child(1) .quick-icon { background: var(--verde-olivo); }
-  .quick-item:nth-child(2) .quick-icon { background: var(--terracotta); }
-  .quick-item:nth-child(3) .quick-icon { background: var(--durazno); }
-  .quick-item:nth-child(4) .quick-icon { background: var(--rosa-polvo); }
-  .quick-item:nth-child(5) .quick-icon { background: #C8B097; }
+  .qi-fecha .quick-icon { background: var(--verde-olivo); }
+  .qi-lugar .quick-icon { background: var(--terracotta); }
+  .qi-historia .quick-icon { background: var(--durazno); }
+  .qi-vestimenta .quick-icon { background: var(--rosa-polvo); }
+  .qi-regalos .quick-icon { background: #C8B097; }
   .quick-item:hover .quick-icon { transform: translateY(-3px); }
   .quick-lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
 
@@ -829,11 +829,11 @@
 </button>
 
 <nav class="quick-menu" aria-label="Accesos rápidos">
-  <a href="#detalles" class="quick-item"><div class="quick-icon">📅</div><span class="quick-lbl">Fecha</span></a>
-  <a href="#viaje" class="quick-item"><div class="quick-icon">📍</div><span class="quick-lbl">Lugar</span></a>
-  <a href="#historia" class="quick-item"><div class="quick-icon">🥂</div><span class="quick-lbl">Historia</span></a>
-  <a href="#dresscode" class="quick-item"><div class="quick-icon">📷</div><span class="quick-lbl">Vestimenta</span></a>
-  <a href="#regalos" class="quick-item"><div class="quick-icon">🎁</div><span class="quick-lbl">Regalos</span></a>
+  <a href="#historia" class="quick-item qi-historia"><div class="quick-icon">🥂</div><span class="quick-lbl">Historia</span></a>
+  <a href="#detalles" class="quick-item qi-fecha"><div class="quick-icon">📅</div><span class="quick-lbl">Fecha</span></a>
+  <a href="#viaje" class="quick-item qi-lugar"><div class="quick-icon">📍</div><span class="quick-lbl">Lugar</span></a>
+  <a href="#dresscode" class="quick-item qi-vestimenta"><div class="quick-icon">📷</div><span class="quick-lbl">Vestimenta</span></a>
+  <a href="#regalos" class="quick-item qi-regalos"><div class="quick-icon">🎁</div><span class="quick-lbl">Regalos</span></a>
 </nav>
 
 <!-- Cita Inspiradora -->
