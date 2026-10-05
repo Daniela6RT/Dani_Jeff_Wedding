@@ -1709,7 +1709,7 @@
       var b = document.createElement('p');
       b.className = 'pase-corte';
       b.textContent = ({ dama: '💐 ', madrina: '💐 ', caballero: '🤵 ', padrino: '🤵 ' })[c.rol] + c.nombre + ' · ' +
-        ({ dama: 'Dama de honor', madrina: 'Madrina', caballero: 'Caballero de honor', padrino: 'Padrino' })[c.rol];
+        ({ dama: 'Dama de honor', madrina: 'Madrina de bodas', caballero: 'Caballero de honor', padrino: 'Padrino de bodas' })[c.rol];
       campo('nombre').after(b);
     });
     if(inv.puede_cambiar) campo('cambiar').addEventListener('click', mostrarFormulario);
@@ -1822,8 +1822,8 @@
     var mi = pendiente.de_parte === 'ambos' ? 'nuestra' : 'mi';
     document.getElementById('propuesta-nombre').textContent = pendiente.nombre;
     document.getElementById('propuesta-pregunta').textContent =
-      rol === 'padrino' ? '¿Aceptas ser mi padrino?' :
-      rol === 'madrina' ? '¿Aceptas ser mi madrina?' :
+      rol === 'padrino' ? '¿Aceptas ser mi padrino de bodas?' :
+      rol === 'madrina' ? '¿Aceptas ser mi madrina de bodas?' :
       '¿Aceptas ser ' + mi + ' ' + (ella ? 'dama' : 'caballero') + ' de honor?';
     var sub = document.getElementById('propuesta-sub');
     sub.hidden = rol !== 'padrino' && rol !== 'madrina';
@@ -1850,8 +1850,8 @@
       document.getElementById('propuesta-mensaje').textContent = {
         dama: 'Nos hace muy felices que seas una de nuestras damas de honor. Tus colores para ese día serán:',
         caballero: 'Nos hace muy felices que seas uno de nuestros caballeros de honor. Tus colores para ese día serán:',
-        madrina: 'Nos hace muy felices que seas nuestra madrina. Tus colores para ese día serán:',
-        padrino: 'Nos hace muy felices que seas nuestro padrino. Tus colores para ese día serán:'
+        madrina: 'Nos hace muy felices que seas nuestra madrina de bodas. Tus colores para ese día serán:',
+        padrino: 'Nos hace muy felices que seas nuestro padrino de bodas. Tus colores para ese día serán:'
       }[p.rol];
       document.getElementById('propuesta-paso1').hidden = true;
       document.getElementById('propuesta-paso2').hidden = false;
@@ -2161,7 +2161,7 @@
     corte = corte.slice().sort(function(a, b){ return ordenRol[a.rol] - ordenRol[b.rol]; });
     corte.forEach(function(c){
       var estado = c.acepto === true ? '✅ Aceptó' : c.acepto === false ? 'No' : '<b style="color:var(--terracotta-deep)">Pendiente</b>';
-      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + ({ dama: '💐 Dama', madrina: '💐 <b>Madrina</b>', caballero: '🤵 Caballero', padrino: '🤵 <b>Padrino</b>' })[c.rol] + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : c.de_parte === 'novio' ? 'Jeff' : 'los dos') + ')</td>' +
+      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + ({ dama: '💐 Dama', madrina: '💐 <b>Madrina de bodas</b>', caballero: '🤵 Caballero', padrino: '🤵 <b>Padrino de bodas</b>' })[c.rol] + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : c.de_parte === 'novio' ? 'Jeff' : 'los dos') + ')</td>' +
         TD + escapeHtml(c.invitacion) + '</td>' + TD + estado + '</td></tr>';
     });
     caja.innerHTML = h + '</tbody></table></div>';
