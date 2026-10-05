@@ -82,3 +82,7 @@ grant execute on function public.responder_corte(text, uuid, boolean) to anon, a
 -- (migración corte_de_parte_ambos) La propuesta puede venir de la novia, del novio o de los dos.
 alter table public.corte drop constraint corte_de_parte_check;
 alter table public.corte add constraint corte_de_parte_check check (de_parte in ('novia', 'novio', 'ambos'));
+
+-- (migración corte_padrino_madrina) Roles de la corte: padrino y madrina, además de damas y caballeros.
+alter table public.corte drop constraint corte_rol_check;
+alter table public.corte add constraint corte_rol_check check (rol in ('dama', 'caballero', 'madrina', 'padrino'));

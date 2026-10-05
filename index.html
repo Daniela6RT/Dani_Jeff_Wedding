@@ -556,6 +556,7 @@
   .propuesta-intro { font-size: 14px; line-height: 1.6; color: var(--texto-suave); margin: 0; }
   .propuesta-intro b { color: var(--verde-profundo); }
   .propuesta-pregunta { font-family: var(--script); font-weight: 400; font-size: clamp(40px, 11vw, 52px); line-height: 1.1; color: var(--terracotta); margin: 14px 0 6px; }
+  #propuesta-sub { margin: -2px 0 10px; font-family: var(--serif); font-style: italic; font-size: 16px; }
   .propuesta-firma { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--verde-profundo); margin: 0 0 24px; }
   .propuesta-si { width: 100%; }
   .propuesta-luego { display: block; margin: 10px auto 0; min-height: 44px; background: none; border: 0; font: 500 14px var(--sans); color: var(--texto-suave); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
@@ -733,6 +734,7 @@
     <div id="propuesta-paso1">
       <p class="propuesta-intro"><b id="propuesta-nombre"></b>, tenemos una pregunta muy importante para ti…</p>
       <h2 class="propuesta-pregunta" id="propuesta-pregunta"></h2>
+      <p class="propuesta-intro" id="propuesta-sub" hidden></p>
       <p class="propuesta-firma" id="propuesta-firma"></p>
       <button type="button" class="btn propuesta-si" id="propuesta-si">¡Sí, acepto! 💃</button>
       <button type="button" class="propuesta-luego" id="propuesta-luego">Déjame pensarlo 🙈</button>
@@ -1706,7 +1708,8 @@
     (inv.corte || []).filter(function(c){ return c.acepto; }).forEach(function(c){
       var b = document.createElement('p');
       b.className = 'pase-corte';
-      b.textContent = c.rol === 'dama' ? '💐 ' + c.nombre + ' · Dama de honor' : '🤵 ' + c.nombre + ' · Caballero de honor';
+      b.textContent = ({ dama: '💐 ', madrina: '💐 ', caballero: '🤵 ', padrino: '🤵 ' })[c.rol] + c.nombre + ' · ' +
+        ({ dama: 'Dama de honor', madrina: 'Madrina', caballero: 'Caballero de honor', padrino: 'Padrino' })[c.rol];
       campo('nombre').after(b);
     });
     if(inv.puede_cambiar) campo('cambiar').addEventListener('click', mostrarFormulario);
@@ -1815,11 +1818,18 @@
     pendiente = null;
     for(var i = 0; i < lista.length; i++){ if(lista[i].acepto === null && !lista[i].pospuesto){ pendiente = lista[i]; break; } }
     if(!pendiente) return;
-    var dama = pendiente.rol === 'dama';
+    var rol = pendiente.rol, ella = rol === 'dama' || rol === 'madrina';
+    var mi = pendiente.de_parte === 'ambos' ? 'nuestra' : 'mi';
     document.getElementById('propuesta-nombre').textContent = pendiente.nombre;
-    var ambos = pendiente.de_parte === 'ambos';
-    document.getElementById('propuesta-pregunta').textContent = '¿Aceptas ser ' + (ambos ? 'nuestra' : 'mi') + ' ' + (dama ? 'dama' : 'caballero') + ' de honor?';
-    document.getElementById('propuesta-firma').textContent = ambos ? '— Dani & Jeff 💛' : pendiente.de_parte === 'novia' ? '— Dani 💐' : '— Jeff 🤵';
+    document.getElementById('propuesta-pregunta').textContent =
+      rol === 'padrino' ? '¿Aceptas ser mi padrino?' :
+      rol === 'madrina' ? '¿Aceptas ser mi madrina?' :
+      '¿Aceptas ser ' + mi + ' ' + (ella ? 'dama' : 'caballero') + ' de honor?';
+    var sub = document.getElementById('propuesta-sub');
+    sub.hidden = rol !== 'padrino' && rol !== 'madrina';
+    sub.textContent = rol === 'padrino' ? 'y acompañar a mis caballeros de honor' : 'y acompañar a mis damas de honor';
+    document.getElementById('propuesta-firma').textContent = pendiente.de_parte === 'ambos' ? '— Dani & Jeff 💛' : pendiente.de_parte === 'novia' ? '— Dani 💐' : '— Jeff 🤵';
+    var dama = ella;
     document.getElementById('propuesta-si').textContent = dama ? '¡Sí, acepto! 💃' : '¡Sí, acepto! 🕺';
     document.getElementById('propuesta-paso1').hidden = false;
     document.getElementById('propuesta-paso2').hidden = true;
@@ -1837,9 +1847,12 @@
     rpc('responder_corte', { p_codigo: codigo, p_id: p.id, p_acepta: true }).then(function(inv){
       invitacion = inv;
       lanzarConfeti();
-      document.getElementById('propuesta-mensaje').textContent = p.rol === 'dama'
-        ? 'Nos hace muy felices que seas una de nuestras damas de honor. Tus colores para ese día serán:'
-        : 'Nos hace muy felices que seas uno de nuestros caballeros de honor. Tus colores para ese día serán:';
+      document.getElementById('propuesta-mensaje').textContent = {
+        dama: 'Nos hace muy felices que seas una de nuestras damas de honor. Tus colores para ese día serán:',
+        caballero: 'Nos hace muy felices que seas uno de nuestros caballeros de honor. Tus colores para ese día serán:',
+        madrina: 'Nos hace muy felices que seas nuestra madrina. Tus colores para ese día serán:',
+        padrino: 'Nos hace muy felices que seas nuestro padrino. Tus colores para ese día serán:'
+      }[p.rol];
       document.getElementById('propuesta-paso1').hidden = true;
       document.getElementById('propuesta-paso2').hidden = false;
       document.getElementById('propuesta-ver').focus();
@@ -2144,9 +2157,11 @@
     if(!corte.length){ caja.innerHTML = h + '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay damas ni caballeros registrados.</div>'; return; }
     h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
       TH + 'Nombre</th>' + TH + 'Rol</th>' + TH + 'Invitación</th>' + TH + 'Respuesta</th></tr></thead><tbody>';
+    var ordenRol = { madrina: 0, padrino: 1, dama: 2, caballero: 3 };
+    corte = corte.slice().sort(function(a, b){ return ordenRol[a.rol] - ordenRol[b.rol]; });
     corte.forEach(function(c){
       var estado = c.acepto === true ? '✅ Aceptó' : c.acepto === false ? 'No' : '<b style="color:var(--terracotta-deep)">Pendiente</b>';
-      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + (c.rol === 'dama' ? '💐 Dama' : '🤵 Caballero') + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : c.de_parte === 'novio' ? 'Jeff' : 'los dos') + ')</td>' +
+      h += '<tr>' + TD + escapeHtml(c.nombre) + '</td>' + TD + ({ dama: '💐 Dama', madrina: '💐 <b>Madrina</b>', caballero: '🤵 Caballero', padrino: '🤵 <b>Padrino</b>' })[c.rol] + ' (de ' + (c.de_parte === 'novia' ? 'Dani' : c.de_parte === 'novio' ? 'Jeff' : 'los dos') + ')</td>' +
         TD + escapeHtml(c.invitacion) + '</td>' + TD + estado + '</td></tr>';
     });
     caja.innerHTML = h + '</tbody></table></div>';
