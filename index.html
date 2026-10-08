@@ -35,10 +35,10 @@
 })(document.documentElement);
 </script>
 
-<!-- Fuentes según el Moodboard: Playfair Display, Allura, Montserrat -->
+<!-- Fuentes: Playfair Display, Great Vibes (cursiva), Montserrat -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Allura&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
 <style>
   :root {
@@ -57,7 +57,7 @@
     --linea: rgba(93, 104, 70, 0.18);
     
     --serif: 'Playfair Display', serif;
-    --script: 'Allura', cursive;
+    --script: 'Great Vibes', cursive;
     --sans: 'Montserrat', sans-serif;
     --nav-h: 65px;
 
@@ -307,7 +307,7 @@
   .env-carta { position: absolute; left: 7%; right: 7%; top: 8%; height: 84%; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 8%;
     background: #FFFDF8; border-radius: 10px; box-shadow: 0 2px 12px rgba(58, 46, 43, .14); text-align: center; transition: transform 1s cubic-bezier(.2, .7, .2, 1) .5s; }
   .env-carta b { font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 7vw, 34px); color: var(--verde-profundo); letter-spacing: .06em; }
-  .env-carta b i { font-family: var(--script); font-style: normal; color: var(--terracotta); padding: 0 .1em; }
+  .env-carta b i { font-family: var(--script); font-style: normal; font-size: .85em; color: var(--terracotta); padding: 0 .3em 0 .06em; }
   .env-carta small { margin-top: 6px; font-size: 10px; font-weight: 600; letter-spacing: .4em; color: var(--terracotta-deep); }
   .env-carta em { margin-top: 5px; font-family: var(--serif); font-size: 13px; color: var(--texto-suave); }
 
@@ -315,7 +315,8 @@
   .env-sello svg { position: absolute; display: block; overflow: visible; pointer-events: none; }
   .env-sello .cera { inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 4px 5px rgba(90, 63, 22, .35)); }
   .env-sello span { position: relative; font-family: var(--serif); font-size: 22px; letter-spacing: .08em; line-height: 96px; color: #6B4A1C; text-shadow: 0 1px 0 rgba(255, 236, 200, .55); }
-  .env-sello span i { font-family: var(--script); font-size: 1.15em; letter-spacing: 0; padding: 0 .06em; }
+  .env-sello span i { font-family: var(--script); font-size: .9em; letter-spacing: 0; padding: 0 .46em 0 0; opacity: .85; }
+  .env-sello span { padding-left: .08em; }
   .env-sello:focus-visible { outline: 3px solid var(--verde-olivo); outline-offset: 4px; }
 
   .sobre-pista { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .32em; text-transform: uppercase; color: var(--verde-olivo); transition: opacity .3s ease; }
@@ -661,7 +662,8 @@
   .pase-lacre { position: relative; width: 66px; height: 66px; flex: 0 0 auto; }
   .pase-lacre svg { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 3px 4px rgba(90, 63, 22, .3)); }
   .pase-lacre span { position: relative; display: block; line-height: 66px; font-family: var(--serif); font-size: 16px; letter-spacing: .06em; color: #6B4A1C; }
-  .pase-lacre span i { font-family: var(--script); font-size: 1.15em; letter-spacing: 0; padding: 0 .05em; }
+  .pase-lacre span i { font-family: var(--script); font-size: .9em; letter-spacing: 0; padding: 0 .46em 0 0; opacity: .85; }
+  .pase-lacre span { padding-left: .06em; }
   .pase-frase { text-align: left; font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--texto-suave); line-height: 1.4; margin: 0; }
   .pase-no .pase-cupo { font-size: 26px; }
   .pase-acciones { text-align: center; margin-top: 26px; }
