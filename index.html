@@ -293,8 +293,9 @@
   @keyframes subir { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
   .sobre-cabeza { position: relative; text-align: center; transition: opacity .4s ease; }
-  .sobre-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: var(--verde-olivo); margin: 0; }
-  .sobre-nombres { font-family: var(--serif); font-size: clamp(30px, 8.4vw, 44px); color: var(--verde-profundo); line-height: 1.15; margin: 10px 0 0; font-weight: 400; letter-spacing: .01em; }
+  .sobre-invitado { font-size: 13px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--verde-olivo); margin: 0 0 12px; overflow-wrap: anywhere; }
+  .sobre-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; color: var(--verde-olivo); margin: 10px 0 0; }
+  .sobre-nombres { font-family: var(--serif); font-size: clamp(30px, 8.4vw, 44px); color: var(--verde-profundo); line-height: 1.15; margin: 0; font-weight: 400; letter-spacing: .01em; }
   .sobre-nombres i { font-family: var(--script); font-style: normal; color: var(--terracotta); font-size: 1.2em; padding: 0 .08em; }
 
   .env-flota { position: relative; transform: rotate(-2deg); }
@@ -707,8 +708,9 @@
   <svg class="sobre-palma p2" viewBox="0 0 400 400" aria-hidden="true"><use href="#palma"/></svg>
 
   <div class="sobre-cabeza">
-    <p class="sobre-eyebrow" id="sobre-para">Una invitación para ustedes</p>
+    <p class="sobre-invitado" id="sobre-invitado" hidden></p>
     <h2 class="sobre-nombres" id="sobre-titulo">Daniela <i>&amp;</i> Jeferson</h2>
+    <p class="sobre-eyebrow" id="sobre-para">les tienen una invitación</p>
   </div>
 
   <div class="env-flota">
@@ -1902,8 +1904,10 @@
   }
 
   function personalizarSobre(){
-    var para = document.getElementById('sobre-para');
-    if(para) para.textContent = 'Una invitación para ' + invitacion.nombre;
+    var inv = document.getElementById('sobre-invitado');
+    inv.textContent = invitacion.nombre;
+    inv.hidden = false;
+    document.getElementById('sobre-para').textContent = invitacion.cupos > 1 ? 'les tienen una invitación' : 'te tienen una invitación';
   }
 
   if(!codigo){
