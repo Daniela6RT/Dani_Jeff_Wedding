@@ -675,6 +675,23 @@
   .admin-head h1 { font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--verde-profundo); margin: 0; }
   .admin-head p { margin: 4px 0 0; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); }
   #login-box { max-width: 340px; margin: 20px auto 0; }
+  /* Vistas y filtros del panel */
+  .panel-barra { padding: 10px 0 8px; margin: 14px 0 4px; border-bottom: 1px solid var(--linea); }
+  .vistas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  @media (max-width: 560px) { .vistas { grid-template-columns: 1fr 1fr; } }
+  .vista-btn { min-height: 40px; padding: 0 14px; border: 1px solid var(--linea); border-radius: 999px; background: #fff; font: 600 12px var(--sans); color: var(--madera); cursor: pointer; white-space: nowrap; }
+  .vista-btn[aria-selected="true"] { background: var(--verde-profundo); border-color: var(--verde-profundo); color: #fff; }
+  .vista-btn small { font-weight: 500; opacity: .75; margin-left: 2px; }
+  .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+  .filtros[hidden] { display: none; }
+  .filtros input, .filtros select { flex: 1 1 160px; min-height: 40px; margin: 0; padding: 0 12px; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font: 13px var(--sans); color: var(--madera); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+  .chip { min-height: 34px; padding: 0 12px; border: 1px solid var(--linea); border-radius: 999px; background: #fff; font: 500 12px var(--sans); color: var(--madera); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--terracotta-deep); border-color: var(--terracotta-deep); color: #fff; }
+  .chip[hidden] { display: none; }
+  .filtro-info { font-size: 12px; color: var(--texto-suave); width: 100%; text-align: left; }
+  .filtro-info button { background: none; border: 0; padding: 4px; font: 600 12px var(--sans); color: var(--terracotta-deep); text-decoration: underline; cursor: pointer; }
+  .vista[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -691,8 +708,29 @@
     <div class="form-msg error" id="login-msg"></div>
   </div>
   <div id="admin-detail" style="display:none;">
+    <button type="button" class="submit-btn refresh-btn" style="margin:0 0 14px;">Actualizar ahora</button>
     <div class="admin-summary" id="detail-summary"></div>
-    <div class="table-scroll">
+    <div class="panel-barra">
+      <div class="vistas" role="tablist" aria-label="Vistas del panel">
+        <button type="button" class="vista-btn" role="tab" data-vista="invitaciones" aria-selected="true">✉️ Invitaciones <small id="n-invitaciones"></small></button>
+        <button type="button" class="vista-btn" role="tab" data-vista="personas" aria-selected="false">👥 Invitados <small id="n-personas"></small></button>
+        <button type="button" class="vista-btn" role="tab" data-vista="corte" aria-selected="false">💐 Corte <small id="n-corte"></small></button>
+        <button type="button" class="vista-btn" role="tab" data-vista="canciones" aria-selected="false">🎵 Canciones <small id="n-canciones"></small></button>
+      </div>
+      <div class="filtros" id="filtros">
+        <input type="search" id="f-buscar" placeholder="Buscar nombre…" aria-label="Buscar por nombre">
+        <select id="f-categoria" aria-label="Filtrar por categoría"><option value="">Todas las categorías</option></select>
+        <div class="chips" role="group" aria-label="Filtrar por estado">
+          <button type="button" class="chip" data-estado="" aria-pressed="true">Todos</button>
+          <button type="button" class="chip" data-estado="pendiente" aria-pressed="false">Pendientes</button>
+          <button type="button" class="chip" data-estado="asiste" aria-pressed="false">Asisten</button>
+          <button type="button" class="chip" data-estado="no asiste" aria-pressed="false">No asisten</button>
+          <button type="button" class="chip" data-estado="por-definir" aria-pressed="false" hidden>+1 por definir</button>
+        </div>
+        <div class="filtro-info" id="f-info"></div>
+      </div>
+    </div>
+    <div class="vista table-scroll" id="vista-invitaciones">
       <table id="detail-table" style="width:100%; border-collapse:collapse; font-size:12px; background:#fff; margin-top:10px;">
         <thead>
           <tr>
@@ -706,9 +744,10 @@
         <tbody id="detail-rows"></tbody>
       </table>
     </div>
-    <div id="detail-corte" style="margin-top:22px; text-align:left;"></div>
-    <div id="detail-canciones" style="margin-top:22px; text-align:left;"></div>
-    <button type="button" class="submit-btn" id="refresh-btn" style="margin-top:14px;">Actualizar ahora</button>
+    <div class="vista" id="detail-personas" style="margin-top:12px; text-align:left;" hidden></div>
+    <div class="vista" id="detail-corte" style="margin-top:12px; text-align:left;" hidden></div>
+    <div class="vista" id="detail-canciones" style="margin-top:12px; text-align:left;" hidden></div>
+    <button type="button" class="submit-btn refresh-btn" style="margin-top:14px;">Actualizar ahora</button>
     <div style="font-size:11px; color:var(--texto-suave); margin-top:8px;">Se actualiza automáticamente cada minuto.</div>
   </div>
 </div>
@@ -730,7 +769,7 @@
   var loginMsg = document.getElementById('login-msg');
   var detailSummary = document.getElementById('detail-summary');
   var detailRows = document.getElementById('detail-rows');
-  var refreshBtn = document.getElementById('refresh-btn');
+  var refreshBtns = document.querySelectorAll('.refresh-btn');
   var storedPassword = null;
   var refreshTimer = null;
 
@@ -770,11 +809,18 @@
     // Agrupadas por categoría (orden de la hoja DATOS); dentro, pendientes primero
     var orden = function(i){ return !i.respuesta ? 0 : (i.respuesta.asiste ? 1 : 2); };
     var grupos = data.porCategoria || [{ categoria: null }];
+    var visibles = data.invitaciones.filter(function(i){
+      var est = !i.respuesta ? 'pendiente' : i.respuesta.asiste ? 'asiste' : 'no asiste';
+      return pasaFiltros(i.nombre, i.categoria, est);
+    });
+    document.getElementById('n-invitaciones').textContent = data.invitaciones.length;
+    if(vistaActual === 'invitaciones') mostrarInfo(visibles.length, data.invitaciones.length, 'invitaciones');
     var html = '';
     grupos.forEach(function(g){
-      var invs = data.invitaciones.filter(function(i){
+      var invs = visibles.filter(function(i){
         return g.categoria === null || (i.categoria || 'Sin categoría') === g.categoria;
       }).sort(function(x, y){ return orden(x) - orden(y); });
+      if(!invs.length) return;
       if(g.categoria !== null){
         html += '<tr><td colspan="6" style="border:1px solid var(--linea); padding:8px 6px; background:var(--marfil); text-align:left;"><b>' +
           escapeHtml(g.categoria) + '</b> · ' + g.personasConfirmadas + ' de ' + g.cupos + ' personas · ' +
@@ -789,20 +835,56 @@
           TD + '<button type="button" class="copiar-link" data-link="' + escapeHtml(LINK_BASE + i.codigo) + '" style="min-height:36px; padding:0 10px; border:1px solid var(--linea); background:#fff; border-radius:6px; cursor:pointer;">Copiar</button></td></tr>';
       });
     });
-    if(data.antiguas && data.antiguas.length){
+    if(data.antiguas && data.antiguas.length && !hayFiltros()){
       html += '<tr><td colspan="6" style="border:1px solid var(--linea); padding:8px 6px; background:var(--marfil); font-weight:600;">Respuestas sin invitación (formulario anterior)</td></tr>';
       data.antiguas.forEach(function(a){
         html += '<tr>' + TD + escapeHtml(a.name) + '</td>' + TD + '—</td>' + TD + (a.attending ? 'Sí' + (a.plus_one ? ' +1' : '') : 'No asiste') + '</td>' +
           TD + escapeHtml(a.diet || '—') + '</td>' + TD + escapeHtml(a.note || '—') + '</td>' + TD + '—</td></tr>';
       });
     }
-    detailRows.innerHTML = html || '<tr><td colspan="6" style="border:1px solid var(--linea); padding:6px;">Aún no hay invitaciones.</td></tr>';
+    detailRows.innerHTML = html || '<tr><td colspan="6" style="border:1px solid var(--linea); padding:6px;">' + (hayFiltros() ? 'Nada coincide con los filtros.' : 'Aún no hay invitaciones.') + '</td></tr>';
     renderCancionesAdmin(data.canciones || []);
     renderCorteAdmin(data.corte || []);
+    renderPersonasAdmin(data.personas || [], data.porCategoria || []);
+  }
+  function renderPersonasAdmin(personas, porCategoria){
+    var caja = document.getElementById('detail-personas');
+    var porDefinir = personas.filter(function(p){ return !p.nombre; }).length;
+    var acomp = personas.filter(function(p){ return p.rol === 'acompanante'; }).length;
+    var h = '<div class="admin-summary" style="margin-bottom:6px;">👥 Invitados (' + personas.length + ' personas · ' +
+      (personas.length - acomp) + ' principales · ' + acomp + ' acompañantes' + (porDefinir ? ' · ' + porDefinir + ' por definir' : '') + ')</div>';
+    document.getElementById('n-personas').textContent = personas.length;
+    var total = personas.length;
+    personas = personas.filter(function(p){
+      if(filtros.estado === 'por-definir') return !p.nombre && pasaFiltros(p.acompananteDe || '', p.categoria, '', [p.invitacion]);
+      return pasaFiltros(p.nombre || '', p.categoria, p.estadoInvitacion, [p.invitacion, p.acompananteDe]);
+    });
+    if(vistaActual === 'personas') mostrarInfo(personas.length, total, 'personas');
+    if(!personas.length){ caja.innerHTML = h + (total ? '<div style="font-size:12px; color:var(--texto-suave);">Nada coincide con los filtros.</div>' : ''); return; }
+    var rolCorte = { dama: '💐 Dama', madrina: '💐 Madrina', caballero: '🤵 Caballero', padrino: '🤵 Padrino' };
+    var estado = { pendiente: '<span style="color:var(--terracotta-deep)">Pendiente</span>', asiste: 'Asiste', 'no asiste': 'No asiste' };
+    h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
+      TH + 'Persona</th>' + TH + 'Rol</th>' + TH + 'Invitación</th>' + TH + 'Corte</th>' + TH + 'Confirmación</th>' + TH + 'Mesa</th></tr></thead><tbody>';
+    var cats = porCategoria.map(function(c){ return c.categoria; });
+    personas.forEach(function(p){ var c = p.categoria || 'Sin categoría'; if(cats.indexOf(c) < 0) cats.push(c); });
+    cats.forEach(function(cat){
+      var grupo = personas.filter(function(p){ return (p.categoria || 'Sin categoría') === cat; });
+      if(!grupo.length) return;
+      h += '<tr><td colspan="6" style="border:1px solid var(--linea); padding:8px 6px; background:var(--marfil);"><b>' + escapeHtml(cat) + '</b> · ' + grupo.length + (grupo.length === 1 ? ' persona' : ' personas') + '</td></tr>';
+      grupo.sort(function(a, b){ return a.invitacion.localeCompare(b.invitacion) || (a.rol === 'principal' ? -1 : 1); });
+      grupo.forEach(function(p){
+        var nombre = p.nombre ? escapeHtml(p.nombre) : '<i style="color:var(--terracotta-deep)">Por definir</i>';
+        var rol = p.rol === 'principal' ? 'Principal' : 'Acompañante' + (p.acompananteDe ? ' de ' + escapeHtml(p.acompananteDe) : '');
+        h += '<tr>' + TD + nombre + '</td>' + TD + rol + '</td>' + TD + escapeHtml(p.invitacion) + '</td>' +
+          TD + (p.corte ? rolCorte[p.corte] : '—') + '</td>' + TD + (estado[p.estadoInvitacion] || '—') + '</td>' + TD + escapeHtml(p.mesa || '—') + '</td></tr>';
+      });
+    });
+    caja.innerHTML = h + '</tbody></table></div>';
   }
   function renderCorteAdmin(corte){
     var caja = document.getElementById('detail-corte');
     var aceptaron = corte.filter(function(c){ return c.acepto; }).length;
+    document.getElementById('n-corte').textContent = corte.length;
     var h = '<div class="admin-summary" style="margin-bottom:6px;">💐 Corte de honor (' + aceptaron + ' de ' + corte.length + ' aceptaron)</div>';
     if(!corte.length){ caja.innerHTML = h + '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay damas ni caballeros registrados.</div>'; return; }
     h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
@@ -818,6 +900,7 @@
   }
   function renderCancionesAdmin(canciones){
     var caja = document.getElementById('detail-canciones');
+    document.getElementById('n-canciones').textContent = canciones.length;
     var h = '<div class="admin-summary" style="margin-bottom:6px;">🎵 Canciones sugeridas (' + canciones.length + ')</div>';
     if(!canciones.length){ caja.innerHTML = h + '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay sugerencias.</div>'; return; }
     h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
@@ -839,8 +922,68 @@
     else prompt('Copia el link:', link);
   });
 
+  // Vistas (pestañas) y filtros; se conservan al actualizar
+  var ultimoData = null;
+  var vistaActual = 'invitaciones';
+  try{ vistaActual = localStorage.getItem('admin-vista') || vistaActual; } catch(e){}
+  var filtros = { buscar: '', categoria: '', estado: '' };
+  var fBuscar = document.getElementById('f-buscar');
+  var fCategoria = document.getElementById('f-categoria');
+  var fInfo = document.getElementById('f-info');
+  var sinTildes = function(t){ return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); };
+  function hayFiltros(){ return !!(filtros.buscar || filtros.categoria || filtros.estado); }
+  function pasaFiltros(nombre, categoria, estado, extras){
+    if(filtros.categoria && (categoria || 'Sin categoría') !== filtros.categoria) return false;
+    if(filtros.estado && filtros.estado !== 'por-definir' && estado !== filtros.estado) return false;
+    if(filtros.buscar){
+      var q = sinTildes(filtros.buscar);
+      return [nombre].concat(extras || []).some(function(t){ return sinTildes(t).indexOf(q) >= 0; });
+    }
+    return true;
+  }
+  function mostrarInfo(n, total, que){
+    fInfo.innerHTML = hayFiltros() ? 'Mostrando ' + n + ' de ' + total + ' ' + que + ' <button type="button" id="f-limpiar">Quitar filtros</button>' : '';
+  }
+  function aplicarVista(){
+    document.querySelectorAll('.vista-btn').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.vista === vistaActual ? 'true' : 'false'); });
+    document.getElementById('vista-invitaciones').hidden = vistaActual !== 'invitaciones';
+    document.getElementById('detail-personas').hidden = vistaActual !== 'personas';
+    document.getElementById('detail-corte').hidden = vistaActual !== 'corte';
+    document.getElementById('detail-canciones').hidden = vistaActual !== 'canciones';
+    document.getElementById('filtros').hidden = vistaActual !== 'invitaciones' && vistaActual !== 'personas';
+    var porDefinir = document.querySelector('.chip[data-estado="por-definir"]');
+    porDefinir.hidden = vistaActual !== 'personas';
+    if(porDefinir.hidden && filtros.estado === 'por-definir') filtros.estado = '';
+    document.querySelectorAll('.chip').forEach(function(c){ c.setAttribute('aria-pressed', c.dataset.estado === filtros.estado ? 'true' : 'false'); });
+    if(ultimoData) renderInvitaciones(ultimoData);
+  }
+  document.querySelector('.vistas').addEventListener('click', function(e){
+    var b = e.target.closest('.vista-btn'); if(!b) return;
+    vistaActual = b.dataset.vista;
+    try{ localStorage.setItem('admin-vista', vistaActual); } catch(err){}
+    aplicarVista();
+  });
+  document.querySelector('.chips').addEventListener('click', function(e){
+    var c = e.target.closest('.chip'); if(!c) return;
+    filtros.estado = c.dataset.estado; aplicarVista();
+  });
+  fBuscar.addEventListener('input', function(){ filtros.buscar = fBuscar.value.trim(); if(ultimoData) renderInvitaciones(ultimoData); });
+  fCategoria.addEventListener('change', function(){ filtros.categoria = fCategoria.value; if(ultimoData) renderInvitaciones(ultimoData); });
+  fInfo.addEventListener('click', function(e){
+    if(!e.target.closest('#f-limpiar')) return;
+    filtros = { buscar: '', categoria: '', estado: '' }; fBuscar.value = ''; fCategoria.value = ''; aplicarVista();
+  });
+  function llenarCategorias(porCategoria){
+    var actual = fCategoria.value;
+    fCategoria.innerHTML = '<option value="">Todas las categorías</option>' + porCategoria.map(function(c){
+      return '<option value="' + escapeHtml(c.categoria) + '">' + escapeHtml(c.categoria) + '</option>';
+    }).join('');
+    fCategoria.value = actual;
+    if(fCategoria.value !== actual){ filtros.categoria = ''; }
+  }
+
   function showSummary(data){
-    if(data.invitaciones){ renderInvitaciones(data); return; }
+    if(data.invitaciones){ ultimoData = data; llenarCategorias(data.porCategoria || []); aplicarVista(); return; }
     detailSummary.textContent = data.summary.confirmed + ' confirmados, ' + data.summary.plusOnes + ' acompañantes, ' + data.summary.declined + ' no asisten.';
     renderRows(data.rows);
   }
@@ -891,11 +1034,13 @@
     }
   });
 
-  refreshBtn.addEventListener('click', async function(){
-    if(!storedPassword) return;
-    refreshBtn.textContent = 'Actualizando…';
-    try{ showSummary(await loadDetail(storedPassword)); } catch(e){}
-    refreshBtn.textContent = 'Actualizar ahora';
+  refreshBtns.forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      if(!storedPassword) return;
+      refreshBtns.forEach(function(b){ b.textContent = 'Actualizando…'; b.disabled = true; });
+      try{ showSummary(await loadDetail(storedPassword)); } catch(e){}
+      refreshBtns.forEach(function(b){ b.textContent = 'Actualizar ahora'; b.disabled = false; });
+    });
   });
 })();
 </script>

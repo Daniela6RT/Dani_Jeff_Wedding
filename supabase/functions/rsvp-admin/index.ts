@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const [rsvpsRes, invRes, catRes, canRes, corteRes] = await Promise.all([
+    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -52,9 +52,13 @@ Deno.serve(async (req: Request) => {
         .order("creada_en", { ascending: true }),
       supabase
         .from("corte")
-        .select("nombre, rol, de_parte, acepto, respondido_en, invitacion_id")
+        .select("nombre, rol, de_parte, acepto, respondido_en, invitacion_id, persona_id")
         .order("rol", { ascending: true })
         .order("nombre", { ascending: true }),
+      supabase
+        .from("personas")
+        .select("id, invitacion_id, nombre, rol, acompanante_de, orden, mesa, notas")
+        .order("orden", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -62,6 +66,7 @@ Deno.serve(async (req: Request) => {
     if (catRes.error) return json({ error: catRes.error.message }, 500);
     if (canRes.error) return json({ error: canRes.error.message }, 500);
     if (corteRes.error) return json({ error: corteRes.error.message }, 500);
+    if (perRes.error) return json({ error: perRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -147,6 +152,27 @@ Deno.serve(async (req: Request) => {
       invitacion: nombrePorId.get(c.invitacion_id) ?? "—",
     }));
 
+    // Personas: cada invitado individual, con su invitación, rol y corte
+    const perData = perRes.data ?? [];
+    const nombrePersona = new Map(perData.map((p) => [p.id, p.nombre]));
+    const cortePorPersona = new Map((corteRes.data ?? []).map((c: Record<string, any>) => [c.persona_id, c.rol]));
+    const invPorId = new Map(invs.map((i) => [i.id, i]));
+    const personas = perData.map((p) => {
+      const inv = invPorId.get(p.invitacion_id);
+      const r = porInvitacion.get(p.invitacion_id);
+      return {
+        nombre: p.nombre,
+        rol: p.rol,
+        acompananteDe: p.acompanante_de ? (nombrePersona.get(p.acompanante_de) ?? null) : null,
+        invitacion: inv?.nombre ?? "—",
+        categoria: inv?.categoria ?? null,
+        corte: cortePorPersona.get(p.id) ?? null,
+        mesa: p.mesa,
+        notas: p.notas,
+        estadoInvitacion: !r ? "pendiente" : r.attending ? "asiste" : "no asiste",
+      };
+    });
+
     // Compatibilidad con el panel anterior (página publicada hoy)
     const confirmed = rsvps.filter((r) => r.attending).length;
     const plusOnes = rsvps.filter((r) => r.attending && r.plus_one).length;
@@ -164,6 +190,7 @@ Deno.serve(async (req: Request) => {
       porCategoria,
       canciones,
       corte,
+      personas,
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
