@@ -624,6 +624,17 @@
   .propuesta-colores div { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--madera); }
   .propuesta-colores i { width: 52px; height: 52px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 6px 14px rgba(58, 46, 43, .25); }
   .propuesta-gracias { font-family: var(--serif); font-size: 26px; color: var(--verde-profundo); margin: 4px 0 8px; }
+  /* Madrina y padrino: celebración más grande */
+  .propuesta-card.especial { box-shadow: 0 0 0 2px #E2C08A, 0 0 34px rgba(226, 192, 138, .75), 0 26px 60px rgba(61, 72, 43, .18); }
+  .propuesta-card.especial::before { border-color: #C39858; }
+  .propuesta-card.especial .propuesta-gracias { font-family: var(--script); font-size: clamp(44px, 12vw, 56px); line-height: 1.05; color: var(--terracotta); }
+  @media (prefers-reduced-motion: no-preference) {
+    .propuesta-card.especial { animation: brilloDorado 2.4s ease-in-out infinite; }
+  }
+  @keyframes brilloDorado {
+    0%, 100% { box-shadow: 0 0 0 2px #E2C08A, 0 0 24px rgba(226, 192, 138, .55), 0 26px 60px rgba(61, 72, 43, .18); }
+    50% { box-shadow: 0 0 0 2px #E2C08A, 0 0 44px rgba(226, 192, 138, .95), 0 26px 60px rgba(61, 72, 43, .18); }
+  }
   .confeti { position: fixed; inset: 0; z-index: 195; pointer-events: none; }
   .pase-corte { margin: 10px 0 0; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--terracotta-deep); }
 
@@ -785,7 +796,7 @@
       <button type="button" class="propuesta-luego" id="propuesta-luego">Déjame pensarlo 🙈</button>
     </div>
     <div id="propuesta-paso2" hidden>
-      <p class="propuesta-gracias">¡Gracias por decir que sí! 🥹💕</p>
+      <p class="propuesta-gracias" id="propuesta-gracias">¡Gracias por decir que sí! 🥹💕</p>
       <p class="propuesta-intro" id="propuesta-mensaje"></p>
       <div class="propuesta-colores" aria-label="Colores de la corte de honor">
         <div><i style="background:#6E2638"></i>Vino</div>
@@ -2010,7 +2021,12 @@
     rpc('responder_corte', { p_codigo: codigo, p_id: p.id, p_acepta: true }).then(function(inv){
       invitacion = inv;
       pintarDressCorte();
-      lanzarConfeti();
+      var especial = p.rol === 'madrina' || p.rol === 'padrino';
+      document.querySelector('.propuesta-card').classList.toggle('especial', especial);
+      document.getElementById('propuesta-gracias').textContent = especial
+        ? (p.rol === 'madrina' ? '¡Tenemos madrina! 🥹💛' : '¡Tenemos padrino! 🥹💛')
+        : '¡Gracias por decir que sí! 🥹💕';
+      lanzarConfeti(especial);
       document.getElementById('propuesta-mensaje').textContent = {
         dama: 'Nos hace muy felices que seas una de nuestras damas de honor. Tus colores para ese día serán:',
         caballero: 'Nos hace muy felices que seas uno de nuestros caballeros de honor. Tus colores para ese día serán:',
@@ -2045,30 +2061,67 @@
   }
 
   // Confeti en los colores de la boda (se omite con reduced-motion)
-  function lanzarConfeti(){
+  function lanzarConfeti(grande){
     if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var cv = document.createElement('canvas'), ctx = cv.getContext('2d');
     cv.className = 'confeti';
     cv.width = innerWidth; cv.height = innerHeight;
     document.body.appendChild(cv);
     var colores = ['#B85F46', '#D9856F', '#C99598', '#68734A', '#8C9A78', '#C2A35C', '#6E2638', '#F6C9AE'];
+    var dorados = ['#C2A35C', '#E2C08A', '#D2A866'];
     var piezas = [];
-    for(var i = 0; i < 160; i++){
-      piezas.push({ x: cv.width / 2 + (Math.random() - .5) * 80, y: cv.height * .45, vx: (Math.random() - .5) * 14, vy: -Math.random() * 15 - 5,
-        w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - .5) * .3, c: colores[i % colores.length] });
+    var duracion = grande ? 6500 : 3200;
+    // Explosión de confeti desde un punto (x, y), con dirección opcional
+    function explosion(x, y, n, empuje, retraso){
+      for(var i = 0; i < n; i++){
+        piezas.push({ tipo: 'confeti', nace: retraso, x: x + (Math.random() - .5) * 60, y: y,
+          vx: (Math.random() - .5) * 14 + empuje, vy: -Math.random() * 16 - 5,
+          w: 6 + Math.random() * 6, h: 8 + Math.random() * 8, r: Math.random() * 6, vr: (Math.random() - .5) * .3,
+          c: (grande && i % 4 === 0) ? dorados[i % 3] : colores[i % colores.length] });
+      }
+    }
+    explosion(cv.width / 2, cv.height * .45, grande ? 220 : 160, 0, 0);
+    if(grande){
+      explosion(0, cv.height * .7, 120, 9, 450);              // desde la izquierda
+      explosion(cv.width, cv.height * .7, 120, -9, 900);      // desde la derecha
+      // Lluvia suave de corazones y pétalos desde arriba
+      for(var k = 0; k < 70; k++){
+        piezas.push({ tipo: k % 2 ? 'corazon' : 'petalo', nace: 300 + Math.random() * 3200,
+          x: Math.random() * cv.width, y: -30, vx: (Math.random() - .5) * .8, vy: 1.4 + Math.random() * 1.6,
+          s: 8 + Math.random() * 9, r: Math.random() * 6, vr: (Math.random() - .5) * .05, osc: Math.random() * 6,
+          c: ['#C99598', '#D9856F', '#B85F46', '#E2C08A', '#B87879'][k % 5] });
+      }
+    }
+    function corazon(s){
+      ctx.beginPath();
+      ctx.moveTo(0, s * .3);
+      ctx.bezierCurveTo(-s, -s * .3, -s * .45, -s, 0, -s * .45);
+      ctx.bezierCurveTo(s * .45, -s, s, -s * .3, 0, s * .3);
+      ctx.fill();
     }
     var inicio = performance.now();
     (function cuadro(t){
       var dt = t - inicio;
       ctx.clearRect(0, 0, cv.width, cv.height);
+      var alfa = Math.max(0, Math.min(1, (duracion - dt) / 900));
       piezas.forEach(function(p){
-        p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
-        ctx.globalAlpha = Math.max(0, 1 - dt / 3200);
-        ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * .6);
+        if(dt < p.nace) return;
+        ctx.save();
+        ctx.globalAlpha = alfa;
+        ctx.fillStyle = p.c;
+        if(p.tipo === 'confeti'){
+          p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+          ctx.translate(p.x, p.y); ctx.rotate(p.r);
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * .6);
+        } else {
+          p.osc += .04; p.x += p.vx + Math.sin(p.osc) * .6; p.y += p.vy; p.r += p.vr;
+          ctx.translate(p.x, p.y); ctx.rotate(p.r);
+          if(p.tipo === 'corazon') corazon(p.s);
+          else { ctx.beginPath(); ctx.ellipse(0, 0, p.s * .45, p.s * .8, 0, 0, Math.PI * 2); ctx.fill(); }
+        }
         ctx.restore();
       });
-      if(dt < 3200) requestAnimationFrame(cuadro); else cv.remove();
+      if(dt < duracion) requestAnimationFrame(cuadro); else cv.remove();
     })(inicio);
   }
 
