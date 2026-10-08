@@ -36,6 +36,22 @@ Deno.serve(async (req: Request) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
 
+    // Editar el nombre de una persona (p. ej. el +1 "por definir")
+    if (body?.accion === "editar_persona") {
+      const id = typeof body.id === "string" ? body.id : "";
+      const nombre = typeof body.nombre === "string" ? body.nombre.trim().replace(/\s+/g, " ") : "";
+      if (!/^[0-9a-f-]{36}$/.test(id)) return json({ error: "persona inválida" }, 400);
+      if (nombre.length > 80) return json({ error: "nombre muy largo" }, 400);
+      const { data: p, error: e1 } = await supabase.from("personas").select("rol").eq("id", id).maybeSingle();
+      if (e1) return json({ error: e1.message }, 500);
+      if (!p) return json({ error: "persona no encontrada" }, 404);
+      // Solo un acompañante puede volver a quedar "por definir"
+      if (!nombre && p.rol !== "acompanante") return json({ error: "el nombre es obligatorio" }, 400);
+      const { error: e2 } = await supabase.from("personas").update({ nombre: nombre || null }).eq("id", id);
+      if (e2) return json({ error: e2.message }, 500);
+      return json({ ok: true });
+    }
+
     const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes] = await Promise.all([
       supabase
         .from("rsvps")
@@ -161,6 +177,7 @@ Deno.serve(async (req: Request) => {
       const inv = invPorId.get(p.invitacion_id);
       const r = porInvitacion.get(p.invitacion_id);
       return {
+        id: p.id,
         nombre: p.nombre,
         rol: p.rol,
         acompananteDe: p.acompanante_de ? (nombrePersona.get(p.acompanante_de) ?? null) : null,

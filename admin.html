@@ -692,6 +692,14 @@
   .filtro-info { font-size: 12px; color: var(--texto-suave); width: 100%; text-align: left; }
   .filtro-info button { background: none; border: 0; padding: 4px; font: 600 12px var(--sans); color: var(--terracotta-deep); text-decoration: underline; cursor: pointer; }
   .vista[hidden] { display: none; }
+  .editar-btn[hidden] { display: none; }
+  .editar-btn { min-width: 32px; min-height: 32px; border: 0; background: none; cursor: pointer; font-size: 13px; opacity: .55; }
+  .editar-btn:hover, .editar-btn:focus-visible { opacity: 1; }
+  .editar-form { display: flex; flex-wrap: wrap; gap: 6px; }
+  .editar-form input { flex: 1 1 120px; min-height: 36px; margin: 0; padding: 0 8px; border: 1px solid var(--verde-olivo); border-radius: 8px; font: 13px var(--sans); }
+  .editar-form button { min-height: 36px; padding: 0 10px; border: 1px solid var(--linea); border-radius: 8px; background: #fff; font: 600 12px var(--sans); cursor: pointer; }
+  .editar-form button[type="submit"] { background: var(--verde-profundo); border-color: var(--verde-profundo); color: #fff; }
+  .editar-form .editar-msg { width: 100%; font-size: 11px; color: #a13a3a; }
 </style>
 </head>
 <body>
@@ -849,6 +857,7 @@
   }
   function renderPersonasAdmin(personas, porCategoria){
     var caja = document.getElementById('detail-personas');
+    editando = false; // volver a pintar descarta cualquier edición abierta
     var porDefinir = personas.filter(function(p){ return !p.nombre; }).length;
     var acomp = personas.filter(function(p){ return p.rol === 'acompanante'; }).length;
     var h = '<div class="admin-summary" style="margin-bottom:6px;">👥 Invitados (' + personas.length + ' personas · ' +
@@ -864,19 +873,22 @@
     var rolCorte = { dama: '💐 Dama', madrina: '💐 Madrina', caballero: '🤵 Caballero', padrino: '🤵 Padrino' };
     var estado = { pendiente: '<span style="color:var(--terracotta-deep)">Pendiente</span>', asiste: 'Asiste', 'no asiste': 'No asiste' };
     h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
-      TH + 'Persona</th>' + TH + 'Rol</th>' + TH + 'Invitación</th>' + TH + 'Corte</th>' + TH + 'Confirmación</th>' + TH + 'Mesa</th></tr></thead><tbody>';
+      TH + 'Persona</th>' + TH + 'Rol</th>' + TH + 'Invitación</th>' + TH + 'Corte</th>' + TH + 'Confirmación</th>' + TH + 'Mesa</th>' + TH + 'Acciones</th></tr></thead><tbody>';
     var cats = porCategoria.map(function(c){ return c.categoria; });
     personas.forEach(function(p){ var c = p.categoria || 'Sin categoría'; if(cats.indexOf(c) < 0) cats.push(c); });
     cats.forEach(function(cat){
       var grupo = personas.filter(function(p){ return (p.categoria || 'Sin categoría') === cat; });
       if(!grupo.length) return;
-      h += '<tr><td colspan="6" style="border:1px solid var(--linea); padding:8px 6px; background:var(--marfil);"><b>' + escapeHtml(cat) + '</b> · ' + grupo.length + (grupo.length === 1 ? ' persona' : ' personas') + '</td></tr>';
+      h += '<tr><td colspan="7" style="border:1px solid var(--linea); padding:8px 6px; background:var(--marfil);"><b>' + escapeHtml(cat) + '</b> · ' + grupo.length + (grupo.length === 1 ? ' persona' : ' personas') + '</td></tr>';
       grupo.sort(function(a, b){ return a.invitacion.localeCompare(b.invitacion) || (a.rol === 'principal' ? -1 : 1); });
       grupo.forEach(function(p){
         var nombre = p.nombre ? escapeHtml(p.nombre) : '<i style="color:var(--terracotta-deep)">Por definir</i>';
+        var acciones = (p.id ? '<button type="button" class="editar-btn" data-id="' + escapeHtml(p.id) + '" data-nombre="' + escapeHtml(p.nombre || '') +
+            '" data-rol="' + p.rol + '" aria-label="Editar nombre' + (p.nombre ? ' de ' + escapeHtml(p.nombre) : '') + '">✏️</button>' : '—');
         var rol = p.rol === 'principal' ? 'Principal' : 'Acompañante' + (p.acompananteDe ? ' de ' + escapeHtml(p.acompananteDe) : '');
         h += '<tr>' + TD + nombre + '</td>' + TD + rol + '</td>' + TD + escapeHtml(p.invitacion) + '</td>' +
-          TD + (p.corte ? rolCorte[p.corte] : '—') + '</td>' + TD + (estado[p.estadoInvitacion] || '—') + '</td>' + TD + escapeHtml(p.mesa || '—') + '</td></tr>';
+          TD + (p.corte ? rolCorte[p.corte] : '—') + '</td>' + TD + (estado[p.estadoInvitacion] || '—') + '</td>' + TD + escapeHtml(p.mesa || '—') + '</td>' +
+          '<td style="border:1px solid var(--linea); padding:6px; text-align:center;">' + acciones + '</td></tr>';
       });
     });
     caja.innerHTML = h + '</tbody></table></div>';
@@ -982,6 +994,48 @@
     if(fCategoria.value !== actual){ filtros.categoria = ''; }
   }
 
+  // Editar el nombre de una persona desde la vista Invitados
+  var editando = false;
+  var cajaPersonas = document.getElementById('detail-personas');
+  cajaPersonas.addEventListener('click', function(e){
+    var b = e.target.closest('.editar-btn');
+    if(b){
+      if(editando) return;
+      editando = true;
+      var celda = b.closest('tr').querySelector('td');
+      b.hidden = true;
+      celda.innerHTML = '<form class="editar-form" data-id="' + escapeHtml(b.dataset.id) + '" data-rol="' + b.dataset.rol + '">' +
+        '<input type="text" maxlength="80" value="' + escapeHtml(b.dataset.nombre) + '" placeholder="Nombre" aria-label="Nombre">' +
+        '<button type="submit">Guardar</button><button type="button" class="editar-cancelar">Cancelar</button><span class="editar-msg" role="alert"></span></form>';
+      var inp = celda.querySelector('input'); inp.focus(); inp.select();
+      return;
+    }
+    if(e.target.closest('.editar-cancelar')){ editando = false; renderInvitaciones(ultimoData); }
+  });
+  cajaPersonas.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var f = e.target, msg = f.querySelector('.editar-msg'), guardar = f.querySelector('[type=submit]');
+    var nombre = f.querySelector('input').value.trim();
+    if(!nombre && f.dataset.rol !== 'acompanante'){ msg.textContent = 'Escribe un nombre.'; return; }
+    guardar.disabled = true; guardar.textContent = 'Guardando…'; msg.textContent = '';
+    try{
+      var resp = await fetch(FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+        body: JSON.stringify({ password: storedPassword, accion: 'editar_persona', id: f.dataset.id, nombre: nombre })
+      });
+      if(!resp.ok) throw new Error((await resp.json().catch(function(){ return {}; })).error || 'error');
+      editando = false;
+      showSummary(await loadDetail(storedPassword));
+    } catch(err){
+      msg.textContent = 'No se pudo guardar' + (err.message && err.message !== 'error' ? ': ' + err.message : '') + '.';
+      guardar.disabled = false; guardar.textContent = 'Guardar';
+    }
+  });
+  cajaPersonas.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && editando){ editando = false; renderInvitaciones(ultimoData); }
+  });
+
   function showSummary(data){
     if(data.invitaciones){ ultimoData = data; llenarCategorias(data.porCategoria || []); aplicarVista(); return; }
     detailSummary.textContent = data.summary.confirmed + ' confirmados, ' + data.summary.plusOnes + ' acompañantes, ' + data.summary.declined + ' no asisten.';
@@ -1024,6 +1078,7 @@
       showSummary(data);
       if(refreshTimer) clearInterval(refreshTimer);
       refreshTimer = setInterval(async function(){
+        if(editando) return;
         try{ showSummary(await loadDetail(storedPassword)); } catch(e){}
       }, 60000);
     } catch(err){
