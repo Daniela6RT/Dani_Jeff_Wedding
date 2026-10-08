@@ -436,6 +436,7 @@
   .despl.abierto .despl-contenido { opacity: 1; transition-delay: .1s; }
   @media (max-width: 520px) { .despl-contenido { padding-left: 4px; } }
   @media (prefers-reduced-motion: reduce) { .despl-cuerpo, .despl-contenido, .despl-acc svg { transition: none; } }
+  .despl.sin-anim .despl-cuerpo, .despl.sin-anim .despl-contenido, .despl.sin-anim .despl-acc svg { transition: none; }
   .despl-contenido > .stay-plan { margin-bottom: 12px; }
   .despl-contenido .stay-datos { margin-bottom: 6px; }
   .despl-contenido .ruta-lista + .ruta-aviso, .despl-contenido .ruta-aviso + .ruta-contacto, .despl-contenido .ruta-lista + .ruta-contacto { margin-top: 14px; }
@@ -994,7 +995,7 @@
       <p class="dress-corte-nota">Estos dos colores son solo para la corte: el resto de invitados no los usará, así brillarán a nuestro lado 💕 Pronto te contaremos los detalles de tu look.</p>
     </div>
 
-    <div class="despl-lista">
+    <div class="despl-lista" data-uno-a-la-vez>
       <div class="despl" id="vestir-ellas">
         <button type="button" class="despl-btn" aria-expanded="false" aria-controls="vestir-ellas-cuerpo">
           <span class="despl-ico" aria-hidden="true">👗</span>
@@ -1622,7 +1623,26 @@
   }
   window.abrirDesplegable = function(id){ var d = document.getElementById(id); if(d && d.classList.contains('despl')) abrir(d, true); };
   document.querySelectorAll('.despl').forEach(function(d){
-    d.querySelector('.despl-btn').addEventListener('click', function(){ abrir(d, !d.classList.contains('abierto')); });
+    var btn = d.querySelector('.despl-btn');
+    btn.addEventListener('click', function(){
+      var abrirlo = !d.classList.contains('abierto');
+      var lista = d.parentNode;
+      if(abrirlo && lista.hasAttribute('data-uno-a-la-vez')){
+        // Solo un bloque abierto a la vez: cerrar los demás al instante y
+        // compensar el scroll para que el bloque tocado no se mueva
+        var antes = btn.getBoundingClientRect().top;
+        lista.querySelectorAll('.despl.abierto').forEach(function(o){
+          if(o === d) return;
+          o.classList.add('sin-anim');
+          abrir(o, false);
+          o.offsetHeight; // aplicar el cierre antes de medir
+          o.classList.remove('sin-anim');
+        });
+        var desfase = btn.getBoundingClientRect().top - antes;
+        if(desfase) window.scrollBy(0, desfase);
+      }
+      abrir(d, abrirlo);
+    });
   });
   // Un enlace interno a un bloque (p. ej. #ruta-taxi) lo abre
   document.addEventListener('click', function(e){
