@@ -678,7 +678,80 @@
   /* Vistas y filtros del panel */
   .panel-barra { padding: 10px 0 8px; margin: 14px 0 4px; border-bottom: 1px solid var(--linea); }
   .vistas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .vistas.sub { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 560px) { .vistas.sub .vista-btn { padding: 4px 6px; white-space: normal; line-height: 1.25; font-size: 11.5px; } }
   @media (max-width: 560px) { .vistas { grid-template-columns: 1fr 1fr; } }
+  /* Dos áreas: invitados y gestión */
+  .areas { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0 0 18px; background: var(--marfil-warm); border-radius: 16px; }
+  .area-btn { min-height: 46px; border: 0; border-radius: 12px; background: transparent; font: 600 13px var(--sans); letter-spacing: .04em; color: var(--texto-suave); cursor: pointer; }
+  .area-btn[aria-selected="true"] { background: #fff; color: var(--verde-profundo); box-shadow: 0 2px 8px rgba(58, 46, 43, .1); }
+  .area[hidden] { display: none; }
+  .area-gestion-head { text-align: left; padding: 14px 16px; border-radius: 14px; background: var(--verde-profundo); color: var(--marfil); margin-bottom: 4px; }
+  .area-gestion-head b { font-family: var(--serif); font-weight: 400; font-size: 20px; display: block; }
+  .area-gestion-head span { font-size: 12px; opacity: .8; }
+  .area-gestion .vista-btn[aria-selected="true"] { background: var(--terracotta-deep); border-color: var(--terracotta-deep); }
+  /* Gestión de proveedores */
+  .prov-card { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+  .prov-top { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+  .prov-top h3 { font-family: var(--serif); font-weight: 400; font-size: 19px; margin: 0; color: var(--verde-profundo); }
+  .prov-meta { font-size: 12px; color: var(--texto-suave); margin-top: 2px; }
+  .prov-notas { font-size: 12px; color: var(--texto-suave); margin: 8px 0 0; white-space: pre-line; }
+  .prov-cifras { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; margin-top: 10px; }
+  .prov-cifras b { font-weight: 600; }
+  .contrato { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 99px; margin-top: 6px; }
+  .contrato.firmado { background: #E6EDDD; color: var(--verde-profundo); }
+  .contrato.pendiente { background: #F6E7D3; color: #7A4B12; }
+  .contrato.no_aplica { background: var(--marfil-warm); color: var(--texto-suave); }
+  .fin-alerta { font-size: 12px; color: #7A4B12; background: #F6E7D3; border-radius: 10px; padding: 8px 12px; margin: 0 0 10px; }
+  .prov-aviso { font-size: 11px; color: #7A4B12; background: #F6E7D3; border-radius: 8px; padding: 6px 10px; margin-top: 8px; }
+  .acciones-mini { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn-mini { min-height: 34px; padding: 0 12px; border: 1px solid var(--linea); border-radius: 8px; background: #fff; font: 600 12px var(--sans); color: var(--madera); cursor: pointer; }
+  .btn-mini.peligro { color: #8E2F1A; }
+  .btn-mini.principal { background: var(--verde-profundo); border-color: var(--verde-profundo); color: #fff; }
+  .btn-mini.solo-icono { min-width: 34px; padding: 0; }
+  .pend-caja { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; margin-bottom: 22px; }
+  .pend-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .pend-head b { font-family: var(--serif); font-weight: 400; font-size: 19px; color: var(--verde-profundo); }
+  .pend-sub { font-size: 12px; color: var(--texto-suave); margin: 4px 0 10px; }
+  .pend-fila { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--linea); flex-wrap: wrap; }
+  .pend-fila .pend-info { flex: 1 1 220px; min-width: 0; }
+  .pend-fila .pend-nombre { font-size: 14px; font-weight: 600; color: var(--madera); }
+  .pend-fila .pend-notas { font-size: 11.5px; color: var(--texto-suave); margin-top: 3px; white-space: pre-line; }
+  .pend-fila .pend-valor { font-size: 12px; color: var(--madera); margin-top: 3px; }
+  .estado-pago.por_cotizar { background: #F4DAD2; color: #8E2F1A; }
+  .estado-pago.cotizando { background: #F6E7D3; color: #7A4B12; }
+  .estado-pago.no_aplica { background: var(--marfil-warm); color: var(--texto-suave); }
+  .pend-resueltos summary { cursor: pointer; font-size: 12px; font-weight: 600; color: var(--texto-suave); padding: 8px 0 2px; border-top: 1px solid var(--linea); }
+  .pend-resueltos .pend-fila { opacity: .75; }
+  .cot-grupo { margin-bottom: 18px; }
+  .cot-grupo > h4 { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--texto-suave); margin: 0 0 8px; }
+  .cot-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .cot-card { position: relative; display: flex; flex-direction: column; gap: 6px; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px; }
+  .cot-card.descartada { opacity: .6; }
+  .cot-card.contratada { border-color: var(--verde-olivo); box-shadow: inset 0 0 0 1px var(--verde-olivo); }
+  .cot-card h5 { font-family: var(--serif); font-weight: 400; font-size: 17px; margin: 0; color: var(--verde-profundo); padding-right: 70px; }
+  .cot-monto { font-family: var(--serif); font-size: 22px; color: var(--madera); }
+  .cot-dif { font-size: 11px; color: var(--texto-suave); }
+  .cot-meta { font-size: 12px; color: var(--texto-suave); }
+  .cot-notas { font-size: 12px; color: var(--madera); margin: 0; white-space: pre-line; }
+  .cot-estado { position: absolute; top: 12px; right: 12px; }
+  .cot-tag { display: inline-block; align-self: flex-start; font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: #E6EDDD; color: var(--verde-profundo); }
+  .cot-card .acciones-mini { margin-top: auto; padding-top: 6px; }
+  .estado-pago.evaluacion { background: #F6E7D3; color: #7A4B12; }
+  .estado-pago.contratada { background: #E6EDDD; color: var(--verde-profundo); }
+  .estado-pago.descartada { background: var(--marfil-warm); color: var(--texto-suave); }
+  .archivo-actual { font-size: 12px; margin-top: 6px; text-align: left; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .archivo-actual label { display: inline-flex; gap: 4px; align-items: center; margin: 0; font-weight: 500; }
+  .archivo-actual input { width: auto; min-height: 0; }
+  dialog.form-dlg { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; border: 0; border-radius: 16px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  dialog.form-dlg::backdrop { background: rgba(30, 36, 22, .45); }
+  .form-dlg h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin: 0 0 14px; color: var(--verde-profundo); }
+  .form-dlg label { display: block; font-size: 12px; font-weight: 600; color: var(--madera); margin: 10px 0 4px; text-align: left; }
+  .form-dlg input, .form-dlg textarea, .form-dlg select { width: 100%; box-sizing: border-box; min-height: 42px; margin: 0; padding: 8px 12px; border: 1px solid var(--linea); border-radius: 10px; font: 14px var(--sans); color: var(--madera); background: #fff; }
+  .form-dlg textarea { min-height: 70px; resize: vertical; }
+  .form-dlg .ayuda { font-size: 11px; color: var(--texto-suave); margin-top: 3px; text-align: left; }
+  .form-dlg .botones { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+  .form-dlg .error { color: #a13a3a; font-size: 12px; margin-top: 10px; min-height: 14px; text-align: left; }
   .vista-btn { min-height: 40px; padding: 0 14px; border: 1px solid var(--linea); border-radius: 999px; background: #fff; font: 600 12px var(--sans); color: var(--madera); cursor: pointer; white-space: nowrap; }
   .vista-btn[aria-selected="true"] { background: var(--verde-profundo); border-color: var(--verde-profundo); color: #fff; }
   .vista-btn small { font-weight: 500; opacity: .75; margin-left: 2px; }
@@ -692,6 +765,33 @@
   .filtro-info { font-size: 12px; color: var(--texto-suave); width: 100%; text-align: left; }
   .filtro-info button { background: none; border: 0; padding: 4px; font: 600 12px var(--sans); color: var(--terracotta-deep); text-decoration: underline; cursor: pointer; }
   .vista[hidden] { display: none; }
+  /* Pagos */
+  .fin-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+  @media (max-width: 560px) { .fin-cards { grid-template-columns: 1fr; } }
+  .fin-card { background: #fff; border: 1px solid var(--linea); border-radius: 12px; padding: 12px 14px; }
+  .fin-card small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); }
+  .fin-card b { display: block; font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--verde-profundo); margin-top: 4px; }
+  .fin-card.saldo b { color: var(--terracotta-deep); }
+  .fin-barra { height: 8px; border-radius: 99px; background: var(--marfil-warm); overflow: hidden; margin: 4px 0 2px; }
+  .fin-barra i { display: block; height: 100%; background: var(--verde-olivo); border-radius: 99px; }
+  .fin-titulo { font-size: 13px; font-weight: 600; color: var(--madera); margin: 20px 0 6px; }
+  .fin-aportes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .fin-aportes .fin-card b { font-size: 18px; }
+  .fin-aportes .fin-card span { font-size: 11px; color: var(--texto-suave); }
+  .fin-aportes { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .aporte-grupo b { font-size: 22px !important; }
+  .aporte-desglose { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--linea); display: grid; gap: 10px; }
+  .aporte-linea { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 2px 8px; }
+  .aporte-linea > span:first-child { font-size: 13px !important; font-weight: 600; color: var(--madera) !important; }
+  .aporte-linea > b { font-family: var(--sans) !important; font-size: 13px !important; font-weight: 600; margin: 0 !important; display: inline !important; }
+  .aporte-linea .fin-barra { grid-column: 1 / -1; margin: 0; }
+  .aporte-linea .aporte-pct { grid-column: 1 / -1; }
+  .estado-pago { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .estado-pago.pagado { background: #E6EDDD; color: var(--verde-profundo); }
+  .estado-pago.parcial { background: #F6E7D3; color: #7A4B12; }
+  .estado-pago.pendiente { background: var(--marfil-warm); color: var(--madera); }
+  .estado-pago.vencido { background: #F4DAD2; color: #8E2F1A; }
+  .num { text-align: right; white-space: nowrap; }
   .editar-btn[hidden] { display: none; }
   .editar-btn { min-width: 32px; min-height: 32px; border: 0; background: none; cursor: pointer; font-size: 13px; opacity: .55; }
   .editar-btn:hover, .editar-btn:focus-visible { opacity: 1; }
@@ -706,7 +806,7 @@
 <header class="admin-head">
   <div class="seal">D&amp;J</div>
   <h1>Administración</h1>
-  <p>Confirmaciones · corte · canciones</p>
+  <p>Confirmaciones · corte · canciones · pagos</p>
 </header>
 <div class="admin-panel" id="login-panel">
   <div id="login-box">
@@ -717,6 +817,11 @@
   </div>
   <div id="admin-detail" style="display:none;">
     <button type="button" class="submit-btn refresh-btn" style="margin:0 0 14px;">Actualizar ahora</button>
+    <div class="areas" role="tablist" aria-label="Áreas del panel">
+      <button type="button" class="area-btn" role="tab" data-area="invitados" aria-selected="true">💌 Invitados</button>
+      <button type="button" class="area-btn" role="tab" data-area="gestion" aria-selected="false">💼 Gestión</button>
+    </div>
+    <div class="area" id="area-invitados">
     <div class="admin-summary" id="detail-summary"></div>
     <div class="panel-barra">
       <div class="vistas" role="tablist" aria-label="Vistas del panel">
@@ -755,10 +860,83 @@
     <div class="vista" id="detail-personas" style="margin-top:12px; text-align:left;" hidden></div>
     <div class="vista" id="detail-corte" style="margin-top:12px; text-align:left;" hidden></div>
     <div class="vista" id="detail-canciones" style="margin-top:12px; text-align:left;" hidden></div>
+    </div>
+    <div class="area area-gestion" id="area-gestion" hidden>
+      <div class="area-gestion-head"><b>Gestión de la boda</b><span>Cotizaciones, proveedores, planes de pago y lo que llevamos pagado</span></div>
+      <div class="panel-barra">
+        <div class="vistas sub" role="tablist" aria-label="Vistas de gestión">
+          <button type="button" class="vista-btn" role="tab" data-gvista="resumen" aria-selected="true">📊 Resumen <small id="n-pagos"></small></button>
+          <button type="button" class="vista-btn" role="tab" data-gvista="cotizaciones" aria-selected="false">📄 Cotizaciones <small id="n-cotizaciones"></small></button>
+          <button type="button" class="vista-btn" role="tab" data-gvista="proveedores" aria-selected="false">🤝 Proveedores <small id="n-proveedores"></small></button>
+        </div>
+      </div>
+      <div class="vista" id="detail-pagos" style="margin-top:12px; text-align:left;"></div>
+      <div class="vista" id="detail-cotizaciones" style="margin-top:12px; text-align:left;" hidden></div>
+      <div class="vista" id="detail-proveedores" style="margin-top:12px; text-align:left;" hidden></div>
+    </div>
     <button type="button" class="submit-btn refresh-btn" style="margin-top:14px;">Actualizar ahora</button>
     <div style="font-size:11px; color:var(--texto-suave); margin-top:8px;">Se actualiza automáticamente cada minuto.</div>
   </div>
 </div>
+<dialog class="form-dlg" id="dlg-proveedor" aria-labelledby="dlg-prov-titulo">
+  <form method="dialog" id="form-proveedor" novalidate>
+    <h3 id="dlg-prov-titulo">Nuevo proveedor</h3>
+    <label for="fp-nombre">Nombre *</label><input id="fp-nombre" maxlength="120" required>
+    <label for="fp-categoria">Categoría</label><input id="fp-categoria" maxlength="60" list="fp-categorias" placeholder="Ej. Música, Flores, Decoración">
+    <datalist id="fp-categorias"></datalist>
+    <label for="fp-total">Valor total (COP) *</label><input id="fp-total" inputmode="numeric" placeholder="0" required>
+    <div class="ayuda" id="fp-total-ayuda"></div>
+    <label for="fp-contrato">Contrato</label>
+    <select id="fp-contrato"><option value="pendiente">📝 Pendiente de firma</option><option value="firmado">✅ Firmado</option><option value="no_aplica">No aplica (compra directa)</option></select>
+    <div id="fp-fecha-caja" hidden><label for="fp-contrato-fecha">Fecha de firma</label><input id="fp-contrato-fecha" type="date"></div>
+    <label for="fp-contacto">Contacto</label><input id="fp-contacto" maxlength="120" placeholder="Nombre o teléfono">
+    <label for="fp-notas">Notas</label><textarea id="fp-notas" maxlength="1000"></textarea>
+    <div class="error" id="fp-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
+<dialog class="form-dlg" id="dlg-cotizacion" aria-labelledby="dlg-cot-titulo">
+  <form method="dialog" id="form-cotizacion" novalidate>
+    <h3 id="dlg-cot-titulo">Nueva cotización</h3>
+    <label for="fq-nombre">Proveedor *</label><input id="fq-nombre" maxlength="120" required placeholder="Nombre de la empresa o persona">
+    <label for="fq-categoria">Categoría</label><input id="fq-categoria" maxlength="60" list="fp-categorias" placeholder="Ej. Música, Flores, Decoración">
+    <label for="fq-monto">Valor cotizado (COP) *</label><input id="fq-monto" inputmode="numeric" placeholder="0" required>
+    <div class="ayuda" id="fq-monto-ayuda"></div>
+    <label for="fq-fecha">Fecha de la cotización</label><input id="fq-fecha" type="date">
+    <label for="fq-contacto">Contacto</label><input id="fq-contacto" maxlength="120" placeholder="Nombre o teléfono">
+    <label for="fq-notas">Qué incluye / notas</label><textarea id="fq-notas" maxlength="1000"></textarea>
+    <label for="fq-archivo">Archivo de la cotización</label><input id="fq-archivo" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.heic">
+    <div class="ayuda">PDF o foto, máximo 8 MB.</div>
+    <div class="archivo-actual" id="fq-actual" hidden></div>
+    <div class="error" id="fq-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
+<dialog class="form-dlg" id="dlg-pendiente" aria-labelledby="dlg-pend-titulo">
+  <form method="dialog" id="form-pendiente" novalidate>
+    <h3 id="dlg-pend-titulo">Nuevo pendiente</h3>
+    <label for="fe-nombre">Qué falta contratar *</label><input id="fe-nombre" maxlength="120" required placeholder="Ej. Torta y postres">
+    <label for="fe-categoria">Categoría *</label><input id="fe-categoria" maxlength="60" list="fp-categorias" required placeholder="Ej. Torta y postres">
+    <div class="ayuda">Las cotizaciones y proveedores con esta misma categoría actualizan su estado solos.</div>
+    <label for="fe-estimado">Presupuesto estimado (COP)</label><input id="fe-estimado" inputmode="numeric" placeholder="Opcional">
+    <div class="ayuda" id="fe-estimado-ayuda"></div>
+    <label for="fe-notas">Notas</label><textarea id="fe-notas" maxlength="1000"></textarea>
+    <div class="error" id="fe-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
+<dialog class="form-dlg" id="dlg-cuota" aria-labelledby="dlg-cuota-titulo">
+  <form method="dialog" id="form-cuota" novalidate>
+    <h3 id="dlg-cuota-titulo">Nueva cuota</h3>
+    <div class="ayuda" id="fc-proveedor" style="margin:-8px 0 6px;"></div>
+    <label for="fc-concepto">Concepto *</label><input id="fc-concepto" maxlength="80" placeholder="Ej. Anticipo 50%" required>
+    <label for="fc-monto">Monto (COP) *</label><input id="fc-monto" inputmode="numeric" placeholder="0" required>
+    <div class="ayuda" id="fc-monto-ayuda"></div>
+    <label for="fc-fecha">Fecha límite</label><input id="fc-fecha" type="date">
+    <div class="error" id="fc-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
 
 <script>
 // Panel de administración: los datos solo llegan con la contraseña correcta
@@ -854,6 +1032,470 @@
     renderCancionesAdmin(data.canciones || []);
     renderCorteAdmin(data.corte || []);
     renderPersonasAdmin(data.personas || [], data.porCategoria || []);
+    renderPagosAdmin(data.finanzas);
+    renderProveedoresAdmin(data.finanzas);
+    renderCotizacionesAdmin(data.finanzas);
+  }
+  function renderPendientes(fin){
+    var lista = fin.pendientes || [];
+    var etiqueta = { por_cotizar: 'Por cotizar', cotizando: 'Cotizando', contratado: '✅ Contratado', no_aplica: 'No aplica' };
+    var cuenta = function(e){ return lista.filter(function(p){ return p.estado === e; }).length; };
+    var activos = lista.filter(function(p){ return p.estado === 'por_cotizar' || p.estado === 'cotizando'; })
+      .sort(function(a, b){ return (a.estado === 'por_cotizar' ? 0 : 1) - (b.estado === 'por_cotizar' ? 0 : 1); });
+    var resueltos = lista.filter(function(p){ return p.estado === 'contratado' || p.estado === 'no_aplica'; });
+    var estimadoSinCot = activos.filter(function(p){ return p.estado === 'por_cotizar' && p.estimado; }).reduce(function(n, p){ return n + p.estimado; }, 0);
+    var fila = function(p){
+      var valor = p.estado === 'contratado' ? 'Con ' + escapeHtml(p.proveedores.join(', '))
+        : p.estado === 'cotizando' ? p.cotizaciones + (p.cotizaciones === 1 ? ' cotización' : ' cotizaciones') + ' · desde ' + pesos(p.desde)
+        : p.estimado ? 'Estimado: ' + pesos(p.estimado) : '';
+      var acciones = p.estado === 'no_aplica'
+        ? '<button type="button" class="btn-mini" data-accion="reactivar-pendiente" data-id="' + p.id + '">Reactivar</button>' +
+          '<button type="button" class="btn-mini solo-icono peligro" data-accion="borrar-pendiente" data-id="' + p.id + '" aria-label="Eliminar">🗑️</button>'
+        : (p.estado !== 'contratado' ? '<button type="button" class="btn-mini" data-accion="cotizar-pendiente" data-id="' + p.id + '">+ Cotización</button>' : '') +
+          '<button type="button" class="btn-mini solo-icono" data-accion="editar-pendiente" data-id="' + p.id + '" aria-label="Editar">✏️</button>' +
+          (p.estado !== 'contratado' ? '<button type="button" class="btn-mini" data-accion="no-aplica-pendiente" data-id="' + p.id + '">No aplica</button>' : '');
+      return '<div class="pend-fila"><div class="pend-info"><span class="estado-pago ' + p.estado + '">' + etiqueta[p.estado] + '</span> ' +
+        '<span class="pend-nombre">' + escapeHtml(p.nombre) + '</span>' +
+        (valor ? '<div class="pend-valor">' + valor + '</div>' : '') +
+        (p.notas && p.estado !== 'contratado' ? '<div class="pend-notas">' + escapeHtml(p.notas) + '</div>' : '') + '</div>' +
+        '<div class="acciones-mini">' + acciones + '</div></div>';
+    };
+    var h = '<div class="pend-caja"><div class="pend-head"><b>📋 Por contratar</b>' +
+      '<button type="button" class="btn-mini principal" data-accion="nuevo-pendiente">+ Añadir pendiente</button></div>' +
+      '<div class="pend-sub">' + cuenta('contratado') + ' de ' + (lista.length - cuenta('no_aplica')) + ' contratados · ' +
+      cuenta('cotizando') + ' cotizando · ' + cuenta('por_cotizar') + ' por cotizar' +
+      (estimadoSinCot ? ' · estimado de lo que falta cotizar: ' + pesos(estimadoSinCot) : '') + '</div>';
+    h += activos.length ? activos.map(fila).join('') : '<div class="pend-sub">¡Todo está contratado! 🎉</div>';
+    if(resueltos.length) h += '<details class="pend-resueltos"><summary>Ya resueltos (' + resueltos.length + ')</summary>' + resueltos.map(fila).join('') + '</details>';
+    return h + '</div>';
+  }
+  var filtroCot = 'evaluacion';
+  function renderCotizacionesAdmin(fin){
+    var caja = document.getElementById('detail-cotizaciones');
+    if(!fin || !fin.cotizaciones){ caja.innerHTML = ''; return; }
+    var abiertoResueltos = !!caja.querySelector('.pend-resueltos[open]');
+    var todas = fin.cotizaciones;
+    var enEval = todas.filter(function(c){ return c.estado === 'evaluacion'; }).length;
+    document.getElementById('n-cotizaciones').textContent = enEval || '';
+    document.getElementById('n-cotizaciones').title = enEval + ' en evaluación';
+    var cuenta = function(e){ return todas.filter(function(c){ return !e || c.estado === e; }).length; };
+    var h = renderPendientes(fin) + '<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">' +
+      '<div class="admin-summary" style="margin:0;">📄 Cotizaciones</div>' +
+      '<button type="button" class="btn-mini principal" data-accion="nueva-cotizacion">+ Nueva cotización</button></div>' +
+      '<div class="chips" style="margin-bottom:14px;">' + [['evaluacion', 'En evaluación'], ['contratada', 'Contratadas'], ['descartada', 'Descartadas'], ['', 'Todas']].map(function(f){
+        return '<button type="button" class="chip" data-filtro-cot="' + f[0] + '" aria-pressed="' + (filtroCot === f[0]) + '">' + f[1] + ' (' + cuenta(f[0]) + ')</button>';
+      }).join('') + '</div>';
+    var lista = todas.filter(function(c){ return !filtroCot || c.estado === filtroCot; });
+    if(!lista.length){
+      caja.innerHTML = h + '<div style="font-size:12px; color:var(--texto-suave);">' + (todas.length ? 'No hay cotizaciones en este estado.' : 'Aún no hay cotizaciones. Añade la primera para empezar a comparar.') + '</div>';
+      if(abiertoResueltos) caja.querySelector('.pend-resueltos').open = true;
+      return;
+    }
+    var etiqueta = { evaluacion: 'En evaluación', contratada: 'Contratada', descartada: 'Descartada' };
+    var cats = [];
+    lista.forEach(function(c){ var k = c.categoria || 'Sin categoría'; if(cats.indexOf(k) < 0) cats.push(k); });
+    cats.sort(function(a, b){ return a === 'Sin categoría' ? 1 : b === 'Sin categoría' ? -1 : a.localeCompare(b); });
+    cats.forEach(function(cat){
+      var grupo = lista.filter(function(c){ return (c.categoria || 'Sin categoría') === cat; }).sort(function(a, b){ return a.monto - b.monto; });
+      // La más económica se calcula entre las que siguen en evaluación
+      var evalGrupo = todas.filter(function(c){ return (c.categoria || 'Sin categoría') === cat && c.estado === 'evaluacion'; });
+      var minimo = evalGrupo.length > 1 ? Math.min.apply(null, evalGrupo.map(function(c){ return c.monto; })) : null;
+      h += '<div class="cot-grupo"><h4>' + escapeHtml(cat) + ' · ' + grupo.length + '</h4><div class="cot-lista">';
+      grupo.forEach(function(c){
+        var acciones = c.estado === 'evaluacion'
+          ? '<button type="button" class="btn-mini principal" data-accion="contratar" data-id="' + c.id + '">✅ Contratar</button>' +
+            '<button type="button" class="btn-mini solo-icono" data-accion="editar-cotizacion" data-id="' + c.id + '" aria-label="Editar">✏️</button>' +
+            '<button type="button" class="btn-mini" data-accion="descartar" data-id="' + c.id + '">Descartar</button>'
+          : c.estado === 'descartada'
+          ? '<button type="button" class="btn-mini" data-accion="reabrir" data-id="' + c.id + '">↩︎ Volver a evaluar</button>' +
+            '<button type="button" class="btn-mini solo-icono peligro" data-accion="borrar-cotizacion" data-id="' + c.id + '" aria-label="Eliminar">🗑️</button>'
+          : (c.proveedorId ? '<button type="button" class="btn-mini" data-accion="ver-proveedor" data-id="' + c.proveedorId + '">Ver proveedor →</button>' : '');
+        h += '<div class="cot-card ' + c.estado + '"><span class="cot-estado"><span class="estado-pago ' + c.estado + '">' + etiqueta[c.estado] + '</span></span>' +
+          '<h5>' + escapeHtml(c.nombre) + '</h5>' +
+          (minimo !== null && c.estado === 'evaluacion' && c.monto === minimo ? '<span class="cot-tag">💲 La más económica</span>' : '') +
+          '<div><div class="cot-monto">' + pesos(c.monto) + '</div>' +
+          (minimo !== null && c.estado === 'evaluacion' && c.monto > minimo ? '<div class="cot-dif">+' + pesos(c.monto - minimo) + ' que la más económica</div>' : '') + '</div>' +
+          ((c.contacto || c.fecha) ? '<div class="cot-meta">' + escapeHtml([c.contacto, c.fecha ? 'Cotizada el ' + fechaCorta(c.fecha) : ''].filter(Boolean).join(' · ')) + '</div>' : '') +
+          (c.notas ? '<p class="cot-notas">' + escapeHtml(c.notas) + '</p>' : '') +
+          (c.archivo && /^https:\/\//.test(c.archivo) ? '<a href="' + escapeHtml(c.archivo) + '" target="_blank" rel="noopener" style="font-size:12px;">📎 Ver cotización (' + (c.archivoTipo === 'pdf' ? 'PDF' : 'imagen') + ')</a>' : '') +
+          '<div class="acciones-mini">' + acciones + '</div></div>';
+      });
+      h += '</div></div>';
+    });
+    caja.innerHTML = h;
+    var det = caja.querySelector('.pend-resueltos'); if(det && abiertoResueltos) det.open = true;
+  }
+  function etiquetaContrato(p){
+    if(p.contrato === 'firmado') return '<span class="contrato firmado">✅ Contrato firmado' + (p.contratoFecha ? ' · ' + fechaCorta(p.contratoFecha) : '') + '</span>';
+    if(p.contrato === 'no_aplica') return '<span class="contrato no_aplica">Sin contrato (compra directa)</span>';
+    if(p.contrato === 'pendiente') return '<span class="contrato pendiente">📝 Contrato pendiente de firma</span>';
+    return '';
+  }
+  function avisoContratos(fin){
+    var pend = fin.proveedores.filter(function(p){ return p.contrato === 'pendiente'; });
+    return pend.length ? '<div class="fin-alerta">📝 ' + (pend.length === 1 ? 'Falta firmar el contrato de ' : 'Faltan firmar ' + pend.length + ' contratos: ') +
+      pend.map(function(p){ return '<b>' + escapeHtml(p.nombre) + '</b>'; }).join(', ') + '.</div>' : '';
+  }
+  function renderProveedoresAdmin(fin){
+    var caja = document.getElementById('detail-proveedores');
+    if(!fin){ caja.innerHTML = ''; return; }
+    document.getElementById('n-proveedores').textContent = fin.proveedores.length;
+    var etiquetaEstado = { pagado: 'Pagado', parcial: 'Parcial', pendiente: 'Pendiente', vencido: 'Vencido' };
+    var h = '<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px;">' +
+      '<div class="admin-summary" style="margin:0;">🤝 ' + fin.proveedores.length + (fin.proveedores.length === 1 ? ' proveedor' : ' proveedores') + '</div>' +
+      '<button type="button" class="btn-mini principal" data-accion="nuevo-proveedor">+ Nuevo proveedor</button></div>' + avisoContratos(fin);
+    if(!fin.proveedores.length) h += '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay proveedores. Añade el primero.</div>';
+    fin.proveedores.forEach(function(p){
+      var cuotas = fin.plan.filter(function(c){ return c.proveedorId === p.id; });
+      var sumaPlan = cuotas.reduce(function(n, c){ return n + c.monto; }, 0);
+      h += '<div class="prov-card" id="prov-' + p.id + '"><div class="prov-top"><div><h3>' + escapeHtml(p.nombre) + '</h3>' +
+        '<div class="prov-meta">' + escapeHtml([p.categoria, p.contacto].filter(Boolean).join(' · ') || 'Sin categoría') + '</div>' + etiquetaContrato(p) + '</div>' +
+        '<div class="acciones-mini"><button type="button" class="btn-mini" data-accion="editar-proveedor" data-id="' + p.id + '">✏️ Editar</button>' +
+        (p.pagado ? '' : '<button type="button" class="btn-mini peligro" data-accion="borrar-proveedor" data-id="' + p.id + '">Eliminar</button>') + '</div></div>' +
+        (p.notas ? '<p class="prov-notas">' + escapeHtml(p.notas) + '</p>' : '') +
+        (function(){ var c = (fin.cotizaciones || []).filter(function(x){ return x.proveedorId === p.id && x.archivo; })[0];
+          return c && /^https:\/\//.test(c.archivo) ? '<a href="' + escapeHtml(c.archivo) + '" target="_blank" rel="noopener" style="display:inline-block; font-size:12px; margin-top:6px;">📎 Cotización aceptada</a>' : ''; })() +
+        '<div class="prov-cifras"><span>Total <b>' + pesos(p.total) + '</b></span><span>Pagado <b>' + pesos(p.pagado) + '</b></span><span>Falta <b style="color:var(--terracotta-deep)">' + pesos(p.saldo) + '</b></span></div>';
+      h += '<div class="fin-titulo" style="margin-top:14px;">Plan de pagos</div>';
+      if(cuotas.length){
+        h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
+          TH + 'Concepto</th>' + TH + 'Monto</th>' + TH + 'Fecha límite</th>' + TH + 'Estado</th>' + TH + 'Acciones</th></tr></thead><tbody>';
+        cuotas.forEach(function(c){
+          h += '<tr>' + TD + escapeHtml(c.concepto) + '</td><td class="num" style="border:1px solid var(--linea); padding:6px;">' + pesos(c.monto) + '</td>' +
+            '<td style="border:1px solid var(--linea); padding:6px; white-space:nowrap;">' + (c.fechaLimite ? fechaCorta(c.fechaLimite) : '—') + '</td>' +
+            TD + '<span class="estado-pago ' + c.estado + '">' + etiquetaEstado[c.estado] + '</span></td>' +
+            '<td style="border:1px solid var(--linea); padding:6px; white-space:nowrap;"><button type="button" class="btn-mini solo-icono" data-accion="editar-cuota" data-id="' + c.id + '" aria-label="Editar ' + escapeHtml(c.concepto) + '">✏️</button> ' +
+            (c.pagado ? '' : '<button type="button" class="btn-mini solo-icono peligro" data-accion="borrar-cuota" data-id="' + c.id + '" aria-label="Eliminar ' + escapeHtml(c.concepto) + '">🗑️</button>') + '</td></tr>';
+        });
+        h += '</tbody></table></div>';
+      } else h += '<div style="font-size:12px; color:var(--texto-suave);">Sin cuotas definidas.</div>';
+      if(cuotas.length && sumaPlan !== p.total){
+        h += '<div class="prov-aviso">Las cuotas suman ' + pesos(sumaPlan) + ' y el total es ' + pesos(p.total) + ' (' + (sumaPlan < p.total ? 'faltan ' + pesos(p.total - sumaPlan) : 'sobran ' + pesos(sumaPlan - p.total)) + ').</div>';
+      }
+      h += '<div class="acciones-mini" style="margin-top:10px;"><button type="button" class="btn-mini" data-accion="nueva-cuota" data-id="' + p.id + '">+ Añadir cuota</button>' +
+        (!cuotas.length && p.total ? '<button type="button" class="btn-mini" data-accion="plan-50" data-id="' + p.id + '">Anticipo 50% + saldo 50%</button>' : '') + '</div></div>';
+    });
+    caja.innerHTML = h;
+  }
+
+  // Acciones de gestión (proveedores y cuotas)
+  async function accionAdmin(datos){
+    var resp = await fetch(FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      body: JSON.stringify(Object.assign({ password: storedPassword }, datos))
+    });
+    var r = await resp.json().catch(function(){ return {}; });
+    if(!resp.ok) throw new Error(r.error || 'No se pudo guardar');
+    showSummary(await loadDetail(storedPassword));
+  }
+  var aNumero = function(v){ var d = String(v || '').replace(/\D/g, ''); return d ? Number(d) : null; };
+  function enlazarMonto(inp, ayuda){
+    inp.addEventListener('input', function(){ var n = aNumero(inp.value); ayuda.textContent = n ? pesos(n) : ''; });
+  }
+  var dlgProv = document.getElementById('dlg-proveedor'), formProv = document.getElementById('form-proveedor');
+  var dlgCuota = document.getElementById('dlg-cuota'), formCuota = document.getElementById('form-cuota');
+  enlazarMonto(document.getElementById('fp-total'), document.getElementById('fp-total-ayuda'));
+  enlazarMonto(document.getElementById('fc-monto'), document.getElementById('fc-monto-ayuda'));
+  document.querySelectorAll('.form-dlg [data-cerrar]').forEach(function(b){ b.addEventListener('click', function(){ b.closest('dialog').close(); }); });
+  document.getElementById('fp-contrato').addEventListener('change', function(){
+    document.getElementById('fp-fecha-caja').hidden = this.value !== 'firmado';
+  });
+  var buscarProv = function(id){ return ultimoData.finanzas.proveedores.filter(function(p){ return p.id === id; })[0]; };
+  var buscarCuota = function(id){ return ultimoData.finanzas.plan.filter(function(c){ return c.id === id; })[0]; };
+  function abrirProveedor(p){
+    formProv.dataset.id = p ? p.id : '';
+    document.getElementById('dlg-prov-titulo').textContent = p ? 'Editar proveedor' : 'Nuevo proveedor';
+    document.getElementById('fp-nombre').value = p ? p.nombre : '';
+    document.getElementById('fp-categoria').value = p ? (p.categoria || '') : '';
+    document.getElementById('fp-total').value = p ? p.total : '';
+    document.getElementById('fp-total-ayuda').textContent = p ? pesos(p.total) : '';
+    document.getElementById('fp-contacto').value = p ? (p.contacto || '') : '';
+    document.getElementById('fp-notas').value = p ? (p.notas || '') : '';
+    document.getElementById('fp-contrato').value = p ? (p.contrato || 'pendiente') : 'pendiente';
+    document.getElementById('fp-contrato-fecha').value = p ? (p.contratoFecha || '') : '';
+    document.getElementById('fp-fecha-caja').hidden = document.getElementById('fp-contrato').value !== 'firmado';
+    document.getElementById('fp-error').textContent = '';
+    llenarCategoriasDatalist();
+    dlgProv.showModal();
+  }
+  function abrirCuota(provId, c){
+    formCuota.dataset.id = c ? c.id : '';
+    formCuota.dataset.proveedor = provId;
+    document.getElementById('dlg-cuota-titulo').textContent = c ? 'Editar cuota' : 'Nueva cuota';
+    document.getElementById('fc-proveedor').textContent = (buscarProv(provId) || {}).nombre || '';
+    document.getElementById('fc-concepto').value = c ? c.concepto : '';
+    document.getElementById('fc-monto').value = c ? c.monto : '';
+    document.getElementById('fc-monto-ayuda').textContent = c ? pesos(c.monto) : '';
+    document.getElementById('fc-fecha').value = c ? (c.fechaLimite || '') : '';
+    document.getElementById('fc-error').textContent = '';
+    dlgCuota.showModal();
+  }
+  async function enviarForm(form, errorEl, datos){
+    var btn = form.querySelector('[type=submit]');
+    btn.disabled = true; btn.textContent = 'Guardando…'; errorEl.textContent = '';
+    try{ await accionAdmin(datos); form.closest('dialog').close(); }
+    catch(err){ errorEl.textContent = err.message; }
+    finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+  }
+  formProv.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('fp-error');
+    var nombre = document.getElementById('fp-nombre').value.trim(), total = aNumero(document.getElementById('fp-total').value);
+    if(!nombre){ err.textContent = 'Escribe el nombre del proveedor.'; return; }
+    if(total === null){ err.textContent = 'Escribe el valor total.'; return; }
+    enviarForm(formProv, err, { accion: 'guardar_proveedor', id: formProv.dataset.id || undefined, nombre: nombre, total: total,
+      categoria: document.getElementById('fp-categoria').value, contacto: document.getElementById('fp-contacto').value, notas: document.getElementById('fp-notas').value,
+      contrato: document.getElementById('fp-contrato').value, contrato_fecha: document.getElementById('fp-contrato-fecha').value || null });
+  });
+  formCuota.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('fc-error');
+    var concepto = document.getElementById('fc-concepto').value.trim(), monto = aNumero(document.getElementById('fc-monto').value);
+    if(!concepto){ err.textContent = 'Escribe el concepto.'; return; }
+    if(!monto){ err.textContent = 'Escribe un monto mayor que cero.'; return; }
+    enviarForm(formCuota, err, { accion: 'guardar_cuota', id: formCuota.dataset.id || undefined, proveedor_id: formCuota.dataset.proveedor,
+      concepto: concepto, monto: monto, fecha_limite: document.getElementById('fc-fecha').value || null });
+  });
+  // Pendientes por contratar
+  var dlgPend = document.getElementById('dlg-pendiente'), formPend = document.getElementById('form-pendiente');
+  enlazarMonto(document.getElementById('fe-estimado'), document.getElementById('fe-estimado-ayuda'));
+  var buscarPend = function(id){ return (ultimoData.finanzas.pendientes || []).filter(function(p){ return p.id === id; })[0]; };
+  function abrirPendiente(p){
+    formPend.dataset.id = p ? p.id : '';
+    document.getElementById('dlg-pend-titulo').textContent = p ? 'Editar pendiente' : 'Nuevo pendiente';
+    document.getElementById('fe-nombre').value = p ? p.nombre : '';
+    document.getElementById('fe-categoria').value = p ? p.categoria : '';
+    document.getElementById('fe-estimado').value = p && p.estimado ? p.estimado : '';
+    document.getElementById('fe-estimado-ayuda').textContent = p && p.estimado ? pesos(p.estimado) : '';
+    document.getElementById('fe-notas').value = p ? (p.notas || '') : '';
+    document.getElementById('fe-error').textContent = '';
+    llenarCategoriasDatalist();
+    dlgPend.showModal();
+  }
+  formPend.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('fe-error');
+    var nombre = document.getElementById('fe-nombre').value.trim(), categoria = document.getElementById('fe-categoria').value.trim();
+    if(!nombre){ err.textContent = 'Escribe qué falta contratar.'; return; }
+    if(!categoria){ err.textContent = 'Escribe la categoría.'; return; }
+    var p = formPend.dataset.id ? buscarPend(formPend.dataset.id) : null;
+    enviarForm(formPend, err, { accion: 'guardar_pendiente', id: formPend.dataset.id || undefined, nombre: nombre, categoria: categoria,
+      estimado: aNumero(document.getElementById('fe-estimado').value), notas: document.getElementById('fe-notas').value, no_aplica: p ? p.noAplica : false });
+  });
+
+  // Cotizaciones
+  var dlgCot = document.getElementById('dlg-cotizacion'), formCot = document.getElementById('form-cotizacion');
+  enlazarMonto(document.getElementById('fq-monto'), document.getElementById('fq-monto-ayuda'));
+  var buscarCot = function(id){ return ultimoData.finanzas.cotizaciones.filter(function(c){ return c.id === id; })[0]; };
+  function llenarCategoriasDatalist(){
+    var cats = {};
+    ultimoData.finanzas.proveedores.concat(ultimoData.finanzas.cotizaciones || []).forEach(function(x){ if(x.categoria) cats[x.categoria] = 1; });
+    document.getElementById('fp-categorias').innerHTML = Object.keys(cats).sort().map(function(c){ return '<option value="' + escapeHtml(c) + '">'; }).join('');
+  }
+  function abrirCotizacion(c){
+    formCot.dataset.id = c ? c.id : '';
+    document.getElementById('dlg-cot-titulo').textContent = c ? 'Editar cotización' : 'Nueva cotización';
+    document.getElementById('fq-nombre').value = c ? c.nombre : '';
+    document.getElementById('fq-categoria').value = c ? (c.categoria || '') : '';
+    document.getElementById('fq-monto').value = c ? c.monto : '';
+    document.getElementById('fq-monto-ayuda').textContent = c ? pesos(c.monto) : '';
+    document.getElementById('fq-fecha').value = c ? (c.fecha || '') : '';
+    document.getElementById('fq-contacto').value = c ? (c.contacto || '') : '';
+    document.getElementById('fq-notas').value = c ? (c.notas || '') : '';
+    document.getElementById('fq-archivo').value = '';
+    var actual = document.getElementById('fq-actual');
+    actual.hidden = !(c && c.archivo);
+    actual.innerHTML = c && c.archivo ? '<span>📎 Ya tiene un archivo (si eliges otro, se reemplaza).</span><label><input type="checkbox" id="fq-quitar"> Quitar archivo</label>' : '';
+    document.getElementById('fq-error').textContent = '';
+    llenarCategoriasDatalist();
+    dlgCot.showModal();
+  }
+  function leerArchivo(file){
+    return new Promise(function(ok, mal){
+      var tipo = file.type || (/\.heic$/i.test(file.name) ? 'image/heic' : '');
+      if(['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic'].indexOf(tipo) < 0) return mal(new Error('El archivo debe ser PDF o imagen (JPG, PNG, WEBP o HEIC).'));
+      if(file.size > 8 * 1024 * 1024) return mal(new Error('El archivo pesa más de 8 MB.'));
+      var r = new FileReader();
+      r.onload = function(){ ok({ tipo: tipo, base64: String(r.result).split(',')[1] }); };
+      r.onerror = function(){ mal(new Error('No se pudo leer el archivo.')); };
+      r.readAsDataURL(file);
+    });
+  }
+  formCot.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var err = document.getElementById('fq-error');
+    var nombre = document.getElementById('fq-nombre').value.trim(), monto = aNumero(document.getElementById('fq-monto').value);
+    if(!nombre){ err.textContent = 'Escribe el nombre del proveedor.'; return; }
+    if(monto === null){ err.textContent = 'Escribe el valor cotizado.'; return; }
+    var archivo = null, file = document.getElementById('fq-archivo').files[0];
+    if(file){ try{ archivo = await leerArchivo(file); } catch(x){ err.textContent = x.message; return; } }
+    var quitar = document.getElementById('fq-quitar');
+    enviarForm(formCot, err, { accion: 'guardar_cotizacion', id: formCot.dataset.id || undefined, nombre: nombre, monto: monto,
+      categoria: document.getElementById('fq-categoria').value, fecha: document.getElementById('fq-fecha').value || null,
+      contacto: document.getElementById('fq-contacto').value, notas: document.getElementById('fq-notas').value,
+      archivo: archivo, quitar_archivo: !!(quitar && quitar.checked) });
+  });
+  document.getElementById('detail-cotizaciones').addEventListener('click', async function(e){
+    var f = e.target.closest('[data-filtro-cot]');
+    if(f){ filtroCot = f.dataset.filtroCot; renderCotizacionesAdmin(ultimoData.finanzas); return; }
+    var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
+    var id = b.dataset.id, a = b.dataset.accion, c = id ? buscarCot(id) : null;
+    if(a === 'nueva-cotizacion') return abrirCotizacion(null);
+    if(a === 'nuevo-pendiente') return abrirPendiente(null);
+    if(a === 'editar-pendiente') return abrirPendiente(buscarPend(id));
+    if(a === 'cotizar-pendiente'){
+      abrirCotizacion(null);
+      document.getElementById('fq-categoria').value = buscarPend(id).categoria;
+      return;
+    }
+    if(a === 'no-aplica-pendiente' || a === 'reactivar-pendiente' || a === 'borrar-pendiente'){
+      var pend = buscarPend(id);
+      if(a === 'borrar-pendiente' && !confirm('¿Eliminar "' + pend.nombre + '" de la lista?')) return;
+      b.disabled = true;
+      try{
+        await accionAdmin(a === 'borrar-pendiente' ? { accion: 'borrar_pendiente', id: id } : { accion: 'aplica_pendiente', id: id, no_aplica: a === 'no-aplica-pendiente' });
+      } catch(x){ alert(x.message); b.disabled = false; }
+      return;
+    }
+    if(a === 'editar-cotizacion') return abrirCotizacion(c);
+    if(a === 'ver-proveedor'){
+      gVista = 'proveedores'; aplicarVista();
+      var card = document.getElementById('prov-' + id); if(card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    var datos = null;
+    if(a === 'contratar'){
+      if(!confirm('¿Contratar a ' + c.nombre + ' por ' + pesos(c.monto) + '?\n\nSe creará como proveedor con estos datos. Luego podrás definir su plan de pagos.')) return;
+      var otras = ultimoData.finanzas.cotizaciones.filter(function(x){ return x.id !== c.id && x.estado === 'evaluacion' && c.categoria && x.categoria === c.categoria; });
+      var descartar = otras.length ? confirm('¿Descartar también ' + (otras.length === 1 ? 'la otra cotización' : 'las otras ' + otras.length + ' cotizaciones') + ' de ' + c.categoria + '?\n(' + otras.map(function(x){ return x.nombre; }).join(', ') + ')') : false;
+      datos = { accion: 'contratar_cotizacion', id: id, descartar_otras: descartar };
+    }
+    if(a === 'descartar') datos = { accion: 'estado_cotizacion', id: id, estado: 'descartada' };
+    if(a === 'reabrir') datos = { accion: 'estado_cotizacion', id: id, estado: 'evaluacion' };
+    if(a === 'borrar-cotizacion'){
+      if(!confirm('¿Eliminar la cotización de ' + c.nombre + '? También se borra su archivo.')) return;
+      datos = { accion: 'borrar_cotizacion', id: id };
+    }
+    if(!datos) return;
+    b.disabled = true;
+    try{
+      await accionAdmin(datos);
+      if(a === 'contratar'){
+        var nuevo = ultimoData.finanzas.cotizaciones.filter(function(x){ return x.id === id; })[0];
+        gVista = 'proveedores'; aplicarVista();
+        var card = nuevo && document.getElementById('prov-' + nuevo.proveedorId);
+        if(card){ card.scrollIntoView({ behavior: 'smooth', block: 'start' }); card.style.boxShadow = '0 0 0 2px var(--verde-olivo)'; }
+      }
+    } catch(x){ alert(x.message); b.disabled = false; }
+  });
+
+  document.getElementById('detail-proveedores').addEventListener('click', async function(e){
+    var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
+    var id = b.dataset.id, a = b.dataset.accion;
+    if(a === 'nuevo-proveedor') return abrirProveedor(null);
+    if(a === 'editar-proveedor') return abrirProveedor(buscarProv(id));
+    if(a === 'nueva-cuota') return abrirCuota(id, null);
+    if(a === 'editar-cuota'){ var c = buscarCuota(id); return abrirCuota(c.proveedorId, c); }
+    var confirmar = { 'borrar-proveedor': '¿Eliminar a ' + ((buscarProv(id) || {}).nombre || 'este proveedor') + ' y su plan de pagos?',
+      'borrar-cuota': '¿Eliminar la cuota "' + ((buscarCuota(id) || {}).concepto || '') + '"?' }[a];
+    if(confirmar && !confirm(confirmar)) return;
+    b.disabled = true;
+    try{
+      if(a === 'borrar-proveedor') await accionAdmin({ accion: 'borrar_proveedor', id: id });
+      if(a === 'borrar-cuota') await accionAdmin({ accion: 'borrar_cuota', id: id });
+      if(a === 'plan-50'){
+        var p = buscarProv(id), mitad = Math.round(p.total / 2);
+        await accionAdmin({ accion: 'guardar_cuota', proveedor_id: id, concepto: 'Anticipo 50%', monto: mitad });
+        await accionAdmin({ accion: 'guardar_cuota', proveedor_id: id, concepto: 'Saldo 50%', monto: p.total - mitad });
+      }
+    } catch(err){ alert(err.message); b.disabled = false; }
+  });
+  var pesos = function(n){ return '$' + Math.round(n).toLocaleString('es-CO'); };
+  var fechaCorta = function(f){
+    if(!f) return '—';
+    var d = new Date(f + 'T12:00:00');
+    return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/ de /g, ' ').replace('.', '');
+  };
+  function renderPagosAdmin(fin){
+    var caja = document.getElementById('detail-pagos');
+    if(!fin){ caja.innerHTML = '<div style="font-size:12px; color:var(--texto-suave);">Sin información de pagos.</div>'; return; }
+    var r = fin.resumen, saldo = r.presupuesto - r.pagado;
+    var pct = r.presupuesto ? Math.min(100, Math.round(r.pagado / r.presupuesto * 100)) : 0;
+    document.getElementById('n-pagos').textContent = pct + '%';
+    var etiquetaEstado = { pagado: 'Pagado', parcial: 'Parcial', pendiente: 'Pendiente', vencido: 'Vencido' };
+    var chip = function(e){ return '<span class="estado-pago ' + e + '">' + etiquetaEstado[e] + '</span>'; };
+    var NUM = '<td class="num" style="border:1px solid var(--linea); padding:6px;">';
+    var FECHA = '<td style="border:1px solid var(--linea); padding:6px; white-space:nowrap;">';
+    var tabla = function(cols){ return '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
+      cols.map(function(c){ return TH + c + '</th>'; }).join('') + '</tr></thead><tbody>'; };
+
+    // Totales
+    var h = '<div class="fin-cards">' +
+      '<div class="fin-card"><small>Presupuesto</small><b>' + pesos(r.presupuesto) + '</b></div>' +
+      '<div class="fin-card"><small>Pagado</small><b>' + pesos(r.pagado) + '</b><div class="fin-barra" aria-hidden="true"><i style="width:' + pct + '%"></i></div><span style="font-size:11px; color:var(--texto-suave);">' + pct + '% del presupuesto</span></div>' +
+      '<div class="fin-card saldo"><small>Falta por pagar</small><b>' + pesos(saldo) + '</b></div></div>';
+
+    // Quién ha pagado
+    // Agrupado: lo que pagaron los novios (Daniela + Jeferson) y lo que fue regalo
+    var pctDe = function(n, total){ return total ? Math.round(n / total * 100) : 0; };
+    var grupoAportes = function(icono, titulo, lista){
+      var total = lista.reduce(function(n, a){ return n + a.total; }, 0);
+      var g = '<div class="fin-card aporte-grupo"><small>' + icono + ' ' + titulo + '</small><b>' + pesos(total) + '</b>' +
+        '<span class="aporte-pct">' + pctDe(total, r.pagado) + '% de lo pagado</span><div class="aporte-desglose">';
+      lista.forEach(function(a){
+        g += '<div class="aporte-linea"><span>' + escapeHtml(a.quien) + '</span><b>' + pesos(a.total) + '</b>' +
+          '<div class="fin-barra" aria-hidden="true"><i style="width:' + pctDe(a.total, total) + '%"></i></div>' +
+          '<span class="aporte-pct">' + pctDe(a.total, total) + '% del grupo</span></div>';
+      });
+      return g + '</div></div>';
+    };
+    var novios = r.aportes.filter(function(a){ return !a.regalo; });
+    var regalos = r.aportes.filter(function(a){ return a.regalo; });
+    h += '<div class="fin-titulo">¿Quién ha pagado?</div><div class="fin-aportes">' + grupoAportes('💑', 'Pagado por los novios', novios) +
+      (regalos.length ? grupoAportes('🎁', 'Regalos', regalos) : '') + '</div>';
+
+    // Próximos pagos
+    var provNombre = {}; fin.proveedores.forEach(function(p){ provNombre[p.id] = p.nombre; });
+    var abiertos = fin.plan.filter(function(p){ return p.estado !== 'pagado'; }).sort(function(a, b){
+      return (a.fechaLimite || '9999') < (b.fechaLimite || '9999') ? -1 : (a.fechaLimite || '9999') > (b.fechaLimite || '9999') ? 1 : 0;
+    });
+    h += '<div class="fin-titulo">📅 Próximos pagos (' + abiertos.length + ')</div>';
+    if(abiertos.length){
+      h += tabla(['Fecha límite', 'Proveedor', 'Concepto', 'Falta', 'Estado']);
+      abiertos.forEach(function(p){
+        h += '<tr>' + FECHA + (p.fechaLimite ? fechaCorta(p.fechaLimite) : '<i style="color:var(--texto-suave)">Sin fecha</i>') + '</td>' + TD + escapeHtml(provNombre[p.proveedorId] || '—') + '</td>' +
+          TD + escapeHtml(p.concepto) + '</td>' + NUM + pesos(p.saldo) + '</td>' + TD + chip(p.estado) + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    } else h += '<div style="font-size:12px; color:var(--texto-suave);">Todo está pagado. 🎉</div>';
+
+    // Proveedores
+    h += '<div class="fin-titulo">🤝 Proveedores (' + fin.proveedores.length + ')</div>' + avisoContratos(fin) + tabla(['Proveedor', 'Total', 'Pagado', 'Falta', 'Avance']);
+    fin.proveedores.forEach(function(p){
+      var pp = p.total ? Math.min(100, Math.round(p.pagado / p.total * 100)) : 0;
+      h += '<tr>' + TD + '<b>' + escapeHtml(p.nombre) + '</b><br><span style="color:var(--texto-suave)">' + escapeHtml(p.categoria || '') + '</span><br>' + etiquetaContrato(p) +
+        (p.notas ? '<div style="color:var(--texto-suave); font-size:11px; margin-top:2px;">' + escapeHtml(p.notas) + '</div>' : '') + '</td>' +
+        NUM + pesos(p.total) + '</td>' + NUM + pesos(p.pagado) + '</td>' + NUM + pesos(p.saldo) + '</td>' +
+        TD + '<div class="fin-barra" style="min-width:60px" aria-hidden="true"><i style="width:' + pp + '%"></i></div>' + pp + '%</td></tr>';
+    });
+    h += '</tbody></table></div>';
+
+    // Historial
+    var quien = { daniela: 'Daniela', jeferson: 'Jeferson', ambos: 'Los dos' };
+    h += '<div class="fin-titulo">🧾 Pagos realizados (' + fin.pagos.length + ')</div>';
+    if(fin.pagos.length){
+      h += tabla(['Fecha', 'Proveedor', 'Monto', 'Pagado por', 'Comprobante']);
+      fin.pagos.forEach(function(p){
+        var por = p.pagadoPor === 'regalo' ? '🎁 ' + escapeHtml(p.regaloDe || 'Regalo') : quien[p.pagadoPor] || '—';
+        var comp = p.comprobante && /^https:\/\//.test(p.comprobante) ? '<a href="' + escapeHtml(p.comprobante) + '" target="_blank" rel="noopener">Ver</a>' : '—';
+        h += '<tr>' + FECHA + fechaCorta(p.fecha) + '</td>' + TD + escapeHtml(p.proveedor) + (p.concepto ? '<br><span style="color:var(--texto-suave)">' + escapeHtml(p.concepto) + '</span>' : '') +
+          (p.notas ? '<div style="color:var(--texto-suave); font-size:11px; margin-top:2px;">' + escapeHtml(p.notas) + '</div>' : '') + '</td>' +
+          NUM + pesos(p.monto) + '</td>' + TD + por + '</td>' + TD + comp + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    } else h += '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay pagos registrados.</div>';
+    caja.innerHTML = h;
   }
   function renderPersonasAdmin(personas, porCategoria){
     var caja = document.getElementById('detail-personas');
@@ -936,8 +1578,13 @@
 
   // Vistas (pestañas) y filtros; se conservan al actualizar
   var ultimoData = null;
-  var vistaActual = 'invitaciones';
-  try{ vistaActual = localStorage.getItem('admin-vista') || vistaActual; } catch(e){}
+  var vistaActual = 'invitaciones', areaActual = 'invitados', gVista = 'resumen';
+  try{
+    vistaActual = localStorage.getItem('admin-vista') || vistaActual;
+    areaActual = localStorage.getItem('admin-area') || areaActual;
+    gVista = localStorage.getItem('admin-gvista') || gVista;
+  } catch(e){}
+  if(vistaActual === 'pagos') vistaActual = 'invitaciones';
   var filtros = { buscar: '', categoria: '', estado: '' };
   var fBuscar = document.getElementById('f-buscar');
   var fCategoria = document.getElementById('f-categoria');
@@ -957,7 +1604,14 @@
     fInfo.innerHTML = hayFiltros() ? 'Mostrando ' + n + ' de ' + total + ' ' + que + ' <button type="button" id="f-limpiar">Quitar filtros</button>' : '';
   }
   function aplicarVista(){
-    document.querySelectorAll('.vista-btn').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.vista === vistaActual ? 'true' : 'false'); });
+    document.querySelectorAll('.area-btn').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.area === areaActual ? 'true' : 'false'); });
+    document.getElementById('area-invitados').hidden = areaActual !== 'invitados';
+    document.getElementById('area-gestion').hidden = areaActual !== 'gestion';
+    document.querySelectorAll('[data-gvista]').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.gvista === gVista ? 'true' : 'false'); });
+    document.getElementById('detail-pagos').hidden = gVista !== 'resumen';
+    document.getElementById('detail-proveedores').hidden = gVista !== 'proveedores';
+    document.getElementById('detail-cotizaciones').hidden = gVista !== 'cotizaciones';
+    document.querySelectorAll('[data-vista]').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.vista === vistaActual ? 'true' : 'false'); });
     document.getElementById('vista-invitaciones').hidden = vistaActual !== 'invitaciones';
     document.getElementById('detail-personas').hidden = vistaActual !== 'personas';
     document.getElementById('detail-corte').hidden = vistaActual !== 'corte';
@@ -969,8 +1623,20 @@
     document.querySelectorAll('.chip').forEach(function(c){ c.setAttribute('aria-pressed', c.dataset.estado === filtros.estado ? 'true' : 'false'); });
     if(ultimoData) renderInvitaciones(ultimoData);
   }
-  document.querySelector('.vistas').addEventListener('click', function(e){
-    var b = e.target.closest('.vista-btn'); if(!b) return;
+  document.querySelector('.areas').addEventListener('click', function(e){
+    var b = e.target.closest('.area-btn'); if(!b) return;
+    areaActual = b.dataset.area;
+    try{ localStorage.setItem('admin-area', areaActual); } catch(err){}
+    aplicarVista();
+  });
+  document.querySelector('.vistas.sub').addEventListener('click', function(e){
+    var b = e.target.closest('[data-gvista]'); if(!b) return;
+    gVista = b.dataset.gvista;
+    try{ localStorage.setItem('admin-gvista', gVista); } catch(err){}
+    aplicarVista();
+  });
+  document.querySelector('.vistas:not(.sub)').addEventListener('click', function(e){
+    var b = e.target.closest('[data-vista]'); if(!b) return;
     vistaActual = b.dataset.vista;
     try{ localStorage.setItem('admin-vista', vistaActual); } catch(err){}
     aplicarVista();
