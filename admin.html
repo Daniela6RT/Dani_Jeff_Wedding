@@ -767,6 +767,51 @@
   .prio.baja { background: transparent; color: #7C8A92; border: 1px dashed #A9B4BA; font-weight: 600; }
   .tareas-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
   .tareas-filtros select { flex: 1 1 140px; min-height: 36px; padding: 0 10px; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font: 13px var(--sans); color: var(--madera); }
+  /* Celular: encabezado compacto, tablas como tarjetas y espacios más ajustados */
+  .refresh-mini { display: none; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  @media (max-width: 640px) {
+    .admin-head { padding: 18px 16px 4px; }
+    .admin-head .seal { width: 44px; height: 44px; font-size: 15px; margin-bottom: 6px; }
+    .admin-head h1 { font-size: 20px; }
+    .admin-head p { display: none; }
+    #admin-detail > .refresh-btn:first-of-type { display: none; }
+    .sesion-barra { justify-content: space-between; margin-bottom: 8px; }
+    .sesion-barra #sesion-quien { flex: 1 1 auto; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .refresh-mini { display: inline-grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--linea) !important; border-radius: 50%; background: #fff !important; color: var(--terracotta-deep) !important; font-size: 19px !important; text-decoration: none !important; padding: 0 !important; }
+    .refresh-mini.girando { animation: girar 1s linear infinite; }
+    .areas { margin-bottom: 12px; }
+    .area-btn { min-height: 40px; font-size: 12.5px; }
+    .area-gestion-head { padding: 10px 14px; }
+    .area-gestion-head b { font-size: 17px; }
+    .area-gestion-head span { display: none; }
+    .panel-barra { margin-top: 8px; }
+    /* Tablas como tarjetas */
+    table.tabla-cards, table.tabla-cards tbody { display: block; width: 100%; background: transparent !important; }
+    table.tabla-cards thead { display: none; }
+    table.tabla-cards tr { display: block; background: #fff; border: 1px solid var(--linea); border-radius: 12px; padding: 6px 4px; margin-bottom: 8px; }
+    table.tabla-cards tr.fila-grupo { background: transparent; border: 0; padding: 10px 2px 2px; margin: 0; }
+    table.tabla-cards tr.fila-grupo td { display: block; border: 0 !important; background: transparent !important; padding: 0 !important; font-size: 12px; text-align: left !important; }
+    table.tabla-cards td { display: block; border: 0 !important; padding: 5px 10px !important; text-align: right !important; font-size: 13px; white-space: normal !important; overflow: hidden; }
+    table.tabla-cards td::before { content: attr(data-label); float: left; margin-right: 12px; font-size: 11px; font-weight: 600; letter-spacing: .04em; line-height: 1.9; color: var(--texto-suave); text-align: left; }
+    table.tabla-cards td[data-label=""]::before { display: none; }
+    table.tabla-cards td:first-child { font-size: 14px; font-weight: 600; color: var(--madera); text-align: left !important; }
+    table.tabla-cards td:first-child::before { display: none; }
+    table.tabla-cards td:empty, table.tabla-cards td.celda-vacia { display: none; }
+    .table-scroll { overflow: visible; }
+    /* Resumen y tarjetas */
+    .fin-cards { grid-template-columns: 1fr 1fr !important; }
+    .fin-cards .fin-card:first-child { grid-column: 1 / -1; }
+    .fin-card { padding: 10px 12px; }
+    .fin-card b { font-size: 19px; }
+    .ini-hero { padding: 14px 16px; }
+    .ini-kpis { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+    .ini-kpi { padding: 10px 12px; }
+    .ini-kpi b { font-size: 22px; }
+    .ini-kpi .ini-sub { font-size: 11.5px; }
+    .prov-card, .pend-caja, .ini-caja, .crono { padding: 12px; }
+    .dia-head { padding: 12px 14px; }
+  }
   /* El día: cronograma */
   .dia-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left; padding: 14px 16px; border-radius: 14px; background: var(--terracotta-deep); color: #fff; margin-bottom: 12px; }
   .dia-head b { font-family: var(--serif); font-weight: 400; font-size: 20px; display: block; }
@@ -1022,7 +1067,7 @@
     </details>
   </div>
   <div id="admin-detail" style="display:none;">
-    <div class="sesion-barra"><span id="sesion-quien"></span><button type="button" id="salir-btn">Cerrar sesión</button></div>
+    <div class="sesion-barra"><span id="sesion-quien"></span><button type="button" id="refresh-mini" class="refresh-mini" aria-label="Actualizar ahora" title="Actualizar ahora">↻</button><button type="button" id="salir-btn">Cerrar sesión</button></div>
     <button type="button" class="submit-btn refresh-btn" style="margin:0 0 14px;">Actualizar ahora</button>
     <div class="areas" role="tablist" aria-label="Áreas del panel">
       <button type="button" class="area-btn" role="tab" data-area="inicio" aria-selected="true">🏠 Inicio</button>
@@ -1349,6 +1394,7 @@
     renderTareasAdmin(data.tareas);
     renderInicio(data);
     renderDia(data);
+    etiquetarTablas();
   }
   function renderPendientes(fin){
     var lista = fin.pendientes || [];
@@ -2489,6 +2535,24 @@
     finally { b.disabled = false; }
   });
 
+  // En el celular las tablas se ven como tarjetas: cada celda lleva el nombre de su columna
+  function etiquetarTablas(){
+    document.querySelectorAll('#admin-detail table').forEach(function(t){
+      var cab = [].map.call(t.querySelectorAll('thead th'), function(th){ return th.textContent.trim(); });
+      if(!cab.length) return;
+      t.classList.add('tabla-cards');
+      t.querySelectorAll('tbody tr').forEach(function(tr){
+        var celdas = tr.children;
+        if(celdas.length === 1 && celdas[0].colSpan > 1){ tr.classList.add('fila-grupo'); return; }
+        [].forEach.call(celdas, function(td, i){
+          td.setAttribute('data-label', cab[i] || '');
+          // Las celdas sin dato ("—") se ocultan en el celular para que la tarjeta sea corta
+          if(i > 0 && /^[—-]?$/.test(td.textContent.trim()) && !td.querySelector('button, a, input')) td.classList.add('celda-vacia');
+        });
+      });
+    });
+  }
+
   // Inicio: lo más importante de todo el panel en una sola pantalla
   var FECHA_RSVP = '2027-01-15';
   function renderInicio(data){
@@ -2819,14 +2883,17 @@
     });
   }
 
-  refreshBtns.forEach(function(btn){
-    btn.addEventListener('click', async function(){
-      if(!storedPassword) return;
-      refreshBtns.forEach(function(b){ b.textContent = 'Actualizando…'; b.disabled = true; });
-      try{ showSummary(await loadDetail(storedPassword)); } catch(e){}
-      refreshBtns.forEach(function(b){ b.textContent = 'Actualizar ahora'; b.disabled = false; });
-    });
-  });
+  var refrescoMini = document.getElementById('refresh-mini');
+  async function refrescar(){
+    if(!dentro) return;
+    refreshBtns.forEach(function(b){ b.textContent = 'Actualizando…'; b.disabled = true; });
+    refrescoMini.disabled = true; refrescoMini.classList.add('girando');
+    try{ showSummary(await loadDetail(storedPassword)); } catch(e){}
+    refreshBtns.forEach(function(b){ b.textContent = 'Actualizar ahora'; b.disabled = false; });
+    refrescoMini.disabled = false; refrescoMini.classList.remove('girando');
+  }
+  refreshBtns.forEach(function(btn){ btn.addEventListener('click', refrescar); });
+  refrescoMini.addEventListener('click', refrescar);
 })();
 </script>
 </body>
