@@ -762,6 +762,54 @@
   .estado-pago.en_progreso { background: #E3E9F2; color: #2F4A6E; }
   .tareas-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
   .tareas-filtros select { flex: 1 1 140px; min-height: 36px; padding: 0 10px; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font: 13px var(--sans); color: var(--madera); }
+  .vista-toggle { display: inline-flex; gap: 2px; padding: 3px; background: var(--marfil-warm); border-radius: 10px; }
+  .vista-toggle button { min-height: 32px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; font: 600 12px var(--sans); color: var(--texto-suave); cursor: pointer; }
+  .vista-toggle button[aria-pressed="true"] { background: #fff; color: var(--verde-profundo); box-shadow: 0 1px 4px rgba(58, 46, 43, .12); }
+  .pend-head .der { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .cal-nav { display: flex; align-items: center; gap: 8px; margin: 14px 0 8px; flex-wrap: wrap; }
+  .cal-nav h4 { font-family: var(--serif); font-weight: 400; font-size: 20px; color: var(--verde-profundo); margin: 0 auto 0 0; text-transform: capitalize; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--linea); border-left: 1px solid var(--linea); }
+  .cal-dow { font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); padding: 6px 8px; border-right: 1px solid var(--linea); border-bottom: 1px solid var(--linea); background: var(--marfil-warm); }
+  .cal-dia { min-height: 112px; padding: 6px; border-right: 1px solid var(--linea); border-bottom: 1px solid var(--linea); background: #fff; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .cal-dia.fuera { background: var(--marfil); }
+  .cal-dia.fin-semana:not(.fuera) { background: #FDFBF7; }
+  .cal-num { font-size: 12px; font-weight: 600; color: var(--texto-suave); }
+  .cal-dia.hoy .cal-num { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--terracotta-deep); color: #fff; }
+  .cal-item { display: block; width: 100%; text-align: left; border: 0; border-left: 3px solid var(--verde-olivo); border-radius: 5px; padding: 3px 6px; background: #EEF2E8; font: 500 11.5px/1.3 var(--sans); color: var(--madera); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cal-item:hover { filter: brightness(.96); }
+  .cal-item.en_progreso { border-left-color: #2F4A6E; background: #E3E9F2; }
+  .cal-item.vencida { border-left-color: #8E2F1A; background: #F4DAD2; }
+  .cal-item.listo { border-left-color: #B9B2A6; background: var(--marfil-warm); color: var(--texto-suave); text-decoration: line-through; }
+  .cal-item.pago { border-left-color: #C08A2B; background: #F6E7D3; }
+  .cal-item.boda { border-left-color: var(--terracotta-deep); background: var(--terracotta-deep); color: #fff; font-weight: 700; cursor: default; }
+  .cal-leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11.5px; color: var(--texto-suave); margin-top: 10px; }
+  .cal-leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .cal-agenda { display: none; }
+  .cal-agenda .ag-dia { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid var(--linea); }
+  .cal-agenda .ag-fecha { text-align: center; line-height: 1.1; }
+  .cal-agenda .ag-fecha b { display: block; font-family: var(--serif); font-weight: 400; font-size: 24px; color: var(--verde-profundo); }
+  .cal-agenda .ag-fecha span { font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--texto-suave); }
+  .cal-agenda .ag-dia.hoy .ag-fecha b { color: var(--terracotta-deep); }
+  .cal-agenda .ag-items { display: flex; flex-direction: column; gap: 5px; }
+  .cal-agenda .cal-item { white-space: normal; font-size: 13px; padding: 6px 8px; }
+  @media (max-width: 700px) { .cal-grid { display: none; } .cal-agenda { display: block; } }
+  .cot-si { font-size: 12px; color: var(--madera); background: var(--marfil); border-radius: 8px; padding: 6px 8px; }
+  .cot-si b { color: var(--verde-profundo); }
+  .cot-card.simulada { border-color: var(--terracotta-deep); box-shadow: inset 0 0 0 1px var(--terracotta-deep); }
+  .btn-mini.sim-on { background: var(--terracotta-deep); border-color: var(--terracotta-deep); color: #fff; }
+  .sim-caja { background: #fff; border: 1px solid var(--linea); border-left: 4px solid var(--terracotta-deep); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; }
+  .sim-caja .pend-head b { font-family: var(--serif); font-weight: 400; font-size: 19px; color: var(--verde-profundo); }
+  .sim-cifras { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+  @media (max-width: 560px) { .sim-cifras { grid-template-columns: 1fr; } }
+  .sim-cifras > div { background: var(--marfil); border-radius: 10px; padding: 8px 10px; }
+  .sim-cifras small { display: block; font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+  .sim-cifras b { display: block; font-family: var(--serif); font-weight: 400; font-size: 19px; color: var(--madera); margin-top: 2px; }
+  .sim-cifras .total { background: var(--verde-profundo); }
+  .sim-cifras .total small, .sim-cifras .total b { color: #fff; }
+  .sim-lista { font-size: 12.5px; margin: 6px 0 0; padding: 0; list-style: none; }
+  .sim-lista li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 0; border-top: 1px solid var(--linea); }
+  .sim-lista li span { min-width: 0; }
+  .sim-lista button { border: 0; background: none; cursor: pointer; color: var(--texto-suave); font-size: 14px; min-width: 30px; min-height: 30px; }
   .cot-grupo { margin-bottom: 18px; }
   .cot-grupo > h4 { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--texto-suave); margin: 0 0 8px; }
   .cot-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
@@ -1146,6 +1194,37 @@
     return h + '</div>';
   }
   var filtroCot = 'evaluacion';
+  // Simulación: una cotización elegida por categoría (se guarda solo en este navegador)
+  var simulacion = { elegidas: {} };
+  try{ simulacion = Object.assign(simulacion, JSON.parse(localStorage.getItem('admin-sim') || '{}')); } catch(e){}
+  var catDe = function(c){ return c.categoria || 'Sin categoría'; };
+  function guardarSim(){ try{ localStorage.setItem('admin-sim', JSON.stringify(simulacion)); } catch(e){} }
+  function renderSimulador(fin){
+    var enEval = fin.cotizaciones.filter(function(c){ return c.estado === 'evaluacion'; });
+    // Descarta elecciones de cotizaciones que ya no están en evaluación
+    Object.keys(simulacion.elegidas).forEach(function(k){
+      if(!enEval.some(function(c){ return c.id === simulacion.elegidas[k] && catDe(c) === k; })) delete simulacion.elegidas[k];
+    });
+    var elegidas = enEval.filter(function(c){ return simulacion.elegidas[catDe(c)] === c.id; });
+    var base = fin.resumen.presupuesto, sumaSel = elegidas.reduce(function(n, c){ return n + c.monto; }, 0);
+    var total = base + sumaSel;
+    var catsEval = []; enEval.forEach(function(c){ if(catsEval.indexOf(catDe(c)) < 0) catsEval.push(catDe(c)); });
+    var sinElegir = catsEval.filter(function(k){ return !simulacion.elegidas[k]; });
+    var h = '<div class="sim-caja"><div class="pend-head"><b>🧮 Simulación</b><div class="acciones-mini">' +
+      '<button type="button" class="btn-mini" data-accion="sim-economicas">Elegir las más económicas</button>' +
+      (elegidas.length ? '<button type="button" class="btn-mini" data-accion="sim-limpiar">Limpiar</button>' : '') + '</div></div>' +
+      '<div class="pend-sub" style="margin-bottom:0;">Marca 🧮 en las cotizaciones que quieras probar (una por categoría) para ver en cuánto quedaría todo.</div>' +
+      '<div class="sim-cifras"><div><small>Ya contratado</small><b>' + pesos(base) + '</b></div>' +
+      '<div><small>Cotizaciones elegidas</small><b>+' + pesos(sumaSel) + '</b></div>' +
+      '<div class="total"><small>Total simulado</small><b>' + pesos(total) + '</b></div></div>' +
+      '<div class="pend-sub" style="margin:0;">Ya pagado ' + pesos(fin.resumen.pagado) + ' · quedaría por pagar <b>' + pesos(total - fin.resumen.pagado) + '</b></div>';
+    if(elegidas.length) h += '<ul class="sim-lista">' + elegidas.map(function(c){
+      return '<li><span><b>' + escapeHtml(catDe(c)) + ':</b> ' + escapeHtml(c.nombre) + ' · ' + pesos(c.monto) + '</span>' +
+        '<button type="button" data-accion="simular" data-id="' + c.id + '" aria-label="Quitar ' + escapeHtml(c.nombre) + ' de la simulación">✕</button></li>';
+    }).join('') + '</ul>';
+    if(sinElegir.length) h += '<div class="pend-sub" style="margin:8px 0 0;">Sin elegir: ' + sinElegir.map(escapeHtml).join(', ') + '</div>';
+    return h + '</div>';
+  }
   function renderCotizacionesAdmin(fin){
     var caja = document.getElementById('detail-cotizaciones');
     if(!fin || !fin.cotizaciones){ caja.innerHTML = ''; return; }
@@ -1162,6 +1241,7 @@
       '<div class="chips" style="margin-bottom:14px;">' + [['evaluacion', 'En evaluación'], ['contratada', 'Contratadas'], ['descartada', 'Descartadas'], ['', 'Todas']].map(function(f){
         return '<button type="button" class="chip" data-filtro-cot="' + f[0] + '" aria-pressed="' + (filtroCot === f[0]) + '">' + f[1] + ' (' + cuenta(f[0]) + ')</button>';
       }).join('') + '</div>';
+    if(todas.some(function(c){ return c.estado === 'evaluacion'; })) h = renderSimulador(fin) + h;
     var lista = todas.filter(function(c){ return !filtroCot || c.estado === filtroCot; });
     if(!lista.length){
       caja.innerHTML = '<div class="cot-layout"><div>' + izq + '</div><div>' + h + '<div style="font-size:12px; color:var(--texto-suave);">' + (todas.length ? 'No hay cotizaciones en este estado.' : 'Aún no hay cotizaciones. Añade la primera para empezar a comparar.') + '</div></div></div>';
@@ -1180,19 +1260,21 @@
       h += '<div class="cot-grupo"><h4>' + escapeHtml(cat) + ' · ' + grupo.length + '</h4><div class="cot-lista">';
       grupo.forEach(function(c){
         var acciones = c.estado === 'evaluacion'
-          ? '<button type="button" class="btn-mini principal" data-accion="contratar" data-id="' + c.id + '">✅ Contratar</button>' +
+          ? '<button type="button" class="btn-mini' + (simulacion.elegidas[catDe(c)] === c.id ? ' sim-on' : '') + '" data-accion="simular" data-id="' + c.id + '" aria-pressed="' + (simulacion.elegidas[catDe(c)] === c.id) + '">' + (simulacion.elegidas[catDe(c)] === c.id ? '✓ En la simulación' : '🧮 Simular') + '</button>' +
+            '<button type="button" class="btn-mini principal" data-accion="contratar" data-id="' + c.id + '">✅ Contratar</button>' +
             '<button type="button" class="btn-mini solo-icono" data-accion="editar-cotizacion" data-id="' + c.id + '" aria-label="Editar">✏️</button>' +
             '<button type="button" class="btn-mini" data-accion="descartar" data-id="' + c.id + '">Descartar</button>'
           : c.estado === 'descartada'
           ? '<button type="button" class="btn-mini" data-accion="reabrir" data-id="' + c.id + '">↩︎ Volver a evaluar</button>' +
             '<button type="button" class="btn-mini solo-icono peligro" data-accion="borrar-cotizacion" data-id="' + c.id + '" aria-label="Eliminar">🗑️</button>'
           : (c.proveedorId ? '<button type="button" class="btn-mini" data-accion="ver-proveedor" data-id="' + c.proveedorId + '">Ver proveedor →</button>' : '');
-        h += '<div class="cot-card ' + c.estado + '"><span class="cot-estado"><span class="estado-pago ' + c.estado + '">' + etiqueta[c.estado] + '</span></span>' +
+        h += '<div class="cot-card ' + c.estado + (c.estado === 'evaluacion' && simulacion.elegidas[catDe(c)] === c.id ? ' simulada' : '') + '"><span class="cot-estado"><span class="estado-pago ' + c.estado + '">' + etiqueta[c.estado] + '</span></span>' +
           '<h5>' + escapeHtml(c.nombre) + '</h5>' +
           (minimo !== null && c.estado === 'evaluacion' && c.monto === minimo ? '<span class="cot-tag">💲 La más económica</span>' : '') +
           '<div><div class="cot-monto">' + pesos(c.monto) + '</div>' +
           (minimo !== null && c.estado === 'evaluacion' && c.monto > minimo ? '<div class="cot-dif">+' + pesos(c.monto - minimo) + ' que la más económica</div>' : '') + '</div>' +
           ((c.contacto || c.fecha) ? '<div class="cot-meta">' + escapeHtml([c.contacto, c.fecha ? 'Cotizada el ' + fechaCorta(c.fecha) : ''].filter(Boolean).join(' · ')) + '</div>' : '') +
+          (c.estado === 'evaluacion' ? '<div class="cot-si">Si la tomamos, lo contratado queda en <b>' + pesos(fin.resumen.presupuesto + c.monto) + '</b></div>' : '') +
           (c.notas ? '<p class="cot-notas">' + escapeHtml(c.notas) + '</p>' : '') +
           (c.archivo && /^https:\/\//.test(c.archivo) ? '<a href="' + escapeHtml(c.archivo) + '" target="_blank" rel="noopener" style="font-size:12px;">📎 Ver cotización (' + (c.archivoTipo === 'pdf' ? 'PDF' : 'imagen') + ')</a>' : '') +
           '<div class="acciones-mini">' + acciones + '</div></div>';
@@ -1360,6 +1442,9 @@
 
   // Tareas
   var filtroTareas = { responsable: '', tipo: '' };
+  var vistaTareas = 'lista', mesCal = null;
+  try{ vistaTareas = localStorage.getItem('admin-tvista') || 'lista'; } catch(e){}
+  var FECHA_BODA = '2027-03-20';
   var NOMBRE_RESP = { daniela: 'Daniela', jeferson: 'Jeferson', ambos: 'Ambos', familia: 'Familia' };
   var NOMBRE_TIPO = { general: '', finca: '🏡 Finca', civil: '⚖️ Civil' };
   var NOMBRE_FASE = { 1: 'Visión y bases', 2: 'Locación y proveedores', 3: 'Experiencia y detalles', 4: 'Logística de invitados', 5: 'Cierre y últimos detalles' };
@@ -1408,8 +1493,11 @@
     var en = function(lista){ return visibles.filter(function(t){ return lista.indexOf(t) >= 0; }); };
     var despues = visibles.filter(function(t){ return t.fechaLimite && diasHasta(t.fechaLimite) > 30; });
     var sinFecha = visibles.filter(function(t){ return !t.fechaLimite; });
-    var h = '<div class="pend-caja"><div class="pend-head"><b>📋 Tareas</b>' +
-      '<button type="button" class="btn-mini principal" data-accion="nueva-tarea">+ Nueva tarea</button></div>' +
+    var h = '<div class="pend-caja"><div class="pend-head"><b>📋 Tareas</b><div class="der">' +
+      '<div class="vista-toggle" role="group" aria-label="Ver tareas como">' +
+      '<button type="button" data-accion="vista-tareas" data-v="lista" aria-pressed="' + (vistaTareas === 'lista') + '">☰ Lista</button>' +
+      '<button type="button" data-accion="vista-tareas" data-v="calendario" aria-pressed="' + (vistaTareas === 'calendario') + '">📅 Calendario</button></div>' +
+      '<button type="button" class="btn-mini principal" data-accion="nueva-tarea">+ Nueva tarea</button></div></div>' +
       '<div class="pend-sub">' + (tareas.length - activas.length) + ' de ' + tareas.length + ' listas' +
       (vencidas.length ? ' · <b style="color:#8E2F1A">' + vencidas.length + (vencidas.length === 1 ? ' vencida' : ' vencidas') + '</b>' : '') +
       (pronto.length ? ' · ' + pronto.length + ' para los próximos 30 días' : '') + '</div>' +
@@ -1417,11 +1505,68 @@
       '<div class="tareas-filtros">' +
       opciones('ft-f-resp', filtroTareas.responsable, [['', 'Todos los responsables'], ['daniela', 'Daniela'], ['jeferson', 'Jeferson'], ['ambos', 'Ambos'], ['familia', 'Familia']]) +
       opciones('ft-f-tipo', filtroTareas.tipo, [['', 'Todos los tipos'], ['general', 'General'], ['finca', '🏡 Finca (contrato)'], ['civil', '⚖️ Trámites civiles']]) + '</div>';
+    if(vistaTareas === 'calendario'){
+      caja.innerHTML = h + renderCalendario(tareas.filter(pasa), tareas.filter(function(t){ return pasa(t) && !t.fechaLimite && t.estado !== 'listo'; }).length) + '</div>';
+      return;
+    }
     h += '<div class="tareas-cols">' + grupo('⚠️ Vencidas', en(vencidas), 'vencidas') + grupo('Próximos 30 días', en(pronto)) + grupo('Más adelante', despues) + grupo('Sin fecha', sinFecha) + '</div>';
     if(!visibles.length) h += '<div class="pend-sub" style="margin-top:12px;">' + (activas.length ? 'No hay tareas pendientes con estos filtros.' : '¡No queda nada pendiente! 🎉') + '</div>';
     if(listas.length) h += '<details class="pend-resueltos" style="margin-top:12px;"><summary>✅ Listas (' + listas.length + ')</summary>' + listas.map(fila).join('') + '</details>';
     caja.innerHTML = h + '</div>';
     if(abiertas){ var det = caja.querySelector('.pend-resueltos'); if(det) det.open = true; }
+  }
+  function renderCalendario(tareas, sinFecha){
+    var hoy = hoyBogota();
+    if(!mesCal) mesCal = hoy.slice(0, 7);
+    var y = +mesCal.slice(0, 4), m = +mesCal.slice(5, 7) - 1;
+    var dosDig = function(n){ return (n < 10 ? '0' : '') + n; };
+    var clave = function(d){ return d.getFullYear() + '-' + dosDig(d.getMonth() + 1) + '-' + dosDig(d.getDate()); };
+    // Lo que cae en cada día: tareas, pagos pendientes y la boda
+    var porDia = {};
+    var poner = function(f, html){ (porDia[f] = porDia[f] || []).push(html); };
+    tareas.filter(function(t){ return t.fechaLimite; }).forEach(function(t){
+      var clase = t.estado === 'listo' ? 'listo' : diasHasta(t.fechaLimite) < 0 ? 'vencida' : t.estado;
+      poner(t.fechaLimite, '<button type="button" class="cal-item ' + clase + '" data-accion="editar-tarea" data-id="' + t.id + '" title="' +
+        escapeHtml(t.titulo + ' · ' + NOMBRE_RESP[t.responsable]) + '">' + (t.estado === 'listo' ? '✓ ' : '') + escapeHtml(t.titulo) + '</button>');
+    });
+    var fin = ultimoData && ultimoData.finanzas;
+    if(fin){
+      var provNombre = {}; fin.proveedores.forEach(function(p){ provNombre[p.id] = p.nombre; });
+      fin.plan.filter(function(c){ return c.fechaLimite && c.estado !== 'pagado'; }).forEach(function(c){
+        var texto = '💰 ' + (provNombre[c.proveedorId] || '') + ' · ' + c.concepto + ' · ' + pesos(c.saldo);
+        poner(c.fechaLimite, '<button type="button" class="cal-item pago" data-accion="ver-pago" data-id="' + c.proveedorId + '" title="' + escapeHtml(texto) + '">' + escapeHtml(texto) + '</button>');
+      });
+    }
+    poner(FECHA_BODA, '<span class="cal-item boda">💍 ¡Nuestra boda!</span>');
+    var titulo = new Date(y, m, 1).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }).replace(' de ', ' ');
+    var h = '<div class="cal-nav"><h4>' + titulo + '</h4>' +
+      '<button type="button" class="btn-mini" data-accion="cal-hoy">Hoy</button>' +
+      '<button type="button" class="btn-mini solo-icono" data-accion="cal-mes" data-paso="-1" aria-label="Mes anterior">‹</button>' +
+      '<button type="button" class="btn-mini solo-icono" data-accion="cal-mes" data-paso="1" aria-label="Mes siguiente">›</button>' +
+      (mesCal !== FECHA_BODA.slice(0, 7) ? '<button type="button" class="btn-mini" data-accion="cal-boda">💍 Marzo 2027</button>' : '') + '</div>';
+    // Cuadrícula (escritorio), la semana empieza el lunes
+    h += '<div class="cal-grid">' + ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(function(d){ return '<div class="cal-dow">' + d + '</div>'; }).join('');
+    var inicio = new Date(y, m, 1 - (new Date(y, m, 1).getDay() + 6) % 7);
+    for(var i = 0; i < 42; i++){
+      var d = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate() + i);
+      if(i === 35 && d.getMonth() !== m) break;
+      var k = clave(d), dow = (d.getDay() + 6) % 7;
+      h += '<div class="cal-dia' + (d.getMonth() !== m ? ' fuera' : '') + (k === hoy ? ' hoy' : '') + (dow > 4 ? ' fin-semana' : '') + '">' +
+        '<span class="cal-num">' + d.getDate() + '</span>' + (porDia[k] || []).join('') + '</div>';
+    }
+    h += '</div>';
+    // Agenda (celular): solo los días del mes con algo
+    var diasMes = Object.keys(porDia).filter(function(k){ return k.slice(0, 7) === mesCal; }).sort();
+    h += '<div class="cal-agenda">' + (diasMes.length ? diasMes.map(function(k){
+      var d = new Date(k + 'T12:00:00');
+      return '<div class="ag-dia' + (k === hoy ? ' hoy' : '') + '"><div class="ag-fecha"><b>' + d.getDate() + '</b><span>' +
+        d.toLocaleDateString('es-CO', { weekday: 'short' }).replace('.', '') + '</span></div><div class="ag-items">' + porDia[k].join('') + '</div></div>';
+    }).join('') : '<div class="pend-sub" style="padding:12px 0;">Nada este mes.</div>') + '</div>';
+    h += '<div class="cal-leyenda"><span><i style="background:#EEF2E8; border-left:3px solid var(--verde-olivo)"></i>Por hacer</span>' +
+      '<span><i style="background:#E3E9F2"></i>En progreso</span><span><i style="background:#F4DAD2"></i>Vencida</span>' +
+      '<span><i style="background:var(--marfil-warm)"></i>Lista</span><span><i style="background:#F6E7D3"></i>Pago pendiente</span>' +
+      (sinFecha ? '<span>· ' + sinFecha + (sinFecha === 1 ? ' tarea sin fecha' : ' tareas sin fecha') + ' (en la vista Lista)</span>' : '') + '</div>';
+    return h;
   }
   var dlgTarea = document.getElementById('dlg-tarea'), formTarea = document.getElementById('form-tarea');
   var buscarTarea = function(id){ return (ultimoData.tareas || []).filter(function(t){ return t.id === id; })[0]; };
@@ -1467,6 +1612,25 @@
     var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
     var a = b.dataset.accion, t = b.dataset.id ? buscarTarea(b.dataset.id) : null;
     if(a === 'nueva-tarea') return abrirTarea(null);
+    if(a === 'vista-tareas'){
+      vistaTareas = b.dataset.v;
+      try{ localStorage.setItem('admin-tvista', vistaTareas); } catch(err){}
+      return renderTareasAdmin(ultimoData.tareas);
+    }
+    if(a === 'cal-mes' || a === 'cal-hoy' || a === 'cal-boda'){
+      if(a === 'cal-hoy') mesCal = hoyBogota().slice(0, 7);
+      else if(a === 'cal-boda') mesCal = FECHA_BODA.slice(0, 7);
+      else {
+        var d = new Date(+mesCal.slice(0, 4), +mesCal.slice(5, 7) - 1 + Number(b.dataset.paso), 1);
+        mesCal = d.getFullYear() + '-' + (d.getMonth() < 9 ? '0' : '') + (d.getMonth() + 1);
+      }
+      return renderTareasAdmin(ultimoData.tareas);
+    }
+    if(a === 'ver-pago'){
+      gVista = 'proveedores'; aplicarVista();
+      var card = document.getElementById('prov-' + b.dataset.id); if(card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     if(a === 'editar-tarea') return abrirTarea(t);
     if(a !== 'check-tarea' && a !== 'empezar-tarea') return;
     var estado = a === 'empezar-tarea' ? 'en_progreso' : (t.estado === 'listo' ? 'sin_empezar' : 'listo');
@@ -1528,6 +1692,24 @@
       archivo: archivo, quitar_archivo: !!(quitar && quitar.checked) });
   });
   document.getElementById('detail-cotizaciones').addEventListener('click', async function(e){
+    var s = e.target.closest('[data-accion^="sim"]');
+    if(s && ultimoData){
+      var as = s.dataset.accion, fin = ultimoData.finanzas;
+      if(as === 'simular'){
+        var cs = buscarCot(s.dataset.id), k = catDe(cs);
+        if(simulacion.elegidas[k] === cs.id) delete simulacion.elegidas[k]; else simulacion.elegidas[k] = cs.id;
+      }
+      if(as === 'sim-limpiar') simulacion.elegidas = {};
+      if(as === 'sim-economicas'){
+        simulacion.elegidas = {};
+        fin.cotizaciones.filter(function(c){ return c.estado === 'evaluacion'; }).forEach(function(c){
+          var k = catDe(c), actual = simulacion.elegidas[k] && buscarCot(simulacion.elegidas[k]);
+          if(!actual || c.monto < actual.monto) simulacion.elegidas[k] = c.id;
+        });
+      }
+      guardarSim(); renderCotizacionesAdmin(fin);
+      return;
+    }
     var f = e.target.closest('[data-filtro-cot]');
     if(f){ filtroCot = f.dataset.filtroCot; renderCotizacionesAdmin(ultimoData.finanzas); return; }
     var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
