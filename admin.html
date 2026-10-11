@@ -690,7 +690,7 @@
   @media (max-width: 560px) { .vistas.sub .vista-btn { padding: 4px 6px; white-space: normal; line-height: 1.25; font-size: 11.5px; } }
   @media (max-width: 560px) { .vistas { grid-template-columns: 1fr 1fr; } }
   /* Dos áreas: invitados y gestión */
-  .areas { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0 0 18px; background: var(--marfil-warm); border-radius: 16px; }
+  .areas { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; padding: 4px; margin: 0 0 18px; background: var(--marfil-warm); border-radius: 16px; }
   .area-btn { min-height: 46px; border: 0; border-radius: 12px; background: transparent; font: 600 13px var(--sans); letter-spacing: .04em; color: var(--texto-suave); cursor: pointer; }
   .area-btn[aria-selected="true"] { background: #fff; color: var(--verde-profundo); box-shadow: 0 2px 8px rgba(58, 46, 43, .1); }
   .area[hidden] { display: none; }
@@ -766,6 +766,45 @@
   .prio.baja { background: transparent; color: #7C8A92; border: 1px dashed #A9B4BA; font-weight: 600; }
   .tareas-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
   .tareas-filtros select { flex: 1 1 140px; min-height: 36px; padding: 0 10px; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font: 13px var(--sans); color: var(--madera); }
+  /* Inicio (dashboard) */
+  .ini-hero { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; text-align: left; padding: 20px 22px; border-radius: 16px; background: var(--verde-profundo); color: var(--marfil); }
+  .ini-hero .ini-dias { font-family: var(--serif); font-size: clamp(40px, 7vw, 64px); line-height: 1; }
+  .ini-hero .ini-dias small { font-size: .38em; margin-left: 6px; opacity: .85; }
+  .ini-hero .ini-lugar { font-size: 13px; opacity: .85; margin-top: 6px; }
+  .ini-hero .ini-barra { flex: 1 1 260px; max-width: 420px; }
+  .ini-hero .ini-barra span { display: flex; justify-content: space-between; font-size: 12px; opacity: .85; margin-bottom: 6px; }
+  .ini-hero .fin-barra { background: rgba(255, 255, 255, .18); height: 10px; }
+  .ini-hero .fin-barra i { background: var(--durazno, #F1C7A8); }
+  .ini-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+  @media (max-width: 860px) { .ini-kpis { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 420px) { .ini-kpis { grid-template-columns: 1fr; } }
+  .ini-kpi { text-align: left; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; cursor: pointer; font: inherit; color: inherit; }
+  .ini-kpi:hover { border-color: var(--verde-olivo); }
+  .ini-kpi small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--texto-suave); }
+  .ini-kpi b { display: block; font-family: var(--serif); font-weight: 400; font-size: 28px; color: var(--verde-profundo); margin: 4px 0 2px; }
+  .ini-kpi b span { font-size: 15px; color: var(--texto-suave); }
+  .ini-kpi .ini-sub { font-size: 12px; color: var(--madera); line-height: 1.5; }
+  .ini-kpi .ini-sub .malo { color: #8E2F1A; font-weight: 600; }
+  .ini-kpi .fin-barra { margin: 8px 0 4px; }
+  .ini-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; }
+  @media (min-width: 1000px) { .ini-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .ini-caja { text-align: left; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; }
+  .ini-caja + .ini-caja { margin-top: 12px; }
+  .ini-caja h4 { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 0 6px; font-family: var(--serif); font-weight: 400; font-size: 18px; color: var(--verde-profundo); }
+  .ini-caja h4 button { background: none; border: 0; padding: 4px; font: 600 12px var(--sans); color: var(--terracotta-deep); cursor: pointer; }
+  .ini-fila { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--linea); font-size: 13px; }
+  .ini-fila.click { cursor: pointer; }
+  .ini-fila.click:hover .ini-titulo { color: var(--terracotta-deep); }
+  .ini-fila .ini-titulo { flex: 1 1 auto; min-width: 0; color: var(--madera); }
+  .ini-fila .ini-der { flex: 0 0 auto; text-align: right; font-size: 12px; color: var(--texto-suave); white-space: nowrap; }
+  .ini-alerta { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-top: 1px solid var(--linea); font-size: 13px; color: var(--madera); cursor: pointer; }
+  .ini-alerta .ico { flex: 0 0 22px; text-align: center; }
+  .ini-alerta.rojo b { color: #8E2F1A; }
+  .ini-alerta.ambar b { color: #7A4B12; }
+  .ini-ok { font-size: 13px; color: var(--verde-profundo); padding: 8px 0; }
+  .ini-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .ini-chips span { font-size: 12px; padding: 3px 10px; border-radius: 99px; background: var(--marfil-warm); color: var(--madera); }
+  .ini-chips span.cotizando { background: #F6E7D3; color: #7A4B12; }
   .tablero { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; align-items: start; }
   @media (max-width: 760px) {
     .tablero { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin-left: -4px; margin-right: -4px; padding: 0 4px 8px; }
@@ -941,10 +980,12 @@
     <div class="sesion-barra"><span id="sesion-quien"></span><button type="button" id="salir-btn">Cerrar sesión</button></div>
     <button type="button" class="submit-btn refresh-btn" style="margin:0 0 14px;">Actualizar ahora</button>
     <div class="areas" role="tablist" aria-label="Áreas del panel">
-      <button type="button" class="area-btn" role="tab" data-area="invitados" aria-selected="true">💌 Invitados</button>
+      <button type="button" class="area-btn" role="tab" data-area="inicio" aria-selected="true">🏠 Inicio</button>
+      <button type="button" class="area-btn" role="tab" data-area="invitados" aria-selected="false">💌 Invitados</button>
       <button type="button" class="area-btn" role="tab" data-area="gestion" aria-selected="false">💼 Gestión</button>
     </div>
-    <div class="area" id="area-invitados">
+    <div class="area" id="area-inicio"></div>
+    <div class="area" id="area-invitados" hidden>
     <div class="admin-summary" id="detail-summary"></div>
     <div class="panel-barra">
       <div class="vistas" role="tablist" aria-label="Vistas del panel">
@@ -1188,6 +1229,7 @@
     renderProveedoresAdmin(data.finanzas);
     renderCotizacionesAdmin(data.finanzas);
     renderTareasAdmin(data.tareas);
+    renderInicio(data);
   }
   function renderPendientes(fin){
     var lista = fin.pendientes || [];
@@ -2035,9 +2077,121 @@
     else prompt('Copia el link:', link);
   });
 
+  // Inicio: lo más importante de todo el panel en una sola pantalla
+  var FECHA_RSVP = '2027-01-15';
+  function renderInicio(data){
+    var caja = document.getElementById('area-inicio');
+    var fin = data.finanzas, r = data.resumen, tareas = data.tareas || [];
+    var plural = function(n, uno, varios){ return n + ' ' + (n === 1 ? uno : varios); };
+    var dias = diasHasta(FECHA_BODA), diasRsvp = diasHasta(FECHA_RSVP);
+    var activas = tareas.filter(function(t){ return t.estado !== 'listo'; });
+    var vencidas = activas.filter(function(t){ return t.fechaLimite && diasHasta(t.fechaLimite) < 0; });
+    var altas = activas.filter(function(t){ return t.prioridad === 'alta'; });
+    var pctTareas = tareas.length ? Math.round((tareas.length - activas.length) / tareas.length * 100) : 0;
+    // Avance desde que empezamos a organizar (22 jul 2026, firma de la finca) hasta la boda
+    var inicioPlan = '2026-07-22', totalDias = diasHasta(FECHA_BODA) - diasHasta(inicioPlan);
+    var pctTiempo = Math.max(0, Math.min(100, Math.round((totalDias - Math.max(dias, 0)) / totalDias * 100)));
+    var h = '<div class="ini-hero"><div><div class="ini-dias">' + (dias > 0 ? dias + '<small>' + (dias === 1 ? 'día' : 'días') + '</small>' : dias === 0 ? '¡Hoy!' : '💍') + '</div>' +
+      '<div class="ini-lugar">' + (dias > 0 ? 'para el 20 de marzo de 2027' : dias === 0 ? 'Es el día de la boda' : '¡Ya nos casamos!') + ' · Finca San José, Los Naranjos</div></div>' +
+      '<div class="ini-barra"><span><b>Organización</b><span>' + pctTiempo + '% del camino · ' + pctTareas + '% de tareas listas</span></span>' +
+      '<div class="fin-barra"><i style="width:' + pctTareas + '%"></i></div></div></div>';
+    // Indicadores
+    var kpi = function(ir, titulo, valor, sub, barra){
+      return '<button type="button" class="ini-kpi" data-ir="' + ir + '"><small>' + titulo + '</small><b>' + valor + '</b>' +
+        (barra !== undefined ? '<div class="fin-barra"><i style="width:' + barra + '%"></i></div>' : '') + '<div class="ini-sub">' + sub + '</div></button>';
+    };
+    var h2 = '';
+    if(r){
+      h2 += kpi('invitados:invitaciones', '💌 Invitados', r.personasConfirmadas + ' <span>de ' + r.cupos + '</span>',
+        'confirmados · ' + plural(r.pendientes, 'invitación sin responder', 'invitaciones sin responder') +
+        (diasRsvp >= 0 ? '<br>El RSVP cierra en ' + plural(diasRsvp, 'día', 'días') : '<br>El RSVP ya cerró'),
+        r.cupos ? Math.round(r.personasConfirmadas / r.cupos * 100) : 0);
+    }
+    if(fin){
+      var pctPag = fin.resumen.presupuesto ? Math.round(fin.resumen.pagado / fin.resumen.presupuesto * 100) : 0;
+      h2 += kpi('gestion:resumen', '💰 Dinero', pesos(fin.resumen.pagado), 'pagado de ' + pesos(fin.resumen.presupuesto) + ' contratado (' + pctPag + '%)<br>Falta por pagar ' + pesos(fin.resumen.presupuesto - fin.resumen.pagado), pctPag);
+      var pend = (fin.pendientes || []).filter(function(p){ return !p.noAplica; });
+      var contratados = pend.filter(function(p){ return p.estado === 'contratado'; }).length;
+      var sinFirma = fin.proveedores.filter(function(p){ return p.contrato === 'pendiente'; }).length;
+      h2 += kpi('gestion:cotizaciones', '🤝 Proveedores', contratados + ' <span>de ' + pend.length + '</span>', 'contratados · ' +
+        pend.filter(function(p){ return p.estado === 'cotizando'; }).length + ' cotizando · ' + pend.filter(function(p){ return p.estado === 'por_cotizar'; }).length + ' por cotizar' +
+        (sinFirma ? '<br><span class="malo">' + plural(sinFirma, 'contrato sin firmar', 'contratos sin firmar') + '</span>' : ''), pend.length ? Math.round(contratados / pend.length * 100) : 0);
+    }
+    h2 += kpi('gestion:tareas', '📋 Tareas', (tareas.length - activas.length) + ' <span>de ' + tareas.length + '</span>', 'listas' +
+      (vencidas.length ? ' · <span class="malo">' + plural(vencidas.length, 'vencida', 'vencidas') + '</span>' : '') +
+      (altas.length ? '<br>' + plural(altas.length, 'pendiente de prioridad alta', 'pendientes de prioridad alta') : ''), pctTareas);
+    h += '<div class="ini-kpis">' + h2 + '</div>';
+
+    // Requiere atención
+    var alertas = [];
+    var alerta = function(color, ico, html, ir){ alertas.push('<div class="ini-alerta ' + color + '" data-ir="' + ir + '"><span class="ico">' + ico + '</span><span>' + html + '</span></div>'); };
+    if(vencidas.length) alerta('rojo', '⏰', '<b>' + plural(vencidas.length, 'tarea vencida', 'tareas vencidas') + ':</b> ' +
+      vencidas.slice(0, 3).map(function(t){ return escapeHtml(t.titulo); }).join(' · ') + (vencidas.length > 3 ? '…' : ''), 'gestion:tareas');
+    if(fin){
+      var provNombre = {}; fin.proveedores.forEach(function(p){ provNombre[p.id] = p.nombre; });
+      var pagosVencidos = fin.plan.filter(function(c){ return c.estado === 'vencido'; });
+      if(pagosVencidos.length) alerta('rojo', '💸', '<b>' + plural(pagosVencidos.length, 'pago vencido', 'pagos vencidos') + ':</b> ' +
+        pagosVencidos.map(function(c){ return escapeHtml(provNombre[c.proveedorId] || '') + ' ' + pesos(c.saldo); }).join(' · '), 'gestion:resumen');
+      var pagosPronto = fin.plan.filter(function(c){ return c.estado !== 'pagado' && c.estado !== 'vencido' && c.fechaLimite && diasHasta(c.fechaLimite) <= 30; });
+      if(pagosPronto.length) alerta('ambar', '📅', '<b>' + plural(pagosPronto.length, 'pago en los próximos 30 días', 'pagos en los próximos 30 días') + ':</b> ' +
+        pagosPronto.map(function(c){ return escapeHtml(provNombre[c.proveedorId] || '') + ' ' + pesos(c.saldo) + ' (' + fechaCorta(c.fechaLimite) + ')'; }).join(' · '), 'gestion:resumen');
+      var sinFirmar = fin.proveedores.filter(function(p){ return p.contrato === 'pendiente'; });
+      if(sinFirmar.length) alerta('ambar', '📝', '<b>Contrato sin firmar:</b> ' + sinFirmar.map(function(p){ return escapeHtml(p.nombre); }).join(', '), 'gestion:proveedores');
+    }
+    if(r && r.pendientes && diasRsvp >= 0 && diasRsvp <= 30) alerta('ambar', '💌', '<b>El RSVP cierra en ' + plural(diasRsvp, 'día', 'días') + '</b> y hay ' +
+      plural(r.pendientes, 'invitación sin responder', 'invitaciones sin responder'), 'invitados:invitaciones');
+    var izq = '<div class="ini-caja"><h4>⚠️ Requiere atención</h4>' + (alertas.length ? alertas.join('') : '<div class="ini-ok">Todo al día 🎉</div>') + '</div>';
+
+    // Próximas tareas: vencidas primero, luego por fecha, luego sin fecha por prioridad
+    var orden = activas.slice().sort(function(a, b){
+      if(!!a.fechaLimite !== !!b.fechaLimite) return a.fechaLimite ? -1 : 1;
+      if(a.fechaLimite && b.fechaLimite && a.fechaLimite !== b.fechaLimite) return a.fechaLimite < b.fechaLimite ? -1 : 1;
+      return (a.prioridad ? ORDEN_PRIO[a.prioridad] : 3) - (b.prioridad ? ORDEN_PRIO[b.prioridad] : 3);
+    }).slice(0, 6);
+    izq += '<div class="ini-caja"><h4>📋 Próximas tareas <button type="button" data-ir="gestion:tareas">Ver todas →</button></h4>' +
+      (orden.length ? orden.map(function(t){
+        var d = t.fechaLimite ? diasHasta(t.fechaLimite) : null;
+        var cuando = d === null ? 'Sin fecha' : d < 0 ? '<span style="color:#8E2F1A; font-weight:600">Venció ' + fechaCorta(t.fechaLimite) + '</span>' : d === 0 ? 'Hoy' : fechaCorta(t.fechaLimite);
+        return '<div class="ini-fila click" data-tarea="' + t.id + '"><span class="ini-titulo">' + chipPrio(t) + escapeHtml(t.titulo) + '</span><span class="ini-der">' + cuando + '<br>👤 ' + NOMBRE_RESP[t.responsable] + '</span></div>';
+      }).join('') : '<div class="ini-ok">No queda nada pendiente 🎉</div>') + '</div>';
+
+    var der = '';
+    if(fin){
+      var proximos = fin.plan.filter(function(c){ return c.estado !== 'pagado'; }).sort(function(a, b){ return (a.fechaLimite || '9999') < (b.fechaLimite || '9999') ? -1 : 1; }).slice(0, 5);
+      der += '<div class="ini-caja"><h4>📅 Próximos pagos <button type="button" data-ir="gestion:resumen">Ver resumen →</button></h4>' +
+        (proximos.length ? proximos.map(function(c){
+          return '<div class="ini-fila"><span class="ini-titulo"><b>' + escapeHtml(provNombre[c.proveedorId] || '—') + '</b> · ' + escapeHtml(c.concepto) + '</span><span class="ini-der"><b style="color:var(--madera)">' + pesos(c.saldo) + '</b><br>' + (c.fechaLimite ? fechaCorta(c.fechaLimite) : 'Sin fecha') + '</span></div>';
+        }).join('') : '<div class="ini-ok">Todo está pagado 🎉</div>') + '</div>';
+      var faltan = (fin.pendientes || []).filter(function(p){ return p.estado === 'por_cotizar' || p.estado === 'cotizando'; });
+      der += '<div class="ini-caja"><h4>🔎 Falta contratar (' + faltan.length + ') <button type="button" data-ir="gestion:cotizaciones">Ver →</button></h4>' +
+        (faltan.length ? '<div class="ini-chips">' + faltan.map(function(p){ return '<span class="' + p.estado + '">' + escapeHtml(p.nombre) + (p.estado === 'cotizando' ? ' · cotizando' : '') + '</span>'; }).join('') + '</div>' : '<div class="ini-ok">¡Todo contratado! 🎉</div>') + '</div>';
+    }
+    // Últimas respuestas al RSVP
+    var resp = (data.invitaciones || []).filter(function(i){ return i.respuesta && i.respuesta.fecha; })
+      .sort(function(a, b){ return a.respuesta.fecha < b.respuesta.fecha ? 1 : -1; }).slice(0, 5);
+    der += '<div class="ini-caja"><h4>💌 Últimas respuestas <button type="button" data-ir="invitados:invitaciones">Ver invitados →</button></h4>' +
+      (resp.length ? resp.map(function(i){
+        var hace = -diasHasta(String(i.respuesta.fecha).slice(0, 10));
+        return '<div class="ini-fila"><span class="ini-titulo">' + escapeHtml(i.nombre) + ' · ' + (i.respuesta.asiste ? '✅ ' + plural(i.respuesta.asistentes, 'persona', 'personas') : '❌ No asiste') + '</span>' +
+          '<span class="ini-der">' + (hace <= 0 ? 'Hoy' : hace === 1 ? 'Ayer' : 'Hace ' + hace + ' días') + '</span></div>';
+      }).join('') : '<div class="ini-ok">Aún no hay respuestas.</div>') + '</div>';
+    caja.innerHTML = h + '<div class="ini-cols"><div>' + izq + '</div><div>' + der + '</div></div>';
+  }
+  document.getElementById('area-inicio').addEventListener('click', function(e){
+    var t = e.target.closest('[data-tarea]');
+    if(t){ var tarea = buscarTarea(t.dataset.tarea); if(tarea) abrirTarea(tarea); return; }
+    var b = e.target.closest('[data-ir]'); if(!b) return;
+    var destino = b.dataset.ir.split(':');
+    areaActual = destino[0];
+    if(destino[0] === 'gestion') gVista = destino[1]; else vistaActual = destino[1];
+    try{ localStorage.setItem('admin-area', areaActual); localStorage.setItem(destino[0] === 'gestion' ? 'admin-gvista' : 'admin-vista', destino[1]); } catch(err){}
+    aplicarVista();
+    window.scrollTo({ top: document.querySelector('.areas').getBoundingClientRect().top + window.scrollY - 10, behavior: 'smooth' });
+  });
+
   // Vistas (pestañas) y filtros; se conservan al actualizar
   var ultimoData = null;
-  var vistaActual = 'invitaciones', areaActual = 'invitados', gVista = 'resumen';
+  var vistaActual = 'invitaciones', areaActual = 'inicio', gVista = 'resumen';
   try{
     vistaActual = localStorage.getItem('admin-vista') || vistaActual;
     areaActual = localStorage.getItem('admin-area') || areaActual;
@@ -2065,8 +2219,9 @@
   function aplicarVista(){
     document.querySelectorAll('.area-btn').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.area === areaActual ? 'true' : 'false'); });
     document.getElementById('area-invitados').hidden = areaActual !== 'invitados';
+    document.getElementById('area-inicio').hidden = areaActual !== 'inicio';
     document.getElementById('area-gestion').hidden = areaActual !== 'gestion';
-    document.body.classList.toggle('modo-gestion', areaActual === 'gestion' && dentro);
+    document.body.classList.toggle('modo-gestion', areaActual !== 'invitados' && dentro);
     document.querySelectorAll('[data-gvista]').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.gvista === gVista ? 'true' : 'false'); });
     document.getElementById('detail-pagos').hidden = gVista !== 'resumen';
     document.getElementById('detail-proveedores').hidden = gVista !== 'proveedores';
