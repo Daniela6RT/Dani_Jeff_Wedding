@@ -265,6 +265,7 @@ Deno.serve(async (req: Request) => {
         fase: Number.isInteger(fase) && fase >= 1 && fase <= 5 ? fase : null,
         responsable: RESPONSABLES.includes(body.responsable) ? body.responsable : "ambos",
         estado: ESTADOS_TAREA.includes(body.estado) ? body.estado : "sin_empezar",
+        prioridad: ["alta", "media", "baja"].includes(body.prioridad) ? body.prioridad : null,
         fecha_limite: esFecha(body.fecha_limite) ? body.fecha_limite : null,
         actualizada_en: new Date().toISOString(),
       };
@@ -337,7 +338,7 @@ Deno.serve(async (req: Request) => {
       supabase.from("pendientes").select("id, nombre, categoria, estimado, notas, no_aplica, orden").order("orden", { ascending: true }),
       supabase
         .from("tareas")
-        .select("id, titulo, notas, tipo, fase, responsable, estado, fecha_limite, completada_en")
+        .select("id, titulo, notas, tipo, fase, responsable, estado, prioridad, fecha_limite, completada_en")
         .order("fecha_limite", { ascending: true, nullsFirst: false })
         .order("creada_en", { ascending: true }),
     ]);
@@ -596,6 +597,7 @@ Deno.serve(async (req: Request) => {
         fase: t.fase,
         responsable: t.responsable,
         estado: t.estado,
+        prioridad: t.prioridad,
         fechaLimite: t.fecha_limite,
         completadaEn: t.completada_en,
       })),

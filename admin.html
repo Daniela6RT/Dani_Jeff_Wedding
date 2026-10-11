@@ -760,8 +760,34 @@
   .tarea-meta .vence { font-weight: 600; color: #7A4B12; }
   .tarea-meta .vencida { font-weight: 600; color: #8E2F1A; }
   .estado-pago.en_progreso { background: #E3E9F2; color: #2F4A6E; }
+  .prio { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 700; letter-spacing: .04em; vertical-align: 1px; }
+  .prio.alta { background: #8E2F1A; color: #fff; border: 1px solid #8E2F1A; }
+  .prio.media { background: #E2A93B; color: #3E2A06; border: 1px solid #E2A93B; }
+  .prio.baja { background: transparent; color: #7C8A92; border: 1px dashed #A9B4BA; font-weight: 600; }
   .tareas-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
   .tareas-filtros select { flex: 1 1 140px; min-height: 36px; padding: 0 10px; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font: 13px var(--sans); color: var(--madera); }
+  .tablero { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; align-items: start; }
+  @media (max-width: 760px) {
+    .tablero { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin-left: -4px; margin-right: -4px; padding: 0 4px 8px; }
+    .tab-col { flex: 0 0 84%; scroll-snap-align: start; }
+  }
+  .tab-col { background: var(--marfil); border: 1px solid var(--linea); border-radius: 14px; padding: 10px; min-width: 0; }
+  .tab-col h5 { display: flex; justify-content: space-between; align-items: center; margin: 2px 4px 10px; font: 600 11px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--texto-suave); }
+  .tab-col h5 span { font-size: 12px; letter-spacing: 0; background: #fff; border-radius: 99px; padding: 1px 9px; color: var(--madera); }
+  .tab-col.en_progreso h5 { color: #2F4A6E; }
+  .tab-col.listo h5 { color: var(--verde-profundo); }
+  .tab-lista { display: flex; flex-direction: column; gap: 8px; min-height: 90px; border-radius: 10px; }
+  .tab-vacia { font-size: 12px; color: var(--texto-suave); text-align: center; padding: 26px 8px; border: 1.5px dashed var(--linea); border-radius: 10px; }
+  .tab-card { position: relative; background: #fff; border: 1px solid var(--linea); border-radius: 10px; padding: 10px 40px 10px 12px; cursor: grab; touch-action: manipulation; box-shadow: 0 1px 3px rgba(58, 46, 43, .06); }
+  .tab-card:active { cursor: grabbing; }
+  .tab-card .tab-titulo { font-size: 13.5px; font-weight: 600; line-height: 1.35; color: var(--madera); margin-top: 4px; }
+  .tab-card.listo .tab-titulo { text-decoration: line-through; color: var(--texto-suave); }
+  .tab-card .tarea-meta { margin-top: 5px; }
+  .tab-card .tab-editar { position: absolute; top: 6px; right: 6px; }
+  .tab-card.vencida { border-left: 3px solid #8E2F1A; }
+  .tab-fantasma { opacity: .35; }
+  .tab-arrastrando { box-shadow: 0 10px 24px rgba(58, 46, 43, .22); transform: rotate(1deg); }
+  .tab-ayuda { font-size: 11.5px; color: var(--texto-suave); margin-top: 8px; }
   .vista-toggle { display: inline-flex; gap: 2px; padding: 3px; background: var(--marfil-warm); border-radius: 10px; }
   .vista-toggle button { min-height: 32px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; font: 600 12px var(--sans); color: var(--texto-suave); cursor: pointer; }
   .vista-toggle button[aria-pressed="true"] { background: #fff; color: var(--verde-profundo); box-shadow: 0 1px 4px rgba(58, 46, 43, .12); }
@@ -889,6 +915,7 @@
   .editar-form .editar-msg { width: 100%; font-size: 11px; color: #a13a3a; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 </head>
 <body>
 <header class="admin-head">
@@ -1031,6 +1058,8 @@
     <select id="ft-responsable"><option value="ambos">Ambos</option><option value="daniela">Daniela</option><option value="jeferson">Jeferson</option><option value="familia">Familia</option></select>
     <label for="ft-estado">Estado</label>
     <select id="ft-estado"><option value="sin_empezar">Sin empezar</option><option value="en_progreso">En progreso</option><option value="listo">✅ Lista</option></select>
+    <label for="ft-prioridad">Prioridad</label>
+    <select id="ft-prioridad"><option value="">Sin prioridad</option><option value="alta">↑ Alta</option><option value="media">= Media</option><option value="baja">↓ Baja</option></select>
     <label for="ft-fecha">Fecha límite</label><input id="ft-fecha" type="date">
     <label for="ft-tipo">Tipo</label>
     <select id="ft-tipo"><option value="general">General</option><option value="finca">Finca (contrato)</option><option value="civil">Trámite civil</option></select>
@@ -1441,7 +1470,10 @@
   });
 
   // Tareas
-  var filtroTareas = { responsable: '', tipo: '' };
+  var filtroTareas = { responsable: '', tipo: '', prioridad: '' };
+  var NOMBRE_PRIO = { alta: 'Alta', media: 'Media', baja: 'Baja' };
+  var ORDEN_PRIO = { alta: 0, media: 1, baja: 2 };
+  var chipPrio = function(t){ return t.prioridad ? '<span class="prio ' + t.prioridad + '" title="Prioridad ' + NOMBRE_PRIO[t.prioridad].toLowerCase() + '">' + { alta: '↑ ', media: '= ', baja: '↓ ' }[t.prioridad] + NOMBRE_PRIO[t.prioridad] + '</span> ' : ''; };
   var vistaTareas = 'lista', mesCal = null;
   try{ vistaTareas = localStorage.getItem('admin-tvista') || 'lista'; } catch(e){}
   var FECHA_BODA = '2027-03-20';
@@ -1460,9 +1492,10 @@
     var nT = document.getElementById('n-tareas');
     nT.textContent = activas.length || ''; nT.title = activas.length + ' por hacer';
     var pasa = function(t){
-      return (!filtroTareas.responsable || t.responsable === filtroTareas.responsable) && (!filtroTareas.tipo || t.tipo === filtroTareas.tipo);
+      return (!filtroTareas.responsable || t.responsable === filtroTareas.responsable) && (!filtroTareas.tipo || t.tipo === filtroTareas.tipo) &&
+        (!filtroTareas.prioridad || (filtroTareas.prioridad === 'ninguna' ? !t.prioridad : t.prioridad === filtroTareas.prioridad));
     };
-    var fila = function(t){
+    var metaDe = function(t){
       var meta = [];
       if(t.fechaLimite){
         var d = diasHasta(t.fechaLimite), cuando = fechaCorta(t.fechaLimite);
@@ -1474,14 +1507,16 @@
       }
       meta.push('<span>👤 ' + NOMBRE_RESP[t.responsable] + '</span>');
       if(NOMBRE_TIPO[t.tipo]) meta.push('<span>' + NOMBRE_TIPO[t.tipo] + '</span>');
+      return meta.join(' · ');
+    };
+    var fila = function(t){
       return '<div class="tarea-fila ' + t.estado + '">' +
         '<button type="button" class="tarea-check" data-accion="check-tarea" data-id="' + t.id + '" aria-label="' + (t.estado === 'listo' ? 'Marcar como pendiente: ' : 'Marcar como lista: ') + escapeHtml(t.titulo) + '">' + (t.estado === 'listo' ? '✓' : '') + '</button>' +
-        '<div class="pend-info">' + (t.estado === 'en_progreso' ? '<span class="estado-pago en_progreso">En progreso</span> ' : '') +
+        '<div class="pend-info">' + (t.estado !== 'listo' ? chipPrio(t) : '') + (t.estado === 'en_progreso' ? '<span class="estado-pago en_progreso">En progreso</span> ' : '') +
         '<span class="pend-nombre">' + escapeHtml(t.titulo) + '</span>' +
-        '<div class="tarea-meta">' + meta.join(' · ') + '</div>' +
+        '<div class="tarea-meta">' + metaDe(t) + '</div>' +
         (t.notas ? '<div class="pend-notas">' + escapeHtml(t.notas) + '</div>' : '') + '</div>' +
-        '<div class="acciones-mini">' + (t.estado === 'sin_empezar' ? '<button type="button" class="btn-mini solo-icono" data-accion="empezar-tarea" data-id="' + t.id + '" title="Empezar" aria-label="Empezar: ' + escapeHtml(t.titulo) + '">▶</button>' : '') +
-        '<button type="button" class="btn-mini solo-icono" data-accion="editar-tarea" data-id="' + t.id + '" aria-label="Editar ' + escapeHtml(t.titulo) + '">✏️</button></div></div>';
+        '<div class="acciones-mini"><button type="button" class="btn-mini solo-icono" data-accion="editar-tarea" data-id="' + t.id + '" aria-label="Editar ' + escapeHtml(t.titulo) + '">✏️</button></div></div>';
     };
     var grupo = function(titulo, lista, clase){
       return lista.length ? '<div class="tarea-col"><div class="tarea-grupo ' + (clase || '') + '">' + titulo + ' · ' + lista.length + '</div>' + lista.map(fila).join('') + '</div>' : '';
@@ -1492,19 +1527,48 @@
     var visibles = activas.filter(pasa), listas = tareas.filter(function(t){ return t.estado === 'listo' && pasa(t); });
     var en = function(lista){ return visibles.filter(function(t){ return lista.indexOf(t) >= 0; }); };
     var despues = visibles.filter(function(t){ return t.fechaLimite && diasHasta(t.fechaLimite) > 30; });
-    var sinFecha = visibles.filter(function(t){ return !t.fechaLimite; });
+    var sinFecha = visibles.filter(function(t){ return !t.fechaLimite; }).sort(function(a, b){
+      return (a.prioridad ? ORDEN_PRIO[a.prioridad] : 3) - (b.prioridad ? ORDEN_PRIO[b.prioridad] : 3);
+    });
+    var altas = activas.filter(function(t){ return t.prioridad === 'alta'; }).length;
     var h = '<div class="pend-caja"><div class="pend-head"><b>📋 Tareas</b><div class="der">' +
       '<div class="vista-toggle" role="group" aria-label="Ver tareas como">' +
       '<button type="button" data-accion="vista-tareas" data-v="lista" aria-pressed="' + (vistaTareas === 'lista') + '">☰ Lista</button>' +
+      '<button type="button" data-accion="vista-tareas" data-v="tablero" aria-pressed="' + (vistaTareas === 'tablero') + '">▦ Tablero</button>' +
       '<button type="button" data-accion="vista-tareas" data-v="calendario" aria-pressed="' + (vistaTareas === 'calendario') + '">📅 Calendario</button></div>' +
       '<button type="button" class="btn-mini principal" data-accion="nueva-tarea">+ Nueva tarea</button></div></div>' +
       '<div class="pend-sub">' + (tareas.length - activas.length) + ' de ' + tareas.length + ' listas' +
       (vencidas.length ? ' · <b style="color:#8E2F1A">' + vencidas.length + (vencidas.length === 1 ? ' vencida' : ' vencidas') + '</b>' : '') +
-      (pronto.length ? ' · ' + pronto.length + ' para los próximos 30 días' : '') + '</div>' +
+      (pronto.length ? ' · ' + pronto.length + ' para los próximos 30 días' : '') +
+      (altas ? ' · <b>' + altas + ' de prioridad alta</b>' : '') + '</div>' +
       '<div class="fin-barra"><i style="width:' + (tareas.length ? Math.round((tareas.length - activas.length) / tareas.length * 100) : 0) + '%"></i></div>' +
       '<div class="tareas-filtros">' +
       opciones('ft-f-resp', filtroTareas.responsable, [['', 'Todos los responsables'], ['daniela', 'Daniela'], ['jeferson', 'Jeferson'], ['ambos', 'Ambos'], ['familia', 'Familia']]) +
-      opciones('ft-f-tipo', filtroTareas.tipo, [['', 'Todos los tipos'], ['general', 'General'], ['finca', '🏡 Finca (contrato)'], ['civil', '⚖️ Trámites civiles']]) + '</div>';
+      opciones('ft-f-tipo', filtroTareas.tipo, [['', 'Todos los tipos'], ['general', 'General'], ['finca', '🏡 Finca (contrato)'], ['civil', '⚖️ Trámites civiles']]) +
+      opciones('ft-f-prio', filtroTareas.prioridad, [['', 'Todas las prioridades'], ['alta', '↑ Alta'], ['media', '= Media'], ['baja', '↓ Baja'], ['ninguna', 'Sin prioridad']]) + '</div>';
+    if(vistaTareas === 'tablero'){
+      var porPrioridad = function(a, b){
+        return (a.prioridad ? ORDEN_PRIO[a.prioridad] : 3) - (b.prioridad ? ORDEN_PRIO[b.prioridad] : 3) ||
+          (a.fechaLimite || '9999') .localeCompare(b.fechaLimite || '9999');
+      };
+      var tarjeta = function(t){
+        var vencida = t.estado !== 'listo' && t.fechaLimite && diasHasta(t.fechaLimite) < 0;
+        return '<div class="tab-card ' + t.estado + (vencida ? ' vencida' : '') + '" data-id="' + t.id + '">' +
+          (t.estado !== 'listo' ? chipPrio(t) : '') + '<div class="tab-titulo">' + escapeHtml(t.titulo) + '</div>' +
+          '<div class="tarea-meta">' + metaDe(t) + '</div>' +
+          '<button type="button" class="btn-mini solo-icono tab-editar" data-accion="editar-tarea" data-id="' + t.id + '" aria-label="Editar ' + escapeHtml(t.titulo) + '">✏️</button></div>';
+      };
+      var columnas = [['sin_empezar', 'Por hacer'], ['en_progreso', 'En progreso'], ['listo', '✓ Listas']];
+      h += '<div class="tablero">' + columnas.map(function(c){
+        var suyas = tareas.filter(function(t){ return t.estado === c[0] && pasa(t); });
+        suyas.sort(c[0] === 'listo' ? function(a, b){ return (b.completadaEn || '').localeCompare(a.completadaEn || ''); } : porPrioridad);
+        return '<div class="tab-col ' + c[0] + '"><h5>' + c[1] + ' <span>' + suyas.length + '</span></h5>' +
+          '<div class="tab-lista" data-estado="' + c[0] + '">' + (suyas.length ? suyas.map(tarjeta).join('') : '<div class="tab-vacia">Arrastra tareas aquí</div>') + '</div></div>';
+      }).join('') + '</div><div class="tab-ayuda">Arrastra una tarea a otra columna para cambiar su estado. En el celular, desliza para ver las otras columnas y mantén presionada la tarea un momento antes de moverla.</div>';
+      caja.innerHTML = h + '</div>';
+      activarTablero(caja);
+      return;
+    }
     if(vistaTareas === 'calendario'){
       caja.innerHTML = h + renderCalendario(tareas.filter(pasa), tareas.filter(function(t){ return pasa(t) && !t.fechaLimite && t.estado !== 'listo'; }).length) + '</div>';
       return;
@@ -1514,6 +1578,24 @@
     if(listas.length) h += '<details class="pend-resueltos" style="margin-top:12px;"><summary>✅ Listas (' + listas.length + ')</summary>' + listas.map(fila).join('') + '</details>';
     caja.innerHTML = h + '</div>';
     if(abiertas){ var det = caja.querySelector('.pend-resueltos'); if(det) det.open = true; }
+  }
+  function activarTablero(caja){
+    if(!window.Sortable) return;
+    caja.querySelectorAll('.tab-lista').forEach(function(lista){
+      new Sortable(lista, {
+        group: 'tareas', animation: 150, delay: 180, delayOnTouchOnly: true,
+        filter: '.tab-editar, .tab-vacia', preventOnFilter: false,
+        ghostClass: 'tab-fantasma', dragClass: 'tab-arrastrando',
+        onStart: function(){ editando = true; },
+        onEnd: async function(ev){
+          editando = false;
+          var estado = ev.to.dataset.estado, id = ev.item.dataset.id;
+          if(ev.to === ev.from || !estado) return;
+          try{ await accionAdmin({ accion: 'estado_tarea', id: id, estado: estado }); }
+          catch(x){ alert(x.message); renderTareasAdmin(ultimoData.tareas); }
+        }
+      });
+    });
   }
   function renderCalendario(tareas, sinFecha){
     var hoy = hoyBogota();
@@ -1527,7 +1609,8 @@
     tareas.filter(function(t){ return t.fechaLimite; }).forEach(function(t){
       var clase = t.estado === 'listo' ? 'listo' : diasHasta(t.fechaLimite) < 0 ? 'vencida' : t.estado;
       poner(t.fechaLimite, '<button type="button" class="cal-item ' + clase + '" data-accion="editar-tarea" data-id="' + t.id + '" title="' +
-        escapeHtml(t.titulo + ' · ' + NOMBRE_RESP[t.responsable]) + '">' + (t.estado === 'listo' ? '✓ ' : '') + escapeHtml(t.titulo) + '</button>');
+        escapeHtml(t.titulo + ' · ' + NOMBRE_RESP[t.responsable] + (t.prioridad ? ' · prioridad ' + NOMBRE_PRIO[t.prioridad].toLowerCase() : '')) + '">' +
+        (t.estado === 'listo' ? '✓ ' : t.prioridad === 'alta' ? '↑ ' : '') + escapeHtml(t.titulo) + '</button>');
     });
     var fin = ultimoData && ultimoData.finanzas;
     if(fin){
@@ -1564,7 +1647,7 @@
     }).join('') : '<div class="pend-sub" style="padding:12px 0;">Nada este mes.</div>') + '</div>';
     h += '<div class="cal-leyenda"><span><i style="background:#EEF2E8; border-left:3px solid var(--verde-olivo)"></i>Por hacer</span>' +
       '<span><i style="background:#E3E9F2"></i>En progreso</span><span><i style="background:#F4DAD2"></i>Vencida</span>' +
-      '<span><i style="background:var(--marfil-warm)"></i>Lista</span><span><i style="background:#F6E7D3"></i>Pago pendiente</span>' +
+      '<span><i style="background:var(--marfil-warm)"></i>Lista</span><span><i style="background:#F6E7D3"></i>Pago pendiente</span><span>↑ Prioridad alta</span>' +
       (sinFecha ? '<span>· ' + sinFecha + (sinFecha === 1 ? ' tarea sin fecha' : ' tareas sin fecha') + ' (en la vista Lista)</span>' : '') + '</div>';
     return h;
   }
@@ -1577,6 +1660,7 @@
     document.getElementById('ft-responsable').value = t ? t.responsable : (filtroTareas.responsable || 'ambos');
     document.getElementById('ft-estado').value = t ? t.estado : 'sin_empezar';
     document.getElementById('ft-fecha').value = t ? (t.fechaLimite || '') : '';
+    document.getElementById('ft-prioridad').value = t ? (t.prioridad || '') : (filtroTareas.prioridad && filtroTareas.prioridad !== 'ninguna' ? filtroTareas.prioridad : '');
     document.getElementById('ft-tipo').value = t ? t.tipo : (filtroTareas.tipo || 'general');
     document.getElementById('ft-fase').value = t && t.fase ? String(t.fase) : '';
     document.getElementById('ft-notas').value = t ? (t.notas || '') : '';
@@ -1591,6 +1675,7 @@
     enviarForm(formTarea, err, { accion: 'guardar_tarea', id: formTarea.dataset.id || undefined, titulo: titulo,
       responsable: document.getElementById('ft-responsable').value, estado: document.getElementById('ft-estado').value,
       fecha_limite: document.getElementById('ft-fecha').value || null, tipo: document.getElementById('ft-tipo').value,
+      prioridad: document.getElementById('ft-prioridad').value || null,
       fase: document.getElementById('ft-fase').value || null, notas: document.getElementById('ft-notas').value });
   });
   document.getElementById('ft-borrar').addEventListener('click', async function(){
@@ -1605,6 +1690,7 @@
   cajaTareas.addEventListener('change', function(e){
     if(e.target.id === 'ft-f-resp') filtroTareas.responsable = e.target.value;
     else if(e.target.id === 'ft-f-tipo') filtroTareas.tipo = e.target.value;
+    else if(e.target.id === 'ft-f-prio') filtroTareas.prioridad = e.target.value;
     else return;
     renderTareasAdmin(ultimoData.tareas);
   });
@@ -1632,8 +1718,8 @@
       return;
     }
     if(a === 'editar-tarea') return abrirTarea(t);
-    if(a !== 'check-tarea' && a !== 'empezar-tarea') return;
-    var estado = a === 'empezar-tarea' ? 'en_progreso' : (t.estado === 'listo' ? 'sin_empezar' : 'listo');
+    if(a !== 'check-tarea') return;
+    var estado = t.estado === 'listo' ? 'sin_empezar' : 'listo';
     b.disabled = true;
     try{ await accionAdmin({ accion: 'estado_tarea', id: t.id, estado: estado }); }
     catch(x){ alert(x.message); b.disabled = false; }
