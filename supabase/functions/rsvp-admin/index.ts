@@ -139,7 +139,7 @@ Deno.serve(async (req: Request) => {
     const TIPOS: Record<string, string> = {
       "application/pdf": "pdf", "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/heic": "heic",
     };
-    const subirArchivo = async (a: unknown): Promise<string | null | { error: string }> => {
+    const subirArchivo = async (a: unknown, bucket = "cotizaciones"): Promise<string | null | { error: string }> => {
       if (!a || typeof a !== "object") return null;
       const { tipo, base64 } = a as { tipo?: string; base64?: string };
       const ext = tipo ? TIPOS[tipo] : undefined;
@@ -147,7 +147,7 @@ Deno.serve(async (req: Request) => {
       const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
       if (bytes.length > 8 * 1024 * 1024) return { error: "el archivo pesa más de 8 MB" };
       const ruta = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("cotizaciones").upload(ruta, bytes, { contentType: tipo });
+      const { error } = await supabase.storage.from(bucket).upload(ruta, bytes, { contentType: tipo });
       return error ? { error: error.message } : ruta;
     };
 
@@ -216,6 +216,57 @@ Deno.serve(async (req: Request) => {
           .eq("categoria", c.categoria).eq("estado", "evaluacion").neq("id", c.id);
       }
       return json({ ok: true, proveedorId: prov.id });
+    }
+
+    // Pagos realizados, con su comprobante en el bucket privado
+    if (body?.accion === "guardar_pago") {
+      const fila: Record<string, unknown> = {
+        monto: pesos(body.monto),
+        fecha: esFecha(body.fecha) ? body.fecha : null,
+        pagado_por: ["daniela", "jeferson", "ambos", "regalo"].includes(body.pagado_por) ? body.pagado_por : null,
+        regalo_de: body.pagado_por === "regalo" ? texto(body.regalo_de, 80) : null,
+        notas: textoLargo(body.notas, 1000),
+      };
+      if (!fila.monto) return json({ error: "el monto debe ser mayor que cero" }, 400);
+      if (!fila.fecha) return json({ error: "la fecha no es válida" }, 400);
+      if (!fila.pagado_por) return json({ error: "indica quién pagó" }, 400);
+      if (fila.pagado_por === "regalo" && !fila.regalo_de) return json({ error: "indica de quién fue el regalo" }, 400);
+      const anterior = esId(body.id)
+        ? (await supabase.from("pagos").select("proveedor_id, comprobante_path").eq("id", body.id).maybeSingle()).data
+        : null;
+      if (esId(body.id) && !anterior) return json({ error: "pago no encontrado" }, 404);
+      const proveedorId = anterior?.proveedor_id ?? body.proveedor_id;
+      if (!esId(proveedorId)) return json({ error: "elige el proveedor" }, 400);
+      if (!anterior) fila.proveedor_id = proveedorId;
+      // La cuota debe ser del mismo proveedor
+      if (body.plan_pago_id) {
+        if (!esId(body.plan_pago_id)) return json({ error: "cuota inválida" }, 400);
+        const { data: cuota } = await supabase.from("plan_pagos").select("proveedor_id").eq("id", body.plan_pago_id).maybeSingle();
+        if (!cuota || cuota.proveedor_id !== proveedorId) return json({ error: "la cuota no es de ese proveedor" }, 400);
+        fila.plan_pago_id = body.plan_pago_id;
+      } else fila.plan_pago_id = null;
+      const subido = await subirArchivo(body.archivo, "comprobantes");
+      if (subido && typeof subido === "object") return json({ error: subido.error }, 400);
+      if (subido) fila.comprobante_path = subido;
+      else if (body.quitar_archivo) fila.comprobante_path = null;
+      const { error } = anterior
+        ? await supabase.from("pagos").update(fila).eq("id", body.id)
+        : await supabase.from("pagos").insert(fila);
+      if (error) return json({ error: error.message }, 500);
+      if (anterior?.comprobante_path && (subido || body.quitar_archivo)) {
+        await supabase.storage.from("comprobantes").remove([anterior.comprobante_path]);
+      }
+      return json({ ok: true });
+    }
+
+    if (body?.accion === "borrar_pago") {
+      if (!esId(body.id)) return json({ error: "pago inválido" }, 400);
+      const { data: pg } = await supabase.from("pagos").select("comprobante_path").eq("id", body.id).maybeSingle();
+      if (!pg) return json({ error: "pago no encontrado" }, 404);
+      const { error } = await supabase.from("pagos").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      if (pg.comprobante_path) await supabase.storage.from("comprobantes").remove([pg.comprobante_path]);
+      return json({ ok: true });
     }
 
     // Lo que falta contratar
@@ -559,6 +610,8 @@ Deno.serve(async (req: Request) => {
       plan,
       pagos: pagosData.map((p) => ({
         id: p.id,
+        proveedorId: p.proveedor_id,
+        planPagoId: p.plan_pago_id,
         proveedor: provPorId.get(p.proveedor_id) ?? "—",
         concepto: p.plan_pago_id ? (planPorId.get(p.plan_pago_id) ?? null) : null,
         monto: p.monto,

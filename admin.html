@@ -708,7 +708,7 @@
   }
   .tareas-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 0 24px; align-items: start; }
   .tarea-col { min-width: 0; }
-  .prov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 14px; align-items: start; }
+  .prov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 14px; align-items: start; }
   .prov-grid .prov-card { margin-bottom: 0; }
   .area-gestion .vista-btn[aria-selected="true"] { background: var(--terracotta-deep); border-color: var(--terracotta-deep); }
   /* Gestión de proveedores */
@@ -1111,6 +1111,25 @@
     <div class="botones"><button type="button" class="btn-mini peligro" id="ft-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
   </form>
 </dialog>
+<dialog class="form-dlg" id="dlg-pago" aria-labelledby="dlg-pago-titulo">
+  <form method="dialog" id="form-pago" novalidate>
+    <h3 id="dlg-pago-titulo">Registrar pago</h3>
+    <label for="fpg-proveedor">Proveedor *</label><select id="fpg-proveedor" required></select>
+    <label for="fpg-cuota">Cuota del plan de pagos</label><select id="fpg-cuota"></select>
+    <label for="fpg-monto">Monto pagado (COP) *</label><input id="fpg-monto" inputmode="numeric" placeholder="0" required>
+    <div class="ayuda" id="fpg-monto-ayuda"></div>
+    <label for="fpg-fecha">Fecha del pago *</label><input id="fpg-fecha" type="date" required>
+    <label for="fpg-por">¿Quién pagó? *</label>
+    <select id="fpg-por"><option value="daniela">Daniela</option><option value="jeferson">Jeferson</option><option value="ambos">Los dos (50/50)</option><option value="regalo">🎁 Regalo</option></select>
+    <div id="fpg-regalo-caja" hidden><label for="fpg-regalo">Regalo de *</label><input id="fpg-regalo" maxlength="80" list="fpg-regalos" placeholder="Ej. Papás de Daniela"><datalist id="fpg-regalos"></datalist></div>
+    <label for="fpg-archivo">Comprobante</label><input id="fpg-archivo" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.heic">
+    <div class="ayuda">Foto o PDF de la transferencia, máximo 8 MB.</div>
+    <div class="archivo-actual" id="fpg-actual" hidden></div>
+    <label for="fpg-notas">Notas</label><textarea id="fpg-notas" maxlength="1000"></textarea>
+    <div class="error" id="fpg-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini peligro" id="fpg-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
 <dialog class="form-dlg" id="dlg-cuota" aria-labelledby="dlg-cuota-titulo">
   <form method="dialog" id="form-cuota" novalidate>
     <h3 id="dlg-cuota-titulo">Nueva cuota</h3>
@@ -1395,7 +1414,9 @@
           h += '<tr>' + TD + escapeHtml(c.concepto) + '</td><td class="num" style="border:1px solid var(--linea); padding:6px;">' + pesos(c.monto) + '</td>' +
             '<td style="border:1px solid var(--linea); padding:6px; white-space:nowrap;">' + (c.fechaLimite ? fechaCorta(c.fechaLimite) : '—') + '</td>' +
             TD + '<span class="estado-pago ' + c.estado + '">' + etiquetaEstado[c.estado] + '</span></td>' +
-            '<td style="border:1px solid var(--linea); padding:6px; white-space:nowrap;"><button type="button" class="btn-mini solo-icono" data-accion="editar-cuota" data-id="' + c.id + '" aria-label="Editar ' + escapeHtml(c.concepto) + '">✏️</button> ' +
+            '<td style="border:1px solid var(--linea); padding:6px; white-space:nowrap;">' +
+            (c.estado !== 'pagado' ? '<button type="button" class="btn-mini solo-icono" data-accion="pagar-cuota" data-id="' + c.id + '" title="Registrar pago de esta cuota" aria-label="Registrar pago de ' + escapeHtml(c.concepto) + '">💵</button> ' : '') +
+            '<button type="button" class="btn-mini solo-icono" data-accion="editar-cuota" data-id="' + c.id + '" aria-label="Editar ' + escapeHtml(c.concepto) + '">✏️</button> ' +
             (c.pagado ? '' : '<button type="button" class="btn-mini solo-icono peligro" data-accion="borrar-cuota" data-id="' + c.id + '" aria-label="Eliminar ' + escapeHtml(c.concepto) + '">🗑️</button>') + '</td></tr>';
         });
         h += '</tbody></table></div>';
@@ -1404,6 +1425,7 @@
         h += '<div class="prov-aviso">Las cuotas suman ' + pesos(sumaPlan) + ' y el total es ' + pesos(p.total) + ' (' + (sumaPlan < p.total ? 'faltan ' + pesos(p.total - sumaPlan) : 'sobran ' + pesos(sumaPlan - p.total)) + ').</div>';
       }
       h += '<div class="acciones-mini" style="margin-top:10px;"><button type="button" class="btn-mini" data-accion="nueva-cuota" data-id="' + p.id + '">+ Añadir cuota</button>' +
+        '<button type="button" class="btn-mini" data-accion="nuevo-pago" data-id="' + p.id + '">💵 Registrar pago</button>' +
         (!cuotas.length && p.total ? '<button type="button" class="btn-mini" data-accion="plan-50" data-id="' + p.id + '">Anticipo 50% + saldo 50%</button>' : '') + '</div></div>';
     });
     caja.innerHTML = h + '</div>';
@@ -1767,6 +1789,83 @@
     catch(x){ alert(x.message); b.disabled = false; }
   });
 
+  // Pagos: registrar, editar y borrar, con comprobante
+  var dlgPago = document.getElementById('dlg-pago'), formPago = document.getElementById('form-pago');
+  enlazarMonto(document.getElementById('fpg-monto'), document.getElementById('fpg-monto-ayuda'));
+  var buscarPago = function(id){ return ultimoData.finanzas.pagos.filter(function(p){ return p.id === id; })[0]; };
+  function llenarCuotasPago(provId, cuotaId){
+    var sel = document.getElementById('fpg-cuota');
+    var cuotas = ultimoData.finanzas.plan.filter(function(c){ return c.proveedorId === provId; });
+    sel.innerHTML = '<option value="">Sin cuota (abono suelto)</option>' + cuotas.map(function(c){
+      return '<option value="' + c.id + '">' + escapeHtml(c.concepto) + ' · ' + (c.estado === 'pagado' ? 'pagada' : 'falta ' + pesos(c.saldo)) + '</option>';
+    }).join('');
+    sel.value = cuotaId || '';
+  }
+  function abrirPago(o){
+    var pg = o.pago || null, fin = ultimoData.finanzas;
+    formPago.dataset.id = pg ? pg.id : '';
+    document.getElementById('dlg-pago-titulo').textContent = pg ? 'Editar pago' : 'Registrar pago';
+    var provSel = document.getElementById('fpg-proveedor');
+    provSel.innerHTML = fin.proveedores.map(function(p){ return '<option value="' + p.id + '">' + escapeHtml(p.nombre) + '</option>'; }).join('');
+    provSel.value = pg ? pg.proveedorId : (o.proveedorId || (fin.proveedores[0] || {}).id || '');
+    provSel.disabled = !!pg;
+    llenarCuotasPago(provSel.value, pg ? pg.planPagoId : o.cuotaId);
+    var cuota = !pg && o.cuotaId ? buscarCuota(o.cuotaId) : null;
+    var monto = pg ? pg.monto : (cuota ? cuota.saldo : '');
+    document.getElementById('fpg-monto').value = monto;
+    document.getElementById('fpg-monto-ayuda').textContent = monto ? pesos(monto) : '';
+    document.getElementById('fpg-fecha').value = pg ? pg.fecha : hoyBogota();
+    document.getElementById('fpg-por').value = pg ? pg.pagadoPor : 'ambos';
+    document.getElementById('fpg-regalo').value = pg ? (pg.regaloDe || '') : '';
+    document.getElementById('fpg-regalo-caja').hidden = document.getElementById('fpg-por').value !== 'regalo';
+    var regalos = {}; fin.pagos.forEach(function(x){ if(x.regaloDe) regalos[x.regaloDe] = 1; });
+    document.getElementById('fpg-regalos').innerHTML = Object.keys(regalos).map(function(r){ return '<option value="' + escapeHtml(r) + '">'; }).join('');
+    document.getElementById('fpg-notas').value = pg ? (pg.notas || '') : '';
+    document.getElementById('fpg-archivo').value = '';
+    var actual = document.getElementById('fpg-actual');
+    actual.hidden = !(pg && pg.comprobante);
+    actual.innerHTML = pg && pg.comprobante ? '<span>📎 Ya tiene comprobante (si eliges otro, se reemplaza).</span><label><input type="checkbox" id="fpg-quitar"> Quitar comprobante</label>' : '';
+    document.getElementById('fpg-borrar').hidden = !pg;
+    document.getElementById('fpg-error').textContent = '';
+    dlgPago.showModal();
+  }
+  document.getElementById('fpg-proveedor').addEventListener('change', function(){ llenarCuotasPago(this.value, ''); });
+  document.getElementById('fpg-cuota').addEventListener('change', function(){
+    // Al elegir una cuota en un pago nuevo, propone su saldo
+    if(formPago.dataset.id || !this.value) return;
+    var c = buscarCuota(this.value);
+    if(c){ document.getElementById('fpg-monto').value = c.saldo; document.getElementById('fpg-monto-ayuda').textContent = pesos(c.saldo); }
+  });
+  document.getElementById('fpg-por').addEventListener('change', function(){ document.getElementById('fpg-regalo-caja').hidden = this.value !== 'regalo'; });
+  formPago.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var err = document.getElementById('fpg-error'), monto = aNumero(document.getElementById('fpg-monto').value);
+    var por = document.getElementById('fpg-por').value, regalo = document.getElementById('fpg-regalo').value.trim();
+    if(!monto){ err.textContent = 'Escribe el monto pagado.'; return; }
+    if(!document.getElementById('fpg-fecha').value){ err.textContent = 'Elige la fecha del pago.'; return; }
+    if(por === 'regalo' && !regalo){ err.textContent = 'Escribe de quién fue el regalo.'; return; }
+    var archivo = null, file = document.getElementById('fpg-archivo').files[0];
+    if(file){ try{ archivo = await leerArchivo(file); } catch(x){ err.textContent = x.message; return; } }
+    var quitar = document.getElementById('fpg-quitar');
+    enviarForm(formPago, err, { accion: 'guardar_pago', id: formPago.dataset.id || undefined, proveedor_id: document.getElementById('fpg-proveedor').value,
+      plan_pago_id: document.getElementById('fpg-cuota').value || null, monto: monto, fecha: document.getElementById('fpg-fecha').value,
+      pagado_por: por, regalo_de: regalo, notas: document.getElementById('fpg-notas').value, archivo: archivo, quitar_archivo: !!(quitar && quitar.checked) });
+  });
+  document.getElementById('fpg-borrar').addEventListener('click', async function(){
+    var pg = buscarPago(formPago.dataset.id), b = this;
+    if(!pg || !confirm('¿Eliminar el pago de ' + pesos(pg.monto) + ' a ' + pg.proveedor + '? También se borra su comprobante.')) return;
+    b.disabled = true;
+    try{ await accionAdmin({ accion: 'borrar_pago', id: pg.id }); dlgPago.close(); }
+    catch(x){ document.getElementById('fpg-error').textContent = x.message; }
+    finally { b.disabled = false; }
+  });
+  document.getElementById('detail-pagos').addEventListener('click', function(e){
+    var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
+    if(b.dataset.accion === 'nuevo-pago') return abrirPago({});
+    if(b.dataset.accion === 'editar-pago') return abrirPago({ pago: buscarPago(b.dataset.id) });
+    if(b.dataset.accion === 'pagar-cuota'){ var c = buscarCuota(b.dataset.id); return abrirPago({ proveedorId: c.proveedorId, cuotaId: c.id }); }
+  });
+
   // Cotizaciones
   var dlgCot = document.getElementById('dlg-cotizacion'), formCot = document.getElementById('form-cotizacion');
   enlazarMonto(document.getElementById('fq-monto'), document.getElementById('fq-monto-ayuda'));
@@ -1897,6 +1996,8 @@
     if(a === 'nuevo-proveedor') return abrirProveedor(null);
     if(a === 'editar-proveedor') return abrirProveedor(buscarProv(id));
     if(a === 'nueva-cuota') return abrirCuota(id, null);
+    if(a === 'nuevo-pago') return abrirPago({ proveedorId: id });
+    if(a === 'pagar-cuota'){ var cq = buscarCuota(id); return abrirPago({ proveedorId: cq.proveedorId, cuotaId: id }); }
     if(a === 'editar-cuota'){ var c = buscarCuota(id); return abrirCuota(c.proveedorId, c); }
     var confirmar = { 'borrar-proveedor': '¿Eliminar a ' + ((buscarProv(id) || {}).nombre || 'este proveedor') + ' y su plan de pagos?',
       'borrar-cuota': '¿Eliminar la cuota "' + ((buscarCuota(id) || {}).concepto || '') + '"?' }[a];
@@ -1963,10 +2064,11 @@
     });
     h += '<div class="fin-titulo">📅 Próximos pagos (' + abiertos.length + ')</div>';
     if(abiertos.length){
-      h += tabla(['Fecha límite', 'Proveedor', 'Concepto', 'Falta', 'Estado']);
+      h += tabla(['Fecha límite', 'Proveedor', 'Concepto', 'Falta', 'Estado', '']);
       abiertos.forEach(function(p){
         h += '<tr>' + FECHA + (p.fechaLimite ? fechaCorta(p.fechaLimite) : '<i style="color:var(--texto-suave)">Sin fecha</i>') + '</td>' + TD + escapeHtml(provNombre[p.proveedorId] || '—') + '</td>' +
-          TD + escapeHtml(p.concepto) + '</td>' + NUM + pesos(p.saldo) + '</td>' + TD + chip(p.estado) + '</td></tr>';
+          TD + escapeHtml(p.concepto) + '</td>' + NUM + pesos(p.saldo) + '</td>' + TD + chip(p.estado) + '</td>' +
+          FECHA + '<button type="button" class="btn-mini" data-accion="pagar-cuota" data-id="' + p.id + '">💵 Pagar</button></td></tr>';
       });
       h += '</tbody></table></div>';
     } else h += '<div style="font-size:12px; color:var(--texto-suave);">Todo está pagado. 🎉</div>';
@@ -1984,15 +2086,17 @@
 
     // Historial
     var quien = { daniela: 'Daniela', jeferson: 'Jeferson', ambos: 'Los dos' };
-    h += '<div class="fin-titulo">🧾 Pagos realizados (' + fin.pagos.length + ')</div>';
+    h += '<div class="fin-titulo" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">🧾 Pagos realizados (' + fin.pagos.length + ')' +
+      '<button type="button" class="btn-mini principal" data-accion="nuevo-pago">💵 Registrar pago</button></div>';
     if(fin.pagos.length){
-      h += tabla(['Fecha', 'Proveedor', 'Monto', 'Pagado por', 'Comprobante']);
+      h += tabla(['Fecha', 'Proveedor', 'Monto', 'Pagado por', 'Comprobante', '']);
       fin.pagos.forEach(function(p){
         var por = p.pagadoPor === 'regalo' ? '🎁 ' + escapeHtml(p.regaloDe || 'Regalo') : quien[p.pagadoPor] || '—';
         var comp = p.comprobante && /^https:\/\//.test(p.comprobante) ? '<a href="' + escapeHtml(p.comprobante) + '" target="_blank" rel="noopener">Ver</a>' : '—';
         h += '<tr>' + FECHA + fechaCorta(p.fecha) + '</td>' + TD + escapeHtml(p.proveedor) + (p.concepto ? '<br><span style="color:var(--texto-suave)">' + escapeHtml(p.concepto) + '</span>' : '') +
           (p.notas ? '<div style="color:var(--texto-suave); font-size:11px; margin-top:2px;">' + escapeHtml(p.notas) + '</div>' : '') + '</td>' +
-          NUM + pesos(p.monto) + '</td>' + TD + por + '</td>' + TD + comp + '</td></tr>';
+          NUM + pesos(p.monto) + '</td>' + TD + por + '</td>' + TD + comp + '</td>' +
+          TD + '<button type="button" class="btn-mini solo-icono" data-accion="editar-pago" data-id="' + p.id + '" aria-label="Editar pago">✏️</button></td></tr>';
       });
       h += '</tbody></table></div>';
     } else h += '<div style="font-size:12px; color:var(--texto-suave);">Aún no hay pagos registrados.</div>';
