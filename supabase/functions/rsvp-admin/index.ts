@@ -353,7 +353,37 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
-    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes] = await Promise.all([
+    // Cronograma del día
+    const esHora = (v: unknown) => typeof v === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
+    if (body?.accion === "guardar_momento") {
+      const fila = {
+        dia: esFecha(body.dia) ? body.dia : null,
+        hora: esHora(body.hora) ? body.hora : null,
+        hora_fin: esHora(body.hora_fin) ? body.hora_fin : null,
+        actividad: texto(body.actividad, 160),
+        responsable: texto(body.responsable, 60),
+        ubicacion: texto(body.ubicacion, 120),
+        cancion: texto(body.cancion, 160),
+        notas: textoLargo(body.notas, 1000),
+      };
+      if (!fila.actividad) return json({ error: "escribe la actividad" }, 400);
+      if (!fila.dia) return json({ error: "elige el día" }, 400);
+      if (!fila.hora) return json({ error: "la hora no es válida" }, 400);
+      const { error } = esId(body.id)
+        ? await supabase.from("cronograma").update(fila).eq("id", body.id)
+        : await supabase.from("cronograma").insert(fila);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    if (body?.accion === "borrar_momento") {
+      if (!esId(body.id)) return json({ error: "momento inválido" }, 400);
+      const { error } = await supabase.from("cronograma").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -392,6 +422,11 @@ Deno.serve(async (req: Request) => {
         .select("id, titulo, notas, tipo, fase, responsable, estado, prioridad, fecha_limite, completada_en")
         .order("fecha_limite", { ascending: true, nullsFirst: false })
         .order("creada_en", { ascending: true }),
+      supabase
+        .from("cronograma")
+        .select("id, dia, hora, hora_fin, actividad, responsable, ubicacion, cancion, notas")
+        .order("dia", { ascending: true })
+        .order("hora", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -406,6 +441,7 @@ Deno.serve(async (req: Request) => {
     if (cotRes.error) return json({ error: cotRes.error.message }, 500);
     if (penRes.error) return json({ error: penRes.error.message }, 500);
     if (tarRes.error) return json({ error: tarRes.error.message }, 500);
+    if (croRes.error) return json({ error: croRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -653,6 +689,17 @@ Deno.serve(async (req: Request) => {
         prioridad: t.prioridad,
         fechaLimite: t.fecha_limite,
         completadaEn: t.completada_en,
+      })),
+      cronograma: (croRes.data ?? []).map((m) => ({
+        id: m.id,
+        dia: m.dia,
+        hora: String(m.hora).slice(0, 5),
+        horaFin: m.hora_fin ? String(m.hora_fin).slice(0, 5) : null,
+        actividad: m.actividad,
+        responsable: m.responsable,
+        ubicacion: m.ubicacion,
+        cancion: m.cancion,
+        notas: m.notas,
       })),
     });
   } catch (_e) {

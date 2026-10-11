@@ -690,7 +690,8 @@
   @media (max-width: 560px) { .vistas.sub .vista-btn { padding: 4px 6px; white-space: normal; line-height: 1.25; font-size: 11.5px; } }
   @media (max-width: 560px) { .vistas { grid-template-columns: 1fr 1fr; } }
   /* Dos áreas: invitados y gestión */
-  .areas { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; padding: 4px; margin: 0 0 18px; background: var(--marfil-warm); border-radius: 16px; }
+  .areas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; margin: 0 0 18px; background: var(--marfil-warm); border-radius: 16px; }
+  @media (max-width: 560px) { .areas { grid-template-columns: 1fr 1fr; } }
   .area-btn { min-height: 46px; border: 0; border-radius: 12px; background: transparent; font: 600 13px var(--sans); letter-spacing: .04em; color: var(--texto-suave); cursor: pointer; }
   .area-btn[aria-selected="true"] { background: #fff; color: var(--verde-profundo); box-shadow: 0 2px 8px rgba(58, 46, 43, .1); }
   .area[hidden] { display: none; }
@@ -766,6 +767,33 @@
   .prio.baja { background: transparent; color: #7C8A92; border: 1px dashed #A9B4BA; font-weight: 600; }
   .tareas-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
   .tareas-filtros select { flex: 1 1 140px; min-height: 36px; padding: 0 10px; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font: 13px var(--sans); color: var(--madera); }
+  /* El día: cronograma */
+  .dia-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left; padding: 14px 16px; border-radius: 14px; background: var(--terracotta-deep); color: #fff; margin-bottom: 12px; }
+  .dia-head b { font-family: var(--serif); font-weight: 400; font-size: 20px; display: block; }
+  .dia-head span { font-size: 12px; opacity: .9; }
+  .dia-head .btn-mini { border-color: rgba(255,255,255,.6); }
+  .dia-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; }
+  @media (min-width: 1000px) { .dia-cols { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); } }
+  .crono { text-align: left; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; }
+  .crono + .crono { margin-top: 12px; }
+  .crono h4 { font-family: var(--serif); font-weight: 400; font-size: 19px; color: var(--verde-profundo); margin: 0 0 4px; }
+  .crono h4 small { font-family: var(--sans); font-size: 12px; color: var(--texto-suave); margin-left: 6px; }
+  .momento { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: 12px; padding: 10px 0; border-top: 1px solid var(--linea); position: relative; }
+  .momento .m-hora { font-family: var(--serif); font-size: 18px; color: var(--terracotta-deep); line-height: 1.2; white-space: nowrap; }
+  .momento .m-hora small { display: block; font-family: var(--sans); font-size: 11px; color: var(--texto-suave); }
+  .momento .m-act { font-size: 14px; font-weight: 600; color: var(--madera); }
+  .momento .m-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11.5px; color: var(--texto-suave); margin-top: 3px; }
+  .momento .m-resp { display: inline-block; padding: 1px 8px; border-radius: 99px; background: var(--marfil-warm); color: var(--madera); font-weight: 600; }
+  .momento .m-notas { font-size: 12px; color: var(--texto-suave); margin-top: 4px; white-space: pre-line; }
+  .momento.ceremonia .m-act { color: var(--terracotta-deep); }
+  @media print {
+    body * { visibility: hidden; }
+    #area-dia, #area-dia * { visibility: visible; }
+    #area-dia { position: absolute; left: 0; top: 0; width: 100%; }
+    #area-dia .no-print { display: none !important; }
+    .dia-cols { grid-template-columns: 1fr; }
+    .crono { border: 0; padding: 0; }
+  }
   /* Inicio (dashboard) */
   .ini-hero { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; text-align: left; padding: 20px 22px; border-radius: 16px; background: var(--verde-profundo); color: var(--marfil); }
   .ini-hero .ini-dias { font-family: var(--serif); font-size: clamp(40px, 7vw, 64px); line-height: 1; }
@@ -983,8 +1011,10 @@
       <button type="button" class="area-btn" role="tab" data-area="inicio" aria-selected="true">🏠 Inicio</button>
       <button type="button" class="area-btn" role="tab" data-area="invitados" aria-selected="false">💌 Invitados</button>
       <button type="button" class="area-btn" role="tab" data-area="gestion" aria-selected="false">💼 Gestión</button>
+      <button type="button" class="area-btn" role="tab" data-area="dia" aria-selected="false">🎉 El día</button>
     </div>
     <div class="area" id="area-inicio"></div>
+    <div class="area" id="area-dia" hidden></div>
     <div class="area" id="area-invitados" hidden>
     <div class="admin-summary" id="detail-summary"></div>
     <div class="panel-barra">
@@ -1130,6 +1160,25 @@
     <div class="botones"><button type="button" class="btn-mini peligro" id="fpg-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
   </form>
 </dialog>
+<dialog class="form-dlg" id="dlg-momento" aria-labelledby="dlg-mom-titulo">
+  <form method="dialog" id="form-momento" novalidate>
+    <h3 id="dlg-mom-titulo">Nuevo momento</h3>
+    <label for="fm-actividad">Actividad *</label><input id="fm-actividad" maxlength="160" required placeholder="Ej. Sesión de fotos con la familia">
+    <label for="fm-dia">Día *</label>
+    <select id="fm-dia"><option value="2027-03-19">Viernes 19 de marzo (víspera)</option><option value="2027-03-20">Sábado 20 de marzo (la boda)</option><option value="2027-03-21">Domingo 21 de marzo (madrugada y salida)</option></select>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div><label for="fm-hora">Hora *</label><input id="fm-hora" type="time" required></div>
+      <div><label for="fm-hora-fin">Hasta (opcional)</label><input id="fm-hora-fin" type="time"></div>
+    </div>
+    <label for="fm-responsable">Responsable</label><input id="fm-responsable" maxlength="60" list="fm-responsables" placeholder="Ej. Novios, Finca, DJ/Música">
+    <datalist id="fm-responsables"><option value="Novios"><option value="Finca"><option value="Coordinador"><option value="DJ/Música"><option value="Fotógrafo"><option value="Decoración"><option value="Todos"></datalist>
+    <label for="fm-ubicacion">Lugar</label><input id="fm-ubicacion" maxlength="120" placeholder="Ej. Kiosko, jardín, piscina">
+    <label for="fm-cancion">Canción del momento</label><input id="fm-cancion" maxlength="160" placeholder="Ej. Perfect — Ed Sheeran">
+    <label for="fm-notas">Notas</label><textarea id="fm-notas" maxlength="1000"></textarea>
+    <div class="error" id="fm-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini peligro" id="fm-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
 <dialog class="form-dlg" id="dlg-cuota" aria-labelledby="dlg-cuota-titulo">
   <form method="dialog" id="form-cuota" novalidate>
     <h3 id="dlg-cuota-titulo">Nueva cuota</h3>
@@ -1249,6 +1298,7 @@
     renderCotizacionesAdmin(data.finanzas);
     renderTareasAdmin(data.tareas);
     renderInicio(data);
+    renderDia(data);
   }
   function renderPendientes(fin){
     var lista = fin.pendientes || [];
@@ -2181,6 +2231,81 @@
     else prompt('Copia el link:', link);
   });
 
+  // El día: cronograma
+  var NOMBRE_DIA = { '2027-03-19': ['Viernes 19 de marzo', 'víspera'], '2027-03-20': ['Sábado 20 de marzo', 'la boda'], '2027-03-21': ['Domingo 21 de marzo', 'madrugada y salida'] };
+  var hora12 = function(h){
+    var p = h.split(':'), n = +p[0];
+    return (n % 12 || 12) + ':' + p[1] + (n < 12 ? ' am' : ' pm');
+  };
+  function renderDia(data){
+    var caja = document.getElementById('area-dia'), lista = data.cronograma || [];
+    var dias = [];
+    lista.forEach(function(m){ if(dias.indexOf(m.dia) < 0) dias.push(m.dia); });
+    var bloque = function(dia){
+      var nom = NOMBRE_DIA[dia] || [fechaCorta(dia), ''];
+      return '<div class="crono"><h4>' + nom[0] + (nom[1] ? '<small>' + nom[1] + '</small>' : '') + '</h4>' +
+        lista.filter(function(m){ return m.dia === dia; }).map(function(m){
+          var meta = [];
+          if(m.responsable) meta.push('<span class="m-resp">' + escapeHtml(m.responsable) + '</span>');
+          if(m.ubicacion) meta.push('<span>📍 ' + escapeHtml(m.ubicacion) + '</span>');
+          if(m.cancion) meta.push('<span>🎵 ' + escapeHtml(m.cancion) + '</span>');
+          return '<div class="momento' + (/ceremonia/i.test(m.actividad) ? ' ceremonia' : '') + '"><div class="m-hora">' + hora12(m.hora) +
+            (m.horaFin ? '<small>hasta ' + hora12(m.horaFin) + '</small>' : '') + '</div>' +
+            '<div><div class="m-act">' + escapeHtml(m.actividad) + '</div>' + (meta.length ? '<div class="m-meta">' + meta.join('') + '</div>' : '') +
+            (m.notas ? '<div class="m-notas">' + escapeHtml(m.notas) + '</div>' : '') + '</div>' +
+            '<div class="no-print"><button type="button" class="btn-mini solo-icono" data-accion="editar-momento" data-id="' + m.id + '" aria-label="Editar ' + escapeHtml(m.actividad) + '">✏️</button></div></div>';
+        }).join('') + '</div>';
+    };
+    var principal = dias.filter(function(d){ return d <= '2027-03-20'; }), despues = dias.filter(function(d){ return d > '2027-03-20'; });
+    caja.innerHTML = '<div class="dia-head"><div><b>⏰ Cronograma del día</b><span>' + plural2(lista.length, 'momento', 'momentos') + ' · para compartir con la finca y los proveedores</span></div>' +
+      '<div class="acciones-mini no-print"><button type="button" class="btn-mini" data-accion="imprimir-crono">🖨️ Imprimir</button>' +
+      '<button type="button" class="btn-mini principal" data-accion="nuevo-momento">+ Añadir momento</button></div></div>' +
+      (lista.length ? '<div class="dia-cols"><div>' + principal.map(bloque).join('') + '</div><div>' + despues.map(bloque).join('') + '</div></div>'
+        : '<div class="crono">Aún no hay momentos. Añade el primero.</div>');
+  }
+  var plural2 = function(n, uno, varios){ return n + ' ' + (n === 1 ? uno : varios); };
+  var dlgMom = document.getElementById('dlg-momento'), formMom = document.getElementById('form-momento');
+  var buscarMomento = function(id){ return (ultimoData.cronograma || []).filter(function(m){ return m.id === id; })[0]; };
+  function abrirMomento(m){
+    formMom.dataset.id = m ? m.id : '';
+    document.getElementById('dlg-mom-titulo').textContent = m ? 'Editar momento' : 'Nuevo momento';
+    document.getElementById('fm-actividad').value = m ? m.actividad : '';
+    document.getElementById('fm-dia').value = m ? m.dia : '2027-03-20';
+    document.getElementById('fm-hora').value = m ? m.hora : '';
+    document.getElementById('fm-hora-fin').value = m ? (m.horaFin || '') : '';
+    document.getElementById('fm-responsable').value = m ? (m.responsable || '') : '';
+    document.getElementById('fm-ubicacion').value = m ? (m.ubicacion || '') : '';
+    document.getElementById('fm-cancion').value = m ? (m.cancion || '') : '';
+    document.getElementById('fm-notas').value = m ? (m.notas || '') : '';
+    document.getElementById('fm-borrar').hidden = !m;
+    document.getElementById('fm-error').textContent = '';
+    dlgMom.showModal();
+  }
+  formMom.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('fm-error'), act = document.getElementById('fm-actividad').value.trim();
+    if(!act){ err.textContent = 'Escribe la actividad.'; return; }
+    if(!document.getElementById('fm-hora').value){ err.textContent = 'Elige la hora.'; return; }
+    enviarForm(formMom, err, { accion: 'guardar_momento', id: formMom.dataset.id || undefined, actividad: act,
+      dia: document.getElementById('fm-dia').value, hora: document.getElementById('fm-hora').value, hora_fin: document.getElementById('fm-hora-fin').value || null,
+      responsable: document.getElementById('fm-responsable').value, ubicacion: document.getElementById('fm-ubicacion').value,
+      cancion: document.getElementById('fm-cancion').value, notas: document.getElementById('fm-notas').value });
+  });
+  document.getElementById('fm-borrar').addEventListener('click', async function(){
+    var m = buscarMomento(formMom.dataset.id), b = this;
+    if(!m || !confirm('¿Eliminar "' + m.actividad + '" del cronograma?')) return;
+    b.disabled = true;
+    try{ await accionAdmin({ accion: 'borrar_momento', id: m.id }); dlgMom.close(); }
+    catch(x){ document.getElementById('fm-error').textContent = x.message; }
+    finally { b.disabled = false; }
+  });
+  document.getElementById('area-dia').addEventListener('click', function(e){
+    var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
+    if(b.dataset.accion === 'nuevo-momento') return abrirMomento(null);
+    if(b.dataset.accion === 'editar-momento') return abrirMomento(buscarMomento(b.dataset.id));
+    if(b.dataset.accion === 'imprimir-crono') window.print();
+  });
+
   // Inicio: lo más importante de todo el panel en una sola pantalla
   var FECHA_RSVP = '2027-01-15';
   function renderInicio(data){
@@ -2324,6 +2449,7 @@
     document.querySelectorAll('.area-btn').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.area === areaActual ? 'true' : 'false'); });
     document.getElementById('area-invitados').hidden = areaActual !== 'invitados';
     document.getElementById('area-inicio').hidden = areaActual !== 'inicio';
+    document.getElementById('area-dia').hidden = areaActual !== 'dia';
     document.getElementById('area-gestion').hidden = areaActual !== 'gestion';
     document.body.classList.toggle('modo-gestion', areaActual !== 'invitados' && dentro);
     document.querySelectorAll('[data-gvista]').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.gvista === gVista ? 'true' : 'false'); });
