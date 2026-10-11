@@ -64,6 +64,29 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
+    // Recordatorio por WhatsApp: el teléfono solo sale de aquí al abrir el chat
+    if (body?.accion === "whatsapp_recordatorio") {
+      const codigo = typeof body.codigo === "string" ? body.codigo : "";
+      const { data: inv, error: e1 } = await supabase.from("invitaciones").select("id, telefono").eq("codigo", codigo).maybeSingle();
+      if (e1) return json({ error: e1.message }, 500);
+      if (!inv) return json({ error: "invitación no encontrada" }, 404);
+      let digitos = String(inv.telefono ?? "").replace(/\D/g, "");
+      if (digitos.length === 10) digitos = "57" + digitos;
+      if (digitos.length < 11) return json({ error: "esta invitación no tiene teléfono" }, 400);
+      const mensaje = typeof body.mensaje === "string" ? body.mensaje.slice(0, 1500) : "";
+      // api.whatsapp.com directo: el redireccionamiento de wa.me daña algunos emojis
+      return json({ url: "https://api.whatsapp.com/send?phone=" + digitos + (mensaje ? "&text=" + encodeURIComponent(mensaje) : "") });
+    }
+
+    // Marca (o quita) que el recordatorio sí se envió
+    if (body?.accion === "marcar_recordado") {
+      const codigo = typeof body.codigo === "string" ? body.codigo : "";
+      const { error } = await supabase.from("invitaciones")
+        .update({ recordado_en: body.recordado === true ? new Date().toISOString() : null }).eq("codigo", codigo);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
     // Gestión: proveedores y su plan de pagos
     const texto = (v: unknown, max: number) => (typeof v === "string" ? v.trim().replace(/\s+/g, " ").slice(0, max) : "") || null;
     // Para notas: conserva los saltos de línea
@@ -441,7 +464,7 @@ Deno.serve(async (req: Request) => {
         .order("submitted_at", { ascending: false }),
       supabase
         .from("invitaciones")
-        .select("id, codigo, nombre, categoria, cupos, notas, creada_en")
+        .select("id, codigo, nombre, categoria, cupos, notas, creada_en, telefono, recordado_en")
         .order("nombre", { ascending: true }),
       supabase.from("categorias").select("nombre, orden").order("orden", { ascending: true }),
       supabase
@@ -510,6 +533,8 @@ Deno.serve(async (req: Request) => {
         categoria: i.categoria,
         cupos: i.cupos,
         notas: i.notas,
+        tieneTelefono: !!i.telefono,
+        recordadoEn: i.recordado_en,
         respuesta: r
           ? {
               asiste: r.attending,
