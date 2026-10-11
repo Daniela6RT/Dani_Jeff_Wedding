@@ -4,6 +4,8 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 // La contraseña del panel vive en el secreto ADMIN_PASSWORD de Supabase
 // (Edge Functions → Secrets), nunca en el código: este repo es público.
 const ADMIN_PASSWORD = Deno.env.get("ADMIN_PASSWORD") ?? "";
+// Correos con acceso al entrar con Google (secreto ADMIN_EMAILS, separados por coma)
+const ADMIN_EMAILS = (Deno.env.get("ADMIN_EMAILS") ?? "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -26,15 +28,25 @@ Deno.serve(async (req: Request) => {
     const body = await req.json().catch(() => ({}));
     const password = body?.password;
 
-    if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
-      // Pausa para frenar intentos repetidos de adivinar la contraseña
-      await new Promise((r) => setTimeout(r, 1000));
-      return json({ error: "unauthorized" }, 401);
-    }
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, serviceKey);
+
+    // Acceso: sesión de Google de un correo permitido, o la contraseña (respaldo)
+    if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
+      const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+      let email: string | null = null;
+      if (token && !token.startsWith("sb_")) {
+        const { data } = await supabase.auth.getUser(token);
+        email = data.user?.email?.toLowerCase() ?? null;
+      }
+      if (!email) {
+        // Pausa para frenar intentos repetidos de adivinar la contraseña
+        await new Promise((r) => setTimeout(r, 1000));
+        return json({ error: "unauthorized" }, 401);
+      }
+      if (!ADMIN_EMAILS.includes(email)) return json({ error: "forbidden" }, 403);
+    }
 
     // Editar el nombre de una persona (p. ej. el +1 "por definir")
     if (body?.accion === "editar_persona") {
@@ -241,7 +253,55 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
-    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes] = await Promise.all([
+    // Tareas (checklist y trámites)
+    const RESPONSABLES = ["daniela", "jeferson", "ambos", "familia"];
+    const ESTADOS_TAREA = ["sin_empezar", "en_progreso", "listo"];
+    if (body?.accion === "guardar_tarea") {
+      const fase = Number(body.fase);
+      const fila: Record<string, unknown> = {
+        titulo: texto(body.titulo, 160),
+        notas: textoLargo(body.notas, 1000),
+        tipo: ["general", "civil", "finca"].includes(body.tipo) ? body.tipo : "general",
+        fase: Number.isInteger(fase) && fase >= 1 && fase <= 5 ? fase : null,
+        responsable: RESPONSABLES.includes(body.responsable) ? body.responsable : "ambos",
+        estado: ESTADOS_TAREA.includes(body.estado) ? body.estado : "sin_empezar",
+        fecha_limite: esFecha(body.fecha_limite) ? body.fecha_limite : null,
+        actualizada_en: new Date().toISOString(),
+      };
+      if (!fila.titulo) return json({ error: "escribe la tarea" }, 400);
+      fila.completada_en = fila.estado === "listo" ? new Date().toISOString() : null;
+      if (esId(body.id)) {
+        // Conserva la fecha en que se completó si sigue lista
+        const { data: previa } = await supabase.from("tareas").select("estado, completada_en").eq("id", body.id).maybeSingle();
+        if (previa?.estado === "listo" && fila.estado === "listo") fila.completada_en = previa.completada_en;
+      }
+      const { error } = esId(body.id)
+        ? await supabase.from("tareas").update(fila).eq("id", body.id)
+        : await supabase.from("tareas").insert(fila);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    if (body?.accion === "estado_tarea") {
+      if (!esId(body.id)) return json({ error: "tarea inválida" }, 400);
+      if (!ESTADOS_TAREA.includes(body.estado)) return json({ error: "estado inválido" }, 400);
+      const { error } = await supabase.from("tareas").update({
+        estado: body.estado,
+        completada_en: body.estado === "listo" ? new Date().toISOString() : null,
+        actualizada_en: new Date().toISOString(),
+      }).eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    if (body?.accion === "borrar_tarea") {
+      if (!esId(body.id)) return json({ error: "tarea inválida" }, 400);
+      const { error } = await supabase.from("tareas").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -275,6 +335,11 @@ Deno.serve(async (req: Request) => {
         .select("id, nombre, categoria, contacto, monto, fecha, notas, archivo_path, estado, proveedor_id, creada_en")
         .order("monto", { ascending: true }),
       supabase.from("pendientes").select("id, nombre, categoria, estimado, notas, no_aplica, orden").order("orden", { ascending: true }),
+      supabase
+        .from("tareas")
+        .select("id, titulo, notas, tipo, fase, responsable, estado, fecha_limite, completada_en")
+        .order("fecha_limite", { ascending: true, nullsFirst: false })
+        .order("creada_en", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -288,6 +353,7 @@ Deno.serve(async (req: Request) => {
     if (pagRes.error) return json({ error: pagRes.error.message }, 500);
     if (cotRes.error) return json({ error: cotRes.error.message }, 500);
     if (penRes.error) return json({ error: penRes.error.message }, 500);
+    if (tarRes.error) return json({ error: tarRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -522,6 +588,17 @@ Deno.serve(async (req: Request) => {
       corte,
       personas,
       finanzas,
+      tareas: (tarRes.data ?? []).map((t) => ({
+        id: t.id,
+        titulo: t.titulo,
+        notas: t.notas,
+        tipo: t.tipo,
+        fase: t.fase,
+        responsable: t.responsable,
+        estado: t.estado,
+        fechaLimite: t.fecha_limite,
+        completadaEn: t.completada_en,
+      })),
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
