@@ -786,6 +786,21 @@
   .momento .m-resp { display: inline-block; padding: 1px 8px; border-radius: 99px; background: var(--marfil-warm); color: var(--madera); font-weight: 600; }
   .momento .m-notas { font-size: 12px; color: var(--texto-suave); margin-top: 4px; white-space: pre-line; }
   .momento.ceremonia .m-act { color: var(--terracotta-deep); }
+  .contacto { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 9px 0; border-top: 1px solid var(--linea); }
+  .contacto small { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+  .contacto .c-nombre { font-size: 13.5px; font-weight: 600; color: var(--madera); }
+  .contacto .c-nombre.vacio { font-weight: 400; font-style: italic; color: var(--texto-suave); }
+  .contacto .c-tel { font-size: 12.5px; margin-top: 2px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .contacto .c-tel a { color: var(--verde-profundo); font-weight: 600; text-decoration: none; }
+  .contacto .c-notas { font-size: 11.5px; color: var(--texto-suave); margin-top: 2px; }
+  .kit-fila { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--linea); font-size: 13px; color: var(--madera); }
+  .kit-fila .tarea-check { width: 26px; height: 26px; font-size: 13px; }
+  .kit-fila.listo .tarea-check { background: var(--verde-olivo); }
+  .kit-fila.listo span { text-decoration: line-through; color: var(--texto-suave); }
+  .kit-fila span { flex: 1 1 auto; min-width: 0; }
+  .kit-fila .kit-quitar { border: 0; background: none; color: var(--texto-suave); cursor: pointer; min-width: 30px; min-height: 30px; font-size: 14px; }
+  .kit-nuevo { display: flex; gap: 6px; margin-top: 8px; }
+  .kit-nuevo input { flex: 1 1 auto; min-height: 38px; margin: 0; padding: 0 10px; border: 1px solid var(--linea); border-radius: 10px; font: 13px var(--sans); }
   @media print {
     body * { visibility: hidden; }
     #area-dia, #area-dia * { visibility: visible; }
@@ -1177,6 +1192,17 @@
     <label for="fm-notas">Notas</label><textarea id="fm-notas" maxlength="1000"></textarea>
     <div class="error" id="fm-error" role="alert"></div>
     <div class="botones"><button type="button" class="btn-mini peligro" id="fm-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
+  </form>
+</dialog>
+<dialog class="form-dlg" id="dlg-contacto" aria-labelledby="dlg-con-titulo">
+  <form method="dialog" id="form-contacto" novalidate>
+    <h3 id="dlg-con-titulo">Nuevo contacto</h3>
+    <label for="fco-rol">Rol *</label><input id="fco-rol" maxlength="80" required placeholder="Ej. Mamá de Daniela, Maquilladora">
+    <label for="fco-nombre">Nombre</label><input id="fco-nombre" maxlength="120">
+    <label for="fco-telefono">Teléfono</label><input id="fco-telefono" maxlength="40" inputmode="tel" placeholder="Ej. 300 123 4567">
+    <label for="fco-notas">Notas</label><textarea id="fco-notas" maxlength="500"></textarea>
+    <div class="error" id="fco-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini peligro" id="fco-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
   </form>
 </dialog>
 <dialog class="form-dlg" id="dlg-cuota" aria-labelledby="dlg-cuota-titulo">
@@ -2257,11 +2283,33 @@
         }).join('') + '</div>';
     };
     var principal = dias.filter(function(d){ return d <= '2027-03-20'; }), despues = dias.filter(function(d){ return d > '2027-03-20'; });
+    // Contactos clave y kit de emergencia
+    var contactos = data.contactos || [], kit = data.kit || [];
+    var telLinks = function(t){
+      var dig = String(t).replace(/\D/g, ''); if(dig.length === 10) dig = '57' + dig;
+      return '<a href="tel:+' + dig + '">📞 ' + escapeHtml(t) + '</a><a class="no-print" href="https://wa.me/' + dig + '" target="_blank" rel="noopener">WhatsApp</a>';
+    };
+    var cajaContactos = '<div class="crono"><h4 style="display:flex; justify-content:space-between; align-items:center;">📞 Contactos del día' +
+      '<button type="button" class="btn-mini no-print" data-accion="nuevo-contacto">+ Contacto</button></h4>' +
+      (contactos.length ? contactos.map(function(c){
+        return '<div class="contacto"><div><small>' + escapeHtml(c.rol) + '</small>' +
+          '<div class="c-nombre' + (c.nombre ? '' : ' vacio') + '">' + escapeHtml(c.nombre || 'Por definir') + '</div>' +
+          (c.telefono ? '<div class="c-tel">' + telLinks(c.telefono) + '</div>' : '') +
+          (c.notas && c.notas !== 'Por definir.' ? '<div class="c-notas">' + escapeHtml(c.notas) + '</div>' : '') + '</div>' +
+          '<div class="no-print"><button type="button" class="btn-mini solo-icono" data-accion="editar-contacto" data-id="' + c.id + '" aria-label="Editar ' + escapeHtml(c.rol) + '">✏️</button></div></div>';
+      }).join('') : '<div class="pend-sub">Aún no hay contactos.</div>') + '</div>';
+    var kitListos = kit.filter(function(k){ return k.listo; }).length;
+    var cajaKit = '<div class="crono"><h4>🪡 Kit de emergencia<small>' + kitListos + ' de ' + kit.length + ' listos</small></h4>' +
+      kit.map(function(k){
+        return '<div class="kit-fila' + (k.listo ? ' listo' : '') + '"><button type="button" class="tarea-check" data-accion="kit-check" data-id="' + k.id + '" aria-label="' + (k.listo ? 'Desmarcar: ' : 'Marcar como listo: ') + escapeHtml(k.item) + '">' + (k.listo ? '✓' : '') + '</button>' +
+          '<span>' + escapeHtml(k.item) + '</span><button type="button" class="kit-quitar no-print" data-accion="kit-quitar" data-id="' + k.id + '" aria-label="Quitar ' + escapeHtml(k.item) + '">✕</button></div>';
+      }).join('') +
+      '<form class="kit-nuevo no-print" id="kit-nuevo"><input id="kit-item" maxlength="160" placeholder="Añadir al kit…" aria-label="Nuevo elemento del kit"><button type="submit" class="btn-mini">Añadir</button></form></div>';
     caja.innerHTML = '<div class="dia-head"><div><b>⏰ Cronograma del día</b><span>' + plural2(lista.length, 'momento', 'momentos') + ' · para compartir con la finca y los proveedores</span></div>' +
       '<div class="acciones-mini no-print"><button type="button" class="btn-mini" data-accion="imprimir-crono">🖨️ Imprimir</button>' +
       '<button type="button" class="btn-mini principal" data-accion="nuevo-momento">+ Añadir momento</button></div></div>' +
-      (lista.length ? '<div class="dia-cols"><div>' + principal.map(bloque).join('') + '</div><div>' + despues.map(bloque).join('') + '</div></div>'
-        : '<div class="crono">Aún no hay momentos. Añade el primero.</div>');
+      '<div class="dia-cols"><div>' + (lista.length ? principal.map(bloque).join('') : '<div class="crono">Aún no hay momentos. Añade el primero.</div>') + '</div>' +
+      '<div>' + despues.map(bloque).join('') + cajaContactos + cajaKit + '</div></div>';
   }
   var plural2 = function(n, uno, varios){ return n + ' ' + (n === 1 ? uno : varios); };
   var dlgMom = document.getElementById('dlg-momento'), formMom = document.getElementById('form-momento');
@@ -2304,6 +2352,57 @@
     if(b.dataset.accion === 'nuevo-momento') return abrirMomento(null);
     if(b.dataset.accion === 'editar-momento') return abrirMomento(buscarMomento(b.dataset.id));
     if(b.dataset.accion === 'imprimir-crono') window.print();
+    if(b.dataset.accion === 'nuevo-contacto') return abrirContacto(null);
+    if(b.dataset.accion === 'editar-contacto') return abrirContacto(buscarContacto(b.dataset.id));
+    if(b.dataset.accion === 'kit-check' || b.dataset.accion === 'kit-quitar'){
+      var k = (ultimoData.kit || []).filter(function(x){ return x.id === b.dataset.id; })[0];
+      if(!k) return;
+      if(b.dataset.accion === 'kit-quitar' && !confirm('¿Quitar "' + k.item + '" del kit?')) return;
+      b.disabled = true;
+      accionAdmin(b.dataset.accion === 'kit-check' ? { accion: 'guardar_kit', id: k.id, listo: !k.listo } : { accion: 'borrar_kit', id: k.id })
+        .catch(function(x){ alert(x.message); b.disabled = false; });
+    }
+  });
+  var cajaDia = document.getElementById('area-dia');
+  cajaDia.addEventListener('submit', async function(e){
+    if(e.target.id !== 'kit-nuevo') return;
+    e.preventDefault();
+    var inp = document.getElementById('kit-item'), item = inp.value.trim();
+    if(!item) return;
+    inp.disabled = true;
+    try{ editando = false; await accionAdmin({ accion: 'guardar_kit', item: item }); }
+    catch(x){ alert(x.message); inp.disabled = false; }
+  });
+  // No refrescar mientras se escribe un elemento nuevo del kit
+  cajaDia.addEventListener('focusin', function(e){ if(e.target.id === 'kit-item') editando = true; });
+  cajaDia.addEventListener('focusout', function(e){ if(e.target.id === 'kit-item') editando = false; });
+  var dlgCon = document.getElementById('dlg-contacto'), formCon = document.getElementById('form-contacto');
+  var buscarContacto = function(id){ return (ultimoData.contactos || []).filter(function(c){ return c.id === id; })[0]; };
+  function abrirContacto(c){
+    formCon.dataset.id = c ? c.id : '';
+    document.getElementById('dlg-con-titulo').textContent = c ? 'Editar contacto' : 'Nuevo contacto';
+    document.getElementById('fco-rol').value = c ? c.rol : '';
+    document.getElementById('fco-nombre').value = c ? (c.nombre || '') : '';
+    document.getElementById('fco-telefono').value = c ? (c.telefono || '') : '';
+    document.getElementById('fco-notas').value = c ? (c.notas || '') : '';
+    document.getElementById('fco-borrar').hidden = !c;
+    document.getElementById('fco-error').textContent = '';
+    dlgCon.showModal();
+  }
+  formCon.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('fco-error'), rol = document.getElementById('fco-rol').value.trim();
+    if(!rol){ err.textContent = 'Escribe el rol.'; return; }
+    enviarForm(formCon, err, { accion: 'guardar_contacto', id: formCon.dataset.id || undefined, rol: rol,
+      nombre: document.getElementById('fco-nombre').value, telefono: document.getElementById('fco-telefono').value, notas: document.getElementById('fco-notas').value });
+  });
+  document.getElementById('fco-borrar').addEventListener('click', async function(){
+    var c = buscarContacto(formCon.dataset.id), b = this;
+    if(!c || !confirm('¿Eliminar el contacto "' + c.rol + '"?')) return;
+    b.disabled = true;
+    try{ await accionAdmin({ accion: 'borrar_contacto', id: c.id }); dlgCon.close(); }
+    catch(x){ document.getElementById('fco-error').textContent = x.message; }
+    finally { b.disabled = false; }
   });
 
   // Inicio: lo más importante de todo el panel en una sola pantalla

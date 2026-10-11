@@ -383,7 +383,58 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
 
-    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes] = await Promise.all([
+    // Kit de emergencia del día
+    if (body?.accion === "guardar_kit") {
+      const item = texto(body.item, 160);
+      if (esId(body.id)) {
+        const cambios: Record<string, unknown> = {};
+        if (typeof body.listo === "boolean") cambios.listo = body.listo;
+        if (item) cambios.item = item;
+        const { error } = await supabase.from("kit").update(cambios).eq("id", body.id);
+        if (error) return json({ error: error.message }, 500);
+      } else {
+        if (!item) return json({ error: "escribe el elemento" }, 400);
+        const { error } = await supabase.from("kit").insert({ item });
+        if (error) return json({ error: error.message }, 500);
+      }
+      return json({ ok: true });
+    }
+
+    if (body?.accion === "borrar_kit") {
+      if (!esId(body.id)) return json({ error: "elemento inválido" }, 400);
+      const { error } = await supabase.from("kit").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    // Contactos clave del día
+    if (body?.accion === "guardar_contacto") {
+      const fila = {
+        rol: texto(body.rol, 80),
+        nombre: texto(body.nombre, 120),
+        telefono: texto(body.telefono, 40),
+        notas: textoLargo(body.notas, 500),
+      };
+      if (!fila.rol) return json({ error: "escribe el rol" }, 400);
+      if (esId(body.id)) {
+        const { error } = await supabase.from("contactos").update(fila).eq("id", body.id);
+        if (error) return json({ error: error.message }, 500);
+      } else {
+        const { data: ult } = await supabase.from("contactos").select("orden").order("orden", { ascending: false }).limit(1).maybeSingle();
+        const { error } = await supabase.from("contactos").insert({ ...fila, orden: (ult?.orden ?? 0) + 1 });
+        if (error) return json({ error: error.message }, 500);
+      }
+      return json({ ok: true });
+    }
+
+    if (body?.accion === "borrar_contacto") {
+      if (!esId(body.id)) return json({ error: "contacto inválido" }, 400);
+      const { error } = await supabase.from("contactos").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes, kitRes, conRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -427,6 +478,8 @@ Deno.serve(async (req: Request) => {
         .select("id, dia, hora, hora_fin, actividad, responsable, ubicacion, cancion, notas")
         .order("dia", { ascending: true })
         .order("hora", { ascending: true }),
+      supabase.from("kit").select("id, item, listo").order("creado_en", { ascending: true }),
+      supabase.from("contactos").select("id, rol, nombre, telefono, notas").order("orden", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -442,6 +495,8 @@ Deno.serve(async (req: Request) => {
     if (penRes.error) return json({ error: penRes.error.message }, 500);
     if (tarRes.error) return json({ error: tarRes.error.message }, 500);
     if (croRes.error) return json({ error: croRes.error.message }, 500);
+    if (kitRes.error) return json({ error: kitRes.error.message }, 500);
+    if (conRes.error) return json({ error: conRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -701,6 +756,8 @@ Deno.serve(async (req: Request) => {
         cancion: m.cancion,
         notas: m.notas,
       })),
+      kit: kitRes.data ?? [],
+      contactos: conRes.data ?? [],
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
