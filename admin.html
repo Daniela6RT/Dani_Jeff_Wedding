@@ -711,6 +711,9 @@
   .tarea-col { min-width: 0; }
   .prov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 14px; align-items: start; }
   .prov-grid .prov-card { margin-bottom: 0; }
+  .doc-fila { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; }
+  .doc-fila a { color: var(--verde-profundo); font-weight: 600; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .doc-fila a:hover { text-decoration: underline; }
   .area-gestion .vista-btn[aria-selected="true"] { background: var(--terracotta-deep); border-color: var(--terracotta-deep); }
   /* Gestión de proveedores */
   .prov-card { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
@@ -836,6 +839,7 @@
   .m-chip span { display: block; font-size: 13px; font-weight: 600; color: var(--madera); }
   .m-chip small { display: block; font-size: 10.5px; color: var(--texto-suave); }
   .m-chip.pendiente { border-style: dashed; }
+  .m-chip.extra { border-color: var(--terracotta-deep); }
   .m-chip.no-asiste { opacity: .55; text-decoration: line-through; }
   /* El día: cronograma */
   .dia-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left; padding: 14px 16px; border-radius: 14px; background: var(--terracotta-deep); color: #fff; margin-bottom: 12px; }
@@ -1308,6 +1312,18 @@
     <div class="botones"><button type="button" class="btn-mini peligro" id="fme-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
   </form>
 </dialog>
+<dialog class="form-dlg" id="dlg-documento" aria-labelledby="dlg-doc-titulo">
+  <form method="dialog" id="form-documento" novalidate>
+    <h3 id="dlg-doc-titulo">Adjuntar documento</h3>
+    <div class="ayuda" id="fd-proveedor" style="margin:-8px 0 6px;"></div>
+    <label for="fd-nombre">Nombre *</label><input id="fd-nombre" maxlength="120" required list="fd-nombres" placeholder="Ej. Contrato firmado">
+    <datalist id="fd-nombres"><option value="Contrato firmado"><option value="Anexo"><option value="Otrosí"><option value="Factura"><option value="Cotización aceptada"></datalist>
+    <label for="fd-archivo">Archivo *</label><input id="fd-archivo" type="file" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,.heic">
+    <div class="ayuda">PDF o foto, máximo 8 MB. Se guarda en privado.</div>
+    <div class="error" id="fd-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Adjuntar</button></div>
+  </form>
+</dialog>
 <dialog class="form-dlg" id="dlg-cuota" aria-labelledby="dlg-cuota-titulo">
   <form method="dialog" id="form-cuota" novalidate>
     <h3 id="dlg-cuota-titulo">Nueva cuota</h3>
@@ -1589,7 +1605,14 @@
         (p.notas ? '<p class="prov-notas">' + escapeHtml(p.notas) + '</p>' : '') +
         (function(){ var c = (fin.cotizaciones || []).filter(function(x){ return x.proveedorId === p.id && x.archivo; })[0];
           return c && /^https:\/\//.test(c.archivo) ? '<a href="' + escapeHtml(c.archivo) + '" target="_blank" rel="noopener" style="display:inline-block; font-size:12px; margin-top:6px;">📎 Cotización aceptada</a>' : ''; })() +
-        '<div class="prov-cifras"><span>Total <b>' + pesos(p.total) + '</b></span><span>Pagado <b>' + pesos(p.pagado) + '</b></span><span>Falta <b style="color:var(--terracotta-deep)">' + pesos(p.saldo) + '</b></span></div>';
+        '<div class="prov-cifras"><span>Total <b>' + pesos(p.total) + '</b></span><span>Pagado <b>' + pesos(p.pagado) + '</b></span><span>Falta <b style="color:var(--terracotta-deep)">' + pesos(p.saldo) + '</b></span></div>' +
+        // Documentos: contrato firmado, anexos, facturas…
+        '<div class="prov-docs"><div class="fin-titulo" style="margin:14px 0 6px;">📎 Documentos</div>' +
+        ((p.documentos || []).length ? (p.documentos || []).map(function(d){
+          return '<div class="doc-fila">' + (d.url && /^https:\/\//.test(d.url) ? '<a href="' + escapeHtml(d.url) + '" target="_blank" rel="noopener">' + (d.tipo === 'pdf' ? '📄 ' : '🖼️ ') + escapeHtml(d.nombre) + '</a>' : escapeHtml(d.nombre)) +
+            '<button type="button" class="btn-mini solo-icono peligro" data-accion="borrar-documento" data-id="' + d.id + '" aria-label="Eliminar ' + escapeHtml(d.nombre) + '">🗑️</button></div>';
+        }).join('') : (p.contrato === 'firmado' ? '<div class="prov-aviso" style="margin-top:0;">El contrato está firmado pero aún no está adjunto.</div>' : '<div style="font-size:12px; color:var(--texto-suave);">Sin documentos.</div>')) +
+        '<button type="button" class="btn-mini" data-accion="nuevo-documento" data-id="' + p.id + '" style="margin-top:6px;">📎 Adjuntar documento</button></div>';
       h += '<div class="fin-titulo" style="margin-top:14px;">Plan de pagos</div>';
       if(cuotas.length){
         h += '<div class="table-scroll"><table style="width:100%; border-collapse:collapse; font-size:12px; background:#fff;"><thead><tr>' +
@@ -1665,11 +1688,11 @@
     dlgCuota.showModal();
   }
   async function enviarForm(form, errorEl, datos){
-    var btn = form.querySelector('[type=submit]');
+    var btn = form.querySelector('[type=submit]'), texto = btn.textContent;
     btn.disabled = true; btn.textContent = 'Guardando…'; errorEl.textContent = '';
     try{ await accionAdmin(datos); form.closest('dialog').close(); }
     catch(err){ errorEl.textContent = err.message; }
-    finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+    finally { btn.disabled = false; btn.textContent = texto; }
   }
   formProv.addEventListener('submit', function(e){
     e.preventDefault();
@@ -1973,6 +1996,26 @@
     catch(x){ alert(x.message); b.disabled = false; }
   });
 
+  // Documentos de proveedores
+  var dlgDoc = document.getElementById('dlg-documento'), formDoc = document.getElementById('form-documento');
+  function abrirDocumento(provId){
+    var p = buscarProv(provId);
+    formDoc.dataset.proveedor = provId;
+    document.getElementById('fd-proveedor').textContent = p ? p.nombre : '';
+    document.getElementById('fd-nombre').value = p && !(p.documentos || []).length ? 'Contrato firmado' : '';
+    document.getElementById('fd-archivo').value = '';
+    document.getElementById('fd-error').textContent = '';
+    dlgDoc.showModal();
+  }
+  formDoc.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var err = document.getElementById('fd-error'), nombre = document.getElementById('fd-nombre').value.trim(), file = document.getElementById('fd-archivo').files[0];
+    if(!nombre){ err.textContent = 'Escribe el nombre del documento.'; return; }
+    if(!file){ err.textContent = 'Elige el archivo.'; return; }
+    var archivo; try{ archivo = await leerArchivo(file); } catch(x){ err.textContent = x.message; return; }
+    enviarForm(formDoc, err, { accion: 'guardar_documento', proveedor_id: formDoc.dataset.proveedor, nombre: nombre, archivo: archivo });
+  });
+
   // Pagos: registrar, editar y borrar, con comprobante
   var dlgPago = document.getElementById('dlg-pago'), formPago = document.getElementById('form-pago');
   enlazarMonto(document.getElementById('fpg-monto'), document.getElementById('fpg-monto-ayuda'));
@@ -2181,6 +2224,14 @@
     if(a === 'editar-proveedor') return abrirProveedor(buscarProv(id));
     if(a === 'nueva-cuota') return abrirCuota(id, null);
     if(a === 'nuevo-pago') return abrirPago({ proveedorId: id });
+    if(a === 'nuevo-documento') return abrirDocumento(id);
+    if(a === 'borrar-documento'){
+      var doc = null; ultimoData.finanzas.proveedores.forEach(function(pv){ (pv.documentos || []).forEach(function(d){ if(d.id === id) doc = d; }); });
+      if(!doc || !confirm('¿Eliminar el documento "' + doc.nombre + '"? El archivo se borra.')) return;
+      b.disabled = true;
+      accionAdmin({ accion: 'borrar_documento', id: id }).catch(function(x){ alert(x.message); b.disabled = false; });
+      return;
+    }
     if(a === 'pagar-cuota'){ var cq = buscarCuota(id); return abrirPago({ proveedorId: cq.proveedorId, cuotaId: id }); }
     if(a === 'editar-cuota'){ var c = buscarCuota(id); return abrirCuota(c.proveedorId, c); }
     var confirmar = { 'borrar-proveedor': '¿Eliminar a ' + ((buscarProv(id) || {}).nombre || 'este proveedor') + ' y su plan de pagos?',
@@ -2445,11 +2496,16 @@
   var conPendientesMesas = false;
   try{ conPendientesMesas = localStorage.getItem('admin-mesas-pend') === '1'; } catch(e){}
   function renderMesas(data){
-    var caja = document.getElementById('area-dia'), mesas = data.mesas || [], personas = data.personas || [];
+    var caja = document.getElementById('area-dia'), mesas = data.mesas || [];
+    // Los novios (y otros que no son invitados del RSVP) también se sientan
+    var extras = (data.mesaExtras || []).map(function(x){
+      return { id: x.id, nombre: x.nombre, mesaId: x.mesaId, estadoInvitacion: 'asiste', categoria: x.etiqueta, invitacion: x.etiqueta || '', extra: true };
+    });
+    var personas = extras.concat(data.personas || []);
     var nombreDe = function(p){ return p.nombre || ('Acompañante de ' + (p.acompananteDe || p.invitacion) + ' (por definir)'); };
     var chip = function(p){
-      return '<div class="m-chip ' + p.estadoInvitacion.replace(' ', '-') + '" data-id="' + p.id + '" title="' + escapeHtml(p.invitacion + (p.categoria ? ' · ' + p.categoria : '')) + '">' +
-        '<span>' + escapeHtml(nombreDe(p)) + (p.corte ? ' 💐' : '') + '</span>' +
+      return '<div class="m-chip ' + p.estadoInvitacion.replace(' ', '-') + (p.extra ? ' extra' : '') + '" data-id="' + p.id + '" title="' + escapeHtml(p.invitacion + (p.categoria ? ' · ' + p.categoria : '')) + '">' +
+        '<span>' + escapeHtml(nombreDe(p)) + (p.corte ? ' 💐' : '') + (p.extra && /novi/i.test(p.categoria || '') ? ' 💍' : '') + '</span>' +
         '<small>' + escapeHtml(p.estadoInvitacion === 'asiste' ? (p.categoria || p.invitacion) : p.estadoInvitacion === 'pendiente' ? 'Sin confirmar' : 'No asiste') + '</small></div>';
     };
     var visible = function(p){ return p.estadoInvitacion === 'asiste' || (conPendientesMesas && p.estadoInvitacion === 'pendiente'); };

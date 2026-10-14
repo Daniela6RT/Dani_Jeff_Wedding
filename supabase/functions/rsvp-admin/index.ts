@@ -100,10 +100,12 @@ Deno.serve(async (req: Request) => {
         case "borrar_kit": return "Quitó del kit " + cita(await campo("kit", "item", b.id));
         case "guardar_contacto": return (editar ? "Editó el contacto " : "Añadió el contacto ") + cita(b.rol);
         case "borrar_contacto": return "Eliminó el contacto " + cita(await campo("contactos", "rol", b.id));
+        case "guardar_documento": return "Adjuntó " + cita(b.nombre) + " a " + cita(await campo("proveedores", "nombre", b.proveedor_id));
+        case "borrar_documento": return "Eliminó el documento " + cita(await campo("documentos", "nombre", b.id));
         case "guardar_mesa": return (editar ? "Editó la mesa " : "Creó la mesa ") + cita(b.nombre);
         case "borrar_mesa": return "Eliminó la mesa " + cita(await campo("mesas", "nombre", b.id));
         case "asignar_mesa": {
-          const persona = await campo("personas", "nombre", b.persona_id);
+          const persona = (await campo("personas", "nombre", b.persona_id)) ?? (await campo("mesa_extras", "nombre", b.persona_id));
           return esUuid(b.mesa_id) ? "Sentó a " + cita(persona) + " en " + cita(await campo("mesas", "nombre", b.mesa_id)) : "Quitó de su mesa a " + cita(persona);
         }
         default: return null;
@@ -200,7 +202,10 @@ Deno.serve(async (req: Request) => {
       if (!esId(body.id)) return json({ error: "proveedor inválido" }, 400);
       const { count } = await supabase.from("pagos").select("id", { count: "exact", head: true }).eq("proveedor_id", body.id);
       if (count) return json({ error: "tiene pagos registrados; no se puede borrar" }, 409);
+      // Sus documentos se borran con él (filas en cascada; archivos aquí)
+      const { data: docs } = await supabase.from("documentos").select("archivo_path").eq("proveedor_id", body.id);
       const { error } = await supabase.from("proveedores").delete().eq("id", body.id);
+      if (!error && docs?.length) await supabase.storage.from("contratos").remove(docs.map((d) => d.archivo_path));
       if (error) return json({ error: error.message }, 500);
       return await listo();
     }
@@ -369,6 +374,32 @@ Deno.serve(async (req: Request) => {
       const { error } = await supabase.from("pagos").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
       if (pg.comprobante_path) await supabase.storage.from("comprobantes").remove([pg.comprobante_path]);
+      return await listo();
+    }
+
+    // Documentos del proveedor (contrato firmado, anexos…), en el bucket privado "contratos"
+    if (body?.accion === "guardar_documento") {
+      const nombre = texto(body.nombre, 120);
+      if (!esId(body.proveedor_id)) return json({ error: "proveedor inválido" }, 400);
+      if (!nombre) return json({ error: "escribe el nombre del documento" }, 400);
+      if (!body.archivo) return json({ error: "elige el archivo" }, 400);
+      const subido = await subirArchivo(body.archivo, "contratos");
+      if (!subido || typeof subido === "object") return json({ error: (subido as { error?: string } | null)?.error || "no se pudo subir el archivo" }, 400);
+      const { error } = await supabase.from("documentos").insert({ proveedor_id: body.proveedor_id, nombre, archivo_path: subido });
+      if (error) {
+        await supabase.storage.from("contratos").remove([subido]);
+        return json({ error: error.message }, 500);
+      }
+      return await listo();
+    }
+
+    if (body?.accion === "borrar_documento") {
+      if (!esId(body.id)) return json({ error: "documento inválido" }, 400);
+      const { data: doc } = await supabase.from("documentos").select("archivo_path").eq("id", body.id).maybeSingle();
+      if (!doc) return json({ error: "documento no encontrado" }, 404);
+      const { error } = await supabase.from("documentos").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      await supabase.storage.from("contratos").remove([doc.archivo_path]);
       return await listo();
     }
 
@@ -566,12 +597,17 @@ Deno.serve(async (req: Request) => {
     if (body?.accion === "asignar_mesa") {
       if (!esId(body.persona_id)) return json({ error: "persona inválida" }, 400);
       const mesaId = esId(body.mesa_id) ? body.mesa_id : null;
-      const { error } = await supabase.from("personas").update({ mesa_id: mesaId }).eq("id", body.persona_id);
+      // Puede ser un invitado (personas) o alguien de "otros en las mesas" (mesa_extras, p. ej. los novios)
+      const { data: inv, error } = await supabase.from("personas").update({ mesa_id: mesaId }).eq("id", body.persona_id).select("id");
       if (error) return json({ error: error.message }, 500);
+      if (!inv?.length) {
+        const { error: e2 } = await supabase.from("mesa_extras").update({ mesa_id: mesaId }).eq("id", body.persona_id);
+        if (e2) return json({ error: e2.message }, 500);
+      }
       return await listo();
     }
 
-    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes, kitRes, conRes, mesRes, hisRes] = await Promise.all([
+    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes, kitRes, conRes, mesRes, hisRes, docRes, extRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -619,6 +655,8 @@ Deno.serve(async (req: Request) => {
       supabase.from("contactos").select("id, rol, nombre, telefono, notas").order("orden", { ascending: true }),
       supabase.from("mesas").select("id, nombre, capacidad").order("orden", { ascending: true }),
       supabase.from("historial").select("quien, detalle, creado_en").order("creado_en", { ascending: false }).limit(60),
+      supabase.from("documentos").select("id, proveedor_id, nombre, archivo_path, creado_en").order("creado_en", { ascending: true }),
+      supabase.from("mesa_extras").select("id, nombre, etiqueta, mesa_id").order("orden", { ascending: true }),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -638,6 +676,15 @@ Deno.serve(async (req: Request) => {
     if (conRes.error) return json({ error: conRes.error.message }, 500);
     if (mesRes.error) return json({ error: mesRes.error.message }, 500);
     if (hisRes.error) return json({ error: hisRes.error.message }, 500);
+    if (docRes.error) return json({ error: docRes.error.message }, 500);
+    if (extRes.error) return json({ error: extRes.error.message }, 500);
+    // Enlaces temporales (1 hora) a los documentos de proveedores
+    const docData = docRes.data ?? [];
+    const firmadasDoc = new Map<string, string>();
+    if (docData.length) {
+      const { data: urls } = await supabase.storage.from("contratos").createSignedUrls(docData.map((d) => d.archivo_path), 3600);
+      for (const u of urls ?? []) if (u.signedUrl && u.path) firmadasDoc.set(u.path, u.signedUrl);
+    }
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -774,6 +821,10 @@ Deno.serve(async (req: Request) => {
       return {
         id: pv.id, nombre: pv.nombre, categoria: pv.categoria, contacto: pv.contacto, notas: pv.notas, total, pagado, saldo: total - pagado,
         contrato: pv.contrato, contratoFecha: pv.contrato_fecha,
+        documentos: docData.filter((d) => d.proveedor_id === pv.id).map((d) => ({
+          id: d.id, nombre: d.nombre, url: firmadasDoc.get(d.archivo_path) ?? null,
+          tipo: d.archivo_path.endsWith(".pdf") ? "pdf" : "imagen", fecha: d.creado_en,
+        })),
       };
     });
     // Enlaces temporales (1 hora) a los comprobantes del bucket privado
@@ -904,6 +955,7 @@ Deno.serve(async (req: Request) => {
       contactos: conRes.data ?? [],
       mesas: mesRes.data ?? [],
       historial: hisRes.data ?? [],
+      mesaExtras: (extRes.data ?? []).map((x) => ({ id: x.id, nombre: x.nombre, etiqueta: x.etiqueta, mesaId: x.mesa_id })),
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
