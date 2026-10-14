@@ -812,6 +812,31 @@
     .prov-card, .pend-caja, .ini-caja, .crono { padding: 12px; }
     .dia-head { padding: 12px 14px; }
   }
+  /* El día: vistas y mesas */
+  .dia-vistas { margin-bottom: 12px; }
+  .m-opcion { display: flex; align-items: center; gap: 8px; font: 400 12.5px var(--sans); letter-spacing: normal; text-transform: none; color: var(--madera); margin: 0 0 12px; text-align: left; cursor: pointer; }
+  .m-opcion input { width: 18px; height: 18px; margin: 0; }
+  .mesas-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; text-align: left; }
+  @media (min-width: 900px) { .mesas-cols { grid-template-columns: 280px minmax(0, 1fr); } .m-sin { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; } }
+  .m-sin { background: var(--marfil); border: 1px solid var(--linea); border-radius: 14px; padding: 10px; }
+  /* En el celular "Sin mesa" queda fijo arriba para arrastrar sin recorrer toda la página */
+  @media (max-width: 899px) { .m-sin { position: sticky; top: 0; z-index: 2; max-height: 38vh; overflow-y: auto; box-shadow: 0 6px 14px rgba(58, 46, 43, .12); } }
+  .m-sin h5, .m-mesa-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 2px 4px 10px; font: 600 11px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+  .m-sin h5 span { font-size: 12px; letter-spacing: 0; background: #fff; border-radius: 99px; padding: 1px 9px; color: var(--madera); }
+  .m-mesas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 12px; align-items: start; }
+  .m-mesa { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 10px; }
+  .m-mesa.llena { border-color: var(--verde-olivo); }
+  .m-mesa.excedida { border-color: #8E2F1A; box-shadow: inset 0 0 0 1px #8E2F1A; }
+  .m-mesa-head b { font-family: var(--serif); font-weight: 400; font-size: 17px; letter-spacing: 0; text-transform: none; color: var(--verde-profundo); margin-right: auto; }
+  .m-mesa-head span { font-size: 12px; letter-spacing: 0; color: var(--madera); }
+  .m-mesa.excedida .m-mesa-head span { color: #8E2F1A; font-weight: 700; }
+  .m-lista { display: flex; flex-direction: column; gap: 6px; min-height: 54px; }
+  .m-chip { background: #fff; border: 1px solid var(--linea); border-radius: 10px; padding: 7px 10px; cursor: grab; touch-action: manipulation; box-shadow: 0 1px 3px rgba(58, 46, 43, .06); }
+  .m-mesa .m-chip { background: var(--marfil); }
+  .m-chip span { display: block; font-size: 13px; font-weight: 600; color: var(--madera); }
+  .m-chip small { display: block; font-size: 10.5px; color: var(--texto-suave); }
+  .m-chip.pendiente { border-style: dashed; }
+  .m-chip.no-asiste { opacity: .55; text-decoration: line-through; }
   /* El día: cronograma */
   .dia-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; text-align: left; padding: 14px 16px; border-radius: 14px; background: var(--terracotta-deep); color: #fff; margin-bottom: 12px; }
   .dia-head b { font-family: var(--serif); font-weight: 400; font-size: 20px; display: block; }
@@ -890,6 +915,9 @@
   .ini-alerta.rojo b { color: #8E2F1A; }
   .ini-alerta.ambar b { color: #7A4B12; }
   .ini-ok { font-size: 13px; color: var(--verde-profundo); padding: 8px 0; }
+  .ini-fila.hist .ini-titulo { font-size: 12.5px; }
+  .ini-fila.hist .ini-titulo b { color: var(--verde-profundo); }
+  .hist-mas summary { cursor: pointer; font-size: 12px; font-weight: 600; color: var(--terracotta-deep); padding: 8px 0 4px; border-top: 1px solid var(--linea); }
   .ini-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
   .ini-chips span { font-size: 12px; padding: 3px 10px; border-radius: 99px; background: var(--marfil-warm); color: var(--madera); }
   .ini-chips span.cotizando { background: #F6E7D3; color: #7A4B12; }
@@ -1268,6 +1296,16 @@
       <div class="botones"><button type="button" class="btn-mini" id="fr-no">No lo envié</button><button type="button" class="btn-mini principal" id="fr-si">✅ Sí, lo envié</button></div>
     </div>
     <div class="error" id="fr-error" role="alert"></div>
+  </form>
+</dialog>
+<dialog class="form-dlg" id="dlg-mesa" aria-labelledby="dlg-mesa-titulo">
+  <form method="dialog" id="form-mesa" novalidate>
+    <h3 id="dlg-mesa-titulo">Nueva mesa</h3>
+    <label for="fme-nombre">Nombre *</label><input id="fme-nombre" maxlength="60" required placeholder="Ej. Mesa 1, Familia Rocha, Novios">
+    <label for="fme-capacidad">Puestos</label><input id="fme-capacidad" type="number" min="1" max="40" value="8">
+    <div class="ayuda">Si eliminas la mesa, las personas sentadas ahí vuelven a “Sin mesa”.</div>
+    <div class="error" id="fme-error" role="alert"></div>
+    <div class="botones"><button type="button" class="btn-mini peligro" id="fme-borrar" style="margin-right:auto;" hidden>Eliminar</button><button type="button" class="btn-mini" data-cerrar>Cancelar</button><button type="submit" class="btn-mini principal">Guardar</button></div>
   </form>
 </dialog>
 <dialog class="form-dlg" id="dlg-cuota" aria-labelledby="dlg-cuota-titulo">
@@ -2280,7 +2318,7 @@
             '" data-rol="' + p.rol + '" aria-label="Editar nombre' + (p.nombre ? ' de ' + escapeHtml(p.nombre) : '') + '">✏️</button>' : '—');
         var rol = p.rol === 'principal' ? 'Principal' : 'Acompañante' + (p.acompananteDe ? ' de ' + escapeHtml(p.acompananteDe) : '');
         h += '<tr>' + TD + nombre + '</td>' + TD + rol + '</td>' + TD + escapeHtml(p.invitacion) + '</td>' +
-          TD + (p.corte ? rolCorte[p.corte] : '—') + '</td>' + TD + (estado[p.estadoInvitacion] || '—') + '</td>' + TD + escapeHtml(p.mesa || '—') + '</td>' +
+          TD + (p.corte ? rolCorte[p.corte] : '—') + '</td>' + TD + (estado[p.estadoInvitacion] || '—') + '</td>' + TD + escapeHtml(nombreMesa(p) || '—') + '</td>' +
           '<td style="border:1px solid var(--linea); padding:6px; text-align:center;">' + acciones + '</td></tr>';
       });
     });
@@ -2393,7 +2431,65 @@
     var p = h.split(':'), n = +p[0];
     return (n % 12 || 12) + ':' + p[1] + (n < 12 ? ' am' : ' pm');
   };
+  var vistaDia = 'cronograma';
+  try{ vistaDia = localStorage.getItem('admin-dvista') || 'cronograma'; } catch(e){}
+  var nombreMesa = function(p){
+    var m = p.mesaId && ultimoData && (ultimoData.mesas || []).filter(function(x){ return x.id === p.mesaId; })[0];
+    return m ? m.nombre : (p.mesa || '');
+  };
+  var togglesDia = function(){
+    return '<div class="vista-toggle dia-vistas no-print" role="group" aria-label="Vistas de El día">' +
+      '<button type="button" data-dvista="cronograma" aria-pressed="' + (vistaDia === 'cronograma') + '">⏰ Cronograma, contactos y kit</button>' +
+      '<button type="button" data-dvista="mesas" aria-pressed="' + (vistaDia === 'mesas') + '">🍽️ Mesas</button></div>';
+  };
+  var conPendientesMesas = false;
+  try{ conPendientesMesas = localStorage.getItem('admin-mesas-pend') === '1'; } catch(e){}
+  function renderMesas(data){
+    var caja = document.getElementById('area-dia'), mesas = data.mesas || [], personas = data.personas || [];
+    var nombreDe = function(p){ return p.nombre || ('Acompañante de ' + (p.acompananteDe || p.invitacion) + ' (por definir)'); };
+    var chip = function(p){
+      return '<div class="m-chip ' + p.estadoInvitacion.replace(' ', '-') + '" data-id="' + p.id + '" title="' + escapeHtml(p.invitacion + (p.categoria ? ' · ' + p.categoria : '')) + '">' +
+        '<span>' + escapeHtml(nombreDe(p)) + (p.corte ? ' 💐' : '') + '</span>' +
+        '<small>' + escapeHtml(p.estadoInvitacion === 'asiste' ? (p.categoria || p.invitacion) : p.estadoInvitacion === 'pendiente' ? 'Sin confirmar' : 'No asiste') + '</small></div>';
+    };
+    var visible = function(p){ return p.estadoInvitacion === 'asiste' || (conPendientesMesas && p.estadoInvitacion === 'pendiente'); };
+    var sinMesa = personas.filter(function(p){ return !p.mesaId && visible(p); });
+    var confirmados = personas.filter(function(p){ return p.estadoInvitacion === 'asiste'; });
+    var sentados = confirmados.filter(function(p){ return p.mesaId; }).length;
+    var capacidad = mesas.reduce(function(n, m){ return n + m.capacidad; }, 0);
+    var h = '<div class="dia-head"><div><b>🍽️ Mesas</b><span>' + sentados + ' de ' + confirmados.length + ' confirmados con mesa · ' +
+      plural2(mesas.length, 'mesa', 'mesas') + ' · ' + capacidad + ' puestos</span></div>' +
+      '<div class="acciones-mini no-print"><button type="button" class="btn-mini" data-accion="varias-mesas">+ Varias mesas</button>' +
+      '<button type="button" class="btn-mini principal" data-accion="nueva-mesa">+ Mesa</button></div></div>' +
+      '<label class="m-opcion"><input type="checkbox" data-accion="mesas-pend"' + (conPendientesMesas ? ' checked' : '') + '> Incluir también a quienes aún no confirman (para planear)</label>' +
+      '<div class="mesas-cols"><div class="m-sin"><h5>Sin mesa <span>' + sinMesa.length + '</span></h5>' +
+      '<div class="m-lista" data-mesa="">' + (sinMesa.length ? sinMesa.map(chip).join('') : '<div class="tab-vacia">' + (confirmados.length ? 'Todos tienen mesa 🎉' : 'Aún no hay confirmados') + '</div>') + '</div></div>' +
+      '<div class="m-mesas">' + (mesas.length ? mesas.map(function(m){
+        var suyos = personas.filter(function(p){ return p.mesaId === m.id; });
+        var lleno = suyos.length > m.capacidad ? ' excedida' : suyos.length === m.capacidad ? ' llena' : '';
+        return '<div class="m-mesa' + lleno + '"><div class="m-mesa-head"><b>' + escapeHtml(m.nombre) + '</b><span>' + suyos.length + '/' + m.capacidad + '</span>' +
+          '<button type="button" class="btn-mini solo-icono no-print" data-accion="editar-mesa" data-id="' + m.id + '" aria-label="Editar ' + escapeHtml(m.nombre) + '">✏️</button></div>' +
+          '<div class="m-lista" data-mesa="' + m.id + '">' + (suyos.length ? suyos.map(chip).join('') : '<div class="tab-vacia">Arrastra invitados aquí</div>') + '</div></div>';
+      }).join('') : '<div class="crono">Crea las mesas para empezar. Luego arrastra a cada invitado confirmado a su mesa.</div>') + '</div></div>' +
+      '<div class="tab-ayuda">Arrastra a cada persona a su mesa; para quitarla, devuélvela a “Sin mesa”. En el celular, mantenla presionada un momento antes de moverla.</div>';
+    caja.innerHTML = togglesDia() + h;
+    if(!window.Sortable) return;
+    caja.querySelectorAll('.m-lista').forEach(function(lista){
+      new Sortable(lista, {
+        group: 'mesas', animation: 150, delay: 180, delayOnTouchOnly: true, filter: '.tab-vacia',
+        ghostClass: 'tab-fantasma', dragClass: 'tab-arrastrando',
+        onStart: function(){ editando = true; },
+        onEnd: async function(ev){
+          editando = false;
+          if(ev.to === ev.from) return;
+          try{ await accionAdmin({ accion: 'asignar_mesa', persona_id: ev.item.dataset.id, mesa_id: ev.to.dataset.mesa || null }); }
+          catch(x){ alert(x.message); renderDia(ultimoData); }
+        }
+      });
+    });
+  }
   function renderDia(data){
+    if(vistaDia === 'mesas') return renderMesas(data);
     var caja = document.getElementById('area-dia'), lista = data.cronograma || [];
     var dias = [];
     lista.forEach(function(m){ if(dias.indexOf(m.dia) < 0) dias.push(m.dia); });
@@ -2440,6 +2536,7 @@
       '<button type="button" class="btn-mini principal" data-accion="nuevo-momento">+ Añadir momento</button></div></div>' +
       '<div class="dia-cols"><div>' + (lista.length ? principal.map(bloque).join('') : '<div class="crono">Aún no hay momentos. Añade el primero.</div>') + '</div>' +
       '<div>' + despues.map(bloque).join('') + cajaContactos + cajaKit + '</div></div>';
+    caja.insertAdjacentHTML('afterbegin', togglesDia());
   }
   var plural2 = function(n, uno, varios){ return n + ' ' + (n === 1 ? uno : varios); };
   var dlgMom = document.getElementById('dlg-momento'), formMom = document.getElementById('form-momento');
@@ -2478,6 +2575,13 @@
     finally { b.disabled = false; }
   });
   document.getElementById('area-dia').addEventListener('click', function(e){
+    var dv = e.target.closest('[data-dvista]');
+    if(dv){ vistaDia = dv.dataset.dvista; try{ localStorage.setItem('admin-dvista', vistaDia); } catch(err){} renderDia(ultimoData); etiquetarTablas(); return; }
+    var bm = e.target.closest('[data-accion]');
+    if(bm && bm.dataset.accion === 'mesas-pend'){ conPendientesMesas = bm.checked; try{ localStorage.setItem('admin-mesas-pend', conPendientesMesas ? '1' : '0'); } catch(err){} renderDia(ultimoData); return; }
+    if(bm && bm.dataset.accion === 'nueva-mesa') return abrirMesa(null);
+    if(bm && bm.dataset.accion === 'editar-mesa') return abrirMesa((ultimoData.mesas || []).filter(function(m){ return m.id === bm.dataset.id; })[0]);
+    if(bm && bm.dataset.accion === 'varias-mesas'){ crearVariasMesas(bm); return; }
     var b = e.target.closest('[data-accion]'); if(!b || !ultimoData) return;
     if(b.dataset.accion === 'nuevo-momento') return abrirMomento(null);
     if(b.dataset.accion === 'editar-momento') return abrirMomento(buscarMomento(b.dataset.id));
@@ -2494,6 +2598,39 @@
     }
   });
   var cajaDia = document.getElementById('area-dia');
+  var dlgMesa = document.getElementById('dlg-mesa'), formMesa = document.getElementById('form-mesa');
+  function abrirMesa(m){
+    formMesa.dataset.id = m ? m.id : '';
+    document.getElementById('dlg-mesa-titulo').textContent = m ? 'Editar mesa' : 'Nueva mesa';
+    document.getElementById('fme-nombre').value = m ? m.nombre : 'Mesa ' + ((ultimoData.mesas || []).length + 1);
+    document.getElementById('fme-capacidad').value = m ? m.capacidad : 8;
+    document.getElementById('fme-borrar').hidden = !m;
+    document.getElementById('fme-error').textContent = '';
+    dlgMesa.showModal();
+  }
+  formMesa.addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('fme-error'), nombre = document.getElementById('fme-nombre').value.trim();
+    if(!nombre){ err.textContent = 'Escribe el nombre de la mesa.'; return; }
+    enviarForm(formMesa, err, { accion: 'guardar_mesa', id: formMesa.dataset.id || undefined, nombre: nombre, capacidad: Number(document.getElementById('fme-capacidad').value) || 8 });
+  });
+  document.getElementById('fme-borrar').addEventListener('click', async function(){
+    var id = formMesa.dataset.id, m = (ultimoData.mesas || []).filter(function(x){ return x.id === id; })[0], b = this;
+    if(!m || !confirm('¿Eliminar "' + m.nombre + '"? Las personas sentadas ahí vuelven a “Sin mesa”.')) return;
+    b.disabled = true;
+    try{ await accionAdmin({ accion: 'borrar_mesa', id: id }); dlgMesa.close(); }
+    catch(x){ document.getElementById('fme-error').textContent = x.message; }
+    finally { b.disabled = false; }
+  });
+  async function crearVariasMesas(b){
+    var n = parseInt(prompt('¿Cuántas mesas quieres crear?', '6'), 10); if(!n || n < 1 || n > 30) return;
+    var cap = parseInt(prompt('¿Cuántos puestos por mesa?', '8'), 10); if(!cap || cap < 1 || cap > 40) return;
+    var ya = (ultimoData.mesas || []).length;
+    b.disabled = true; b.textContent = 'Creando…';
+    try{ for(var i = 1; i <= n; i++) await accionAdmin({ accion: 'guardar_mesa', nombre: 'Mesa ' + (ya + i), capacidad: cap }); }
+    catch(x){ alert(x.message); }
+    finally { b.disabled = false; b.textContent = '+ Varias mesas'; }
+  }
   cajaDia.addEventListener('submit', async function(e){
     if(e.target.id !== 'kit-nuevo') return;
     e.preventDefault();
@@ -2625,6 +2762,9 @@
       if(a.fechaLimite && b.fechaLimite && a.fechaLimite !== b.fechaLimite) return a.fechaLimite < b.fechaLimite ? -1 : 1;
       return (a.prioridad ? ORDEN_PRIO[a.prioridad] : 3) - (b.prioridad ? ORDEN_PRIO[b.prioridad] : 3);
     }).slice(0, 6);
+    var cajaAlertas = '<div class="ini-caja"><h4>📬 Alertas por correo</h4><div class="ini-sub" style="font-size:12.5px; color:var(--madera); line-height:1.6;">' +
+      'Llega un resumen el <b>lunes a las 7:00 a. m.</b> y el <b>viernes a las 7:00 p. m.</b>, con lo urgente (pagos que vencen en 3 días o menos, tareas vencidas), los pagos y tareas que se vienen, contratos sin firmar y confirmaciones.</div>' +
+      '<button type="button" class="btn-mini" id="probar-alertas" style="margin-top:10px;">Enviar resumen de prueba</button> <span class="ini-sub" id="probar-alertas-msg" style="font-size:12px;"></span></div>';
     izq += '<div class="ini-caja"><h4>📋 Próximas tareas <button type="button" data-ir="gestion:tareas">Ver todas →</button></h4>' +
       (orden.length ? orden.map(function(t){
         var d = t.fechaLimite ? diasHasta(t.fechaLimite) : null;
@@ -2652,9 +2792,42 @@
         return '<div class="ini-fila"><span class="ini-titulo">' + escapeHtml(i.nombre) + ' · ' + (i.respuesta.asiste ? '✅ ' + plural(i.respuesta.asistentes, 'persona', 'personas') : '❌ No asiste') + '</span>' +
           '<span class="ini-der">' + (hace <= 0 ? 'Hoy' : hace === 1 ? 'Ayer' : 'Hace ' + hace + ' días') + '</span></div>';
       }).join('') : '<div class="ini-ok">Aún no hay respuestas.</div>') + '</div>';
-    caja.innerHTML = h + '<div class="ini-cols"><div>' + izq + '</div><div>' + der + '</div></div>';
+    // Actividad reciente: quién cambió qué
+    var hist = data.historial || [];
+    var filaHist = function(x){
+      return '<div class="ini-fila hist"><span class="ini-titulo"><b>' + escapeHtml(x.quien) + '</b> ' + escapeHtml(x.detalle.charAt(0).toLowerCase() + x.detalle.slice(1)) + '</span>' +
+        '<span class="ini-der">' + cuandoFue(x.creado_en) + '</span></div>';
+    };
+    der += '<div class="ini-caja"><h4>🕓 Actividad reciente</h4>' +
+      (hist.length ? hist.slice(0, 6).map(filaHist).join('') +
+        (hist.length > 6 ? '<details class="hist-mas"><summary>Ver más (' + (hist.length - 6) + ')</summary>' + hist.slice(6).map(filaHist).join('') + '</details>' : '')
+        : '<div class="ini-ok">Aquí verán quién hizo cada cambio desde el panel.</div>') + '</div>';
+    var abierto = !!caja.querySelector('.hist-mas[open]');
+    caja.innerHTML = h + '<div class="ini-cols"><div>' + izq + cajaAlertas + '</div><div>' + der + '</div></div>';
+    if(abierto){ var dm = caja.querySelector('.hist-mas'); if(dm) dm.open = true; }
   }
-  document.getElementById('area-inicio').addEventListener('click', function(e){
+  var cuandoFue = function(ts){
+    var min = Math.round((Date.now() - new Date(ts).getTime()) / 60000);
+    if(min < 1) return 'ahora';
+    if(min < 60) return 'hace ' + min + ' min';
+    if(min < 60 * 24) return 'hace ' + Math.round(min / 60) + ' h';
+    return new Date(ts).toLocaleDateString('es-CO', { day: 'numeric', month: 'short', timeZone: 'America/Bogota' }).replace('.', '') + ', ' +
+      new Date(ts).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+  };
+  document.getElementById('area-inicio').addEventListener('click', async function(e){
+    var pa = e.target.closest('#probar-alertas');
+    if(pa){
+      var msg = document.getElementById('probar-alertas-msg');
+      pa.disabled = true; pa.textContent = 'Enviando…'; msg.textContent = '';
+      try{
+        var resp = await fetch(FUNCTION_URL, { method: 'POST', headers: cabeceras(), body: cuerpo({ accion: 'probar_alertas' }) });
+        var r = await resp.json().catch(function(){ return {}; });
+        if(!resp.ok) throw new Error(r.error || 'No se pudo enviar');
+        msg.textContent = '✅ Enviado. Revisa tu correo (y la carpeta de spam).';
+      } catch(x){ msg.textContent = '⚠️ ' + x.message; }
+      finally { pa.disabled = false; pa.textContent = 'Enviar resumen de prueba'; }
+      return;
+    }
     var t = e.target.closest('[data-tarea]');
     if(t){ var tarea = buscarTarea(t.dataset.tarea); if(tarea) abrirTarea(tarea); return; }
     var b = e.target.closest('[data-ir]'); if(!b) return;

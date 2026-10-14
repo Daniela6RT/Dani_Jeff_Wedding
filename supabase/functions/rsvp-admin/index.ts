@@ -33,12 +33,15 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, serviceKey);
 
     // Acceso: sesión de Google de un correo permitido, o la contraseña (respaldo)
+    let quien = "Alguien con la contraseña";
     if (!ADMIN_PASSWORD || password !== ADMIN_PASSWORD) {
       const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
       let email: string | null = null;
       if (token && !token.startsWith("sb_")) {
         const { data } = await supabase.auth.getUser(token);
         email = data.user?.email?.toLowerCase() ?? null;
+        const meta = (data.user?.user_metadata ?? {}) as Record<string, string>;
+        quien = String(meta.full_name || meta.name || email || "").split(" ")[0].slice(0, 80) || "Google";
       }
       if (!email) {
         // Pausa para frenar intentos repetidos de adivinar la contraseña
@@ -47,6 +50,70 @@ Deno.serve(async (req: Request) => {
       }
       if (!ADMIN_EMAILS.includes(email)) return json({ error: "forbidden" }, 403);
     }
+
+    // Historial: cada cambio guardado queda registrado con quién lo hizo
+    const esUuid = (v: unknown) => typeof v === "string" && /^[0-9a-f-]{36}$/.test(v);
+    const cita = (t: unknown) => (t ? "“" + String(t).trim().slice(0, 80) + "”" : "");
+    const plata = (n: unknown) => "$" + Math.round(Number(n) || 0).toLocaleString("es-CO");
+    const campo = async (tabla: string, col: string, id: unknown) => {
+      if (!esUuid(id)) return null;
+      const { data } = await supabase.from(tabla).select(col).eq("id", id as string).maybeSingle();
+      return (data as Record<string, unknown> | null)?.[col] ?? null;
+    };
+    const ESTADO_TAREA: Record<string, string> = { sin_empezar: "Por hacer", en_progreso: "En progreso", listo: "Lista" };
+    const describir = async (b: Record<string, any>): Promise<string | null> => {
+      const editar = esUuid(b.id);
+      switch (b.accion) {
+        case "editar_persona": return "Cambió el nombre de un invitado a " + (cita(b.nombre) || "“por definir”");
+        case "marcar_recordado": {
+          const { data } = await supabase.from("invitaciones").select("nombre").eq("codigo", String(b.codigo ?? "")).maybeSingle();
+          return (b.recordado === true ? "Marcó como enviado el recordatorio a " : "Quitó la marca de recordatorio a ") + cita(data?.nombre);
+        }
+        case "guardar_proveedor": return (editar ? "Editó el proveedor " : "Creó el proveedor ") + cita(b.nombre);
+        case "borrar_proveedor": return "Eliminó el proveedor " + cita(await campo("proveedores", "nombre", b.id));
+        case "guardar_cuota": return (editar ? "Editó la cuota " : "Añadió la cuota ") + cita(b.concepto) + " (" + plata(b.monto) + ")";
+        case "borrar_cuota": return "Eliminó la cuota " + cita(await campo("plan_pagos", "concepto", b.id));
+        case "guardar_cotizacion": return (editar ? "Editó la cotización de " : "Añadió la cotización de ") + cita(b.nombre) + " por " + plata(b.monto);
+        case "estado_cotizacion": return (b.estado === "descartada" ? "Descartó la cotización de " : "Volvió a evaluar la cotización de ") + cita(await campo("cotizaciones", "nombre", b.id));
+        case "borrar_cotizacion": return "Eliminó la cotización de " + cita(await campo("cotizaciones", "nombre", b.id));
+        case "contratar_cotizacion": return "Contrató a " + cita(await campo("cotizaciones", "nombre", b.id));
+        case "guardar_pago": {
+          const prov = editar ? await campo("proveedores", "nombre", await campo("pagos", "proveedor_id", b.id)) : await campo("proveedores", "nombre", b.proveedor_id);
+          return (editar ? "Editó el pago de " : "Registró un pago de ") + plata(b.monto) + " a " + cita(prov);
+        }
+        case "borrar_pago": {
+          const monto = await campo("pagos", "monto", b.id);
+          const prov = await campo("proveedores", "nombre", await campo("pagos", "proveedor_id", b.id));
+          return "Eliminó un pago de " + plata(monto) + " a " + cita(prov);
+        }
+        case "guardar_pendiente": return (editar ? "Editó el pendiente " : "Añadió a por contratar ") + cita(b.nombre);
+        case "aplica_pendiente": return "Marcó " + cita(await campo("pendientes", "nombre", b.id)) + (b.no_aplica === true ? " como no aplica" : " como pendiente de nuevo");
+        case "borrar_pendiente": return "Quitó de por contratar " + cita(await campo("pendientes", "nombre", b.id));
+        case "guardar_tarea": return (editar ? "Editó la tarea " : "Creó la tarea ") + cita(b.titulo);
+        case "estado_tarea": return "Movió la tarea " + cita(await campo("tareas", "titulo", b.id)) + " a " + (ESTADO_TAREA[b.estado] ?? b.estado);
+        case "borrar_tarea": return "Eliminó la tarea " + cita(await campo("tareas", "titulo", b.id));
+        case "guardar_momento": return (editar ? "Editó en el cronograma " : "Añadió al cronograma ") + cita(b.actividad);
+        case "borrar_momento": return "Quitó del cronograma " + cita(await campo("cronograma", "actividad", b.id));
+        case "guardar_kit":
+          if (editar && typeof b.listo === "boolean") return "Marcó " + cita(await campo("kit", "item", b.id)) + (b.listo ? " del kit como listo" : " del kit como pendiente");
+          return editar ? "Editó " + cita(b.item) + " del kit" : "Añadió al kit " + cita(b.item);
+        case "borrar_kit": return "Quitó del kit " + cita(await campo("kit", "item", b.id));
+        case "guardar_contacto": return (editar ? "Editó el contacto " : "Añadió el contacto ") + cita(b.rol);
+        case "borrar_contacto": return "Eliminó el contacto " + cita(await campo("contactos", "rol", b.id));
+        case "guardar_mesa": return (editar ? "Editó la mesa " : "Creó la mesa ") + cita(b.nombre);
+        case "borrar_mesa": return "Eliminó la mesa " + cita(await campo("mesas", "nombre", b.id));
+        case "asignar_mesa": {
+          const persona = await campo("personas", "nombre", b.persona_id);
+          return esUuid(b.mesa_id) ? "Sentó a " + cita(persona) + " en " + cita(await campo("mesas", "nombre", b.mesa_id)) : "Quitó de su mesa a " + cita(persona);
+        }
+        default: return null;
+      }
+    };
+    const detalle = typeof body?.accion === "string" ? await describir(body).catch(() => null) : null;
+    const listo = async (extra: Record<string, unknown> = {}) => {
+      if (detalle) await supabase.from("historial").insert({ quien, accion: String(body.accion).slice(0, 40), detalle: detalle.slice(0, 300) });
+      return json({ ok: true, ...extra });
+    };
 
     // Editar el nombre de una persona (p. ej. el +1 "por definir")
     if (body?.accion === "editar_persona") {
@@ -61,7 +128,7 @@ Deno.serve(async (req: Request) => {
       if (!nombre && p.rol !== "acompanante") return json({ error: "el nombre es obligatorio" }, 400);
       const { error: e2 } = await supabase.from("personas").update({ nombre: nombre || null }).eq("id", id);
       if (e2) return json({ error: e2.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Recordatorio por WhatsApp: el teléfono solo sale de aquí al abrir el chat
@@ -84,6 +151,19 @@ Deno.serve(async (req: Request) => {
       const { error } = await supabase.from("invitaciones")
         .update({ recordado_en: body.recordado === true ? new Date().toISOString() : null }).eq("codigo", codigo);
       if (error) return json({ error: error.message }, 500);
+      return await listo();
+    }
+
+    // Correo de prueba de las alertas (lo envía la función alertas-boda)
+    if (body?.accion === "probar_alertas") {
+      const { data: cfg } = await supabase.from("config_privada").select("valor").eq("clave", "alertas_token").maybeSingle();
+      const r = await fetch(supabaseUrl + "/functions/v1/alertas-boda", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-alertas-token": cfg?.valor ?? "" },
+        body: JSON.stringify({ prueba: true, modo: "semanal" }),
+      });
+      const res = await r.json().catch(() => ({}));
+      if (!r.ok) return json({ error: res.error || "no se pudo enviar el correo" }, 502);
       return json({ ok: true });
     }
 
@@ -113,7 +193,7 @@ Deno.serve(async (req: Request) => {
         : supabase.from("proveedores").insert(fila);
       const { error } = await q;
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_proveedor") {
@@ -122,7 +202,7 @@ Deno.serve(async (req: Request) => {
       if (count) return json({ error: "tiene pagos registrados; no se puede borrar" }, 409);
       const { error } = await supabase.from("proveedores").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "guardar_cuota") {
@@ -146,7 +226,7 @@ Deno.serve(async (req: Request) => {
       }
       const { error } = await q;
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_cuota") {
@@ -155,7 +235,7 @@ Deno.serve(async (req: Request) => {
       if (count) return json({ error: "tiene pagos registrados; no se puede borrar" }, 409);
       const { error } = await supabase.from("plan_pagos").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Cotizaciones: se comparan y, si se contratan, pasan a ser proveedores
@@ -202,14 +282,14 @@ Deno.serve(async (req: Request) => {
       if (anterior?.archivo_path && (subido || body.quitar_archivo)) {
         await supabase.storage.from("cotizaciones").remove([anterior.archivo_path]);
       }
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "estado_cotizacion") {
       if (!esId(body.id) || !["evaluacion", "descartada"].includes(body.estado)) return json({ error: "datos inválidos" }, 400);
       const { error } = await supabase.from("cotizaciones").update({ estado: body.estado, proveedor_id: null }).eq("id", body.id).neq("estado", "contratada");
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_cotizacion") {
@@ -220,7 +300,7 @@ Deno.serve(async (req: Request) => {
       const { error } = await supabase.from("cotizaciones").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
       if (c.archivo_path) await supabase.storage.from("cotizaciones").remove([c.archivo_path]);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "contratar_cotizacion") {
@@ -238,7 +318,7 @@ Deno.serve(async (req: Request) => {
         await supabase.from("cotizaciones").update({ estado: "descartada" })
           .eq("categoria", c.categoria).eq("estado", "evaluacion").neq("id", c.id);
       }
-      return json({ ok: true, proveedorId: prov.id });
+      return await listo({ proveedorId: prov.id });
     }
 
     // Pagos realizados, con su comprobante en el bucket privado
@@ -279,7 +359,7 @@ Deno.serve(async (req: Request) => {
       if (anterior?.comprobante_path && (subido || body.quitar_archivo)) {
         await supabase.storage.from("comprobantes").remove([anterior.comprobante_path]);
       }
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_pago") {
@@ -289,7 +369,7 @@ Deno.serve(async (req: Request) => {
       const { error } = await supabase.from("pagos").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
       if (pg.comprobante_path) await supabase.storage.from("comprobantes").remove([pg.comprobante_path]);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Lo que falta contratar
@@ -310,21 +390,21 @@ Deno.serve(async (req: Request) => {
       if (error) {
         return json({ error: error.code === "23505" ? "ya existe un pendiente con esa categoría" : error.message }, error.code === "23505" ? 409 : 500);
       }
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "aplica_pendiente") {
       if (!esId(body.id)) return json({ error: "pendiente inválido" }, 400);
       const { error } = await supabase.from("pendientes").update({ no_aplica: body.no_aplica === true }).eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_pendiente") {
       if (!esId(body.id)) return json({ error: "pendiente inválido" }, 400);
       const { error } = await supabase.from("pendientes").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Tareas (checklist y trámites)
@@ -354,7 +434,7 @@ Deno.serve(async (req: Request) => {
         ? await supabase.from("tareas").update(fila).eq("id", body.id)
         : await supabase.from("tareas").insert(fila);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "estado_tarea") {
@@ -366,14 +446,14 @@ Deno.serve(async (req: Request) => {
         actualizada_en: new Date().toISOString(),
       }).eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_tarea") {
       if (!esId(body.id)) return json({ error: "tarea inválida" }, 400);
       const { error } = await supabase.from("tareas").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Cronograma del día
@@ -396,14 +476,14 @@ Deno.serve(async (req: Request) => {
         ? await supabase.from("cronograma").update(fila).eq("id", body.id)
         : await supabase.from("cronograma").insert(fila);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_momento") {
       if (!esId(body.id)) return json({ error: "momento inválido" }, 400);
       const { error } = await supabase.from("cronograma").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Kit de emergencia del día
@@ -420,14 +500,14 @@ Deno.serve(async (req: Request) => {
         const { error } = await supabase.from("kit").insert({ item });
         if (error) return json({ error: error.message }, 500);
       }
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_kit") {
       if (!esId(body.id)) return json({ error: "elemento inválido" }, 400);
       const { error } = await supabase.from("kit").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
     // Contactos clave del día
@@ -447,17 +527,51 @@ Deno.serve(async (req: Request) => {
         const { error } = await supabase.from("contactos").insert({ ...fila, orden: (ult?.orden ?? 0) + 1 });
         if (error) return json({ error: error.message }, 500);
       }
-      return json({ ok: true });
+      return await listo();
     }
 
     if (body?.accion === "borrar_contacto") {
       if (!esId(body.id)) return json({ error: "contacto inválido" }, 400);
       const { error } = await supabase.from("contactos").delete().eq("id", body.id);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true });
+      return await listo();
     }
 
-    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes, kitRes, conRes] = await Promise.all([
+    // Mesas: crear/editar, borrar y sentar a una persona
+    if (body?.accion === "guardar_mesa") {
+      const capacidad = Number(body.capacidad);
+      const fila = {
+        nombre: texto(body.nombre, 60),
+        capacidad: Number.isInteger(capacidad) && capacidad >= 1 && capacidad <= 40 ? capacidad : 8,
+      };
+      if (!fila.nombre) return json({ error: "escribe el nombre de la mesa" }, 400);
+      if (esId(body.id)) {
+        const { error } = await supabase.from("mesas").update(fila).eq("id", body.id);
+        if (error) return json({ error: error.message }, 500);
+      } else {
+        const { data: ult } = await supabase.from("mesas").select("orden").order("orden", { ascending: false }).limit(1).maybeSingle();
+        const { error } = await supabase.from("mesas").insert({ ...fila, orden: (ult?.orden ?? 0) + 1 });
+        if (error) return json({ error: error.message }, 500);
+      }
+      return await listo();
+    }
+
+    if (body?.accion === "borrar_mesa") {
+      if (!esId(body.id)) return json({ error: "mesa inválida" }, 400);
+      const { error } = await supabase.from("mesas").delete().eq("id", body.id);
+      if (error) return json({ error: error.message }, 500);
+      return await listo();
+    }
+
+    if (body?.accion === "asignar_mesa") {
+      if (!esId(body.persona_id)) return json({ error: "persona inválida" }, 400);
+      const mesaId = esId(body.mesa_id) ? body.mesa_id : null;
+      const { error } = await supabase.from("personas").update({ mesa_id: mesaId }).eq("id", body.persona_id);
+      if (error) return json({ error: error.message }, 500);
+      return await listo();
+    }
+
+    const [rsvpsRes, invRes, catRes, canRes, corteRes, perRes, provRes, planRes, pagRes, cotRes, penRes, tarRes, croRes, kitRes, conRes, mesRes, hisRes] = await Promise.all([
       supabase
         .from("rsvps")
         .select("name, attending, plus_one, asistentes, diet, note, submitted_at, actualizado_en, invitacion_id, lleva_carro, placa")
@@ -478,7 +592,7 @@ Deno.serve(async (req: Request) => {
         .order("nombre", { ascending: true }),
       supabase
         .from("personas")
-        .select("id, invitacion_id, nombre, rol, acompanante_de, orden, mesa, notas")
+        .select("id, invitacion_id, nombre, rol, acompanante_de, orden, mesa, mesa_id, notas")
         .order("orden", { ascending: true }),
       supabase.from("proveedores").select("id, nombre, categoria, contacto, total, notas, contrato, contrato_fecha").order("nombre", { ascending: true }),
       supabase.from("plan_pagos").select("id, proveedor_id, concepto, monto, fecha_limite, orden").order("orden", { ascending: true }),
@@ -503,6 +617,8 @@ Deno.serve(async (req: Request) => {
         .order("hora", { ascending: true }),
       supabase.from("kit").select("id, item, listo").order("creado_en", { ascending: true }),
       supabase.from("contactos").select("id, rol, nombre, telefono, notas").order("orden", { ascending: true }),
+      supabase.from("mesas").select("id, nombre, capacidad").order("orden", { ascending: true }),
+      supabase.from("historial").select("quien, detalle, creado_en").order("creado_en", { ascending: false }).limit(60),
     ]);
 
     if (rsvpsRes.error) return json({ error: rsvpsRes.error.message }, 500);
@@ -520,6 +636,8 @@ Deno.serve(async (req: Request) => {
     if (croRes.error) return json({ error: croRes.error.message }, 500);
     if (kitRes.error) return json({ error: kitRes.error.message }, 500);
     if (conRes.error) return json({ error: conRes.error.message }, 500);
+    if (mesRes.error) return json({ error: mesRes.error.message }, 500);
+    if (hisRes.error) return json({ error: hisRes.error.message }, 500);
 
     const rsvps = rsvpsRes.data ?? [];
     const invs = invRes.data ?? [];
@@ -624,6 +742,7 @@ Deno.serve(async (req: Request) => {
         categoria: inv?.categoria ?? null,
         corte: cortePorPersona.get(p.id) ?? null,
         mesa: p.mesa,
+        mesaId: p.mesa_id,
         notas: p.notas,
         estadoInvitacion: !r ? "pendiente" : r.attending ? "asiste" : "no asiste",
       };
@@ -783,6 +902,8 @@ Deno.serve(async (req: Request) => {
       })),
       kit: kitRes.data ?? [],
       contactos: conRes.data ?? [],
+      mesas: mesRes.data ?? [],
+      historial: hisRes.data ?? [],
     });
   } catch (_e) {
     return json({ error: "bad request" }, 400);
