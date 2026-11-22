@@ -2414,11 +2414,19 @@
   };
   var dlgRec = document.getElementById('dlg-recordar'), formRec = document.getElementById('form-recordar');
   function mensajeRecordatorio(i){
-    var varios = i.cupos > 1;
-    return '¡Hola, ' + i.nombre + '! 💛 Queremos contar ' + (varios ? 'con ustedes' : 'contigo') + ' en nuestra boda el 20 de marzo de 2027. ' +
-      (varios ? 'Les recordamos confirmar su asistencia' : 'Te recordamos confirmar tu asistencia') + ' antes del 15 de enero en ' + (varios ? 'su' : 'tu') + ' invitación:\n' +
+    var v = i.cupos > 1;
+    // Párrafo de vuelos por Black Friday: sale solo hasta el 30 de noviembre de 2026 (hora de Colombia)
+    var blackFriday = new Date() < new Date('2026-12-01T00:00:00-05:00');
+    return '¡Hola, ' + i.nombre + '! 💛\n' +
+      (v ? 'Les escribimos para pedirles un favorcito: ¿nos confirman si nos acompañan'
+         : 'Te escribimos para pedirte un favorcito: ¿nos confirmas si nos acompañas') +
+      ' en nuestra boda el 20 de marzo de 2027, en Santa Marta?\n\n' +
       // &r=1: la invitación abre el sobre de recordatorio y baja sola a la confirmación
-      LINK_BASE + i.codigo + '&r=1\n\n¡Gracias! Daniela & Jeferson';
+      '*Solo toma un minutito, entrando aquí* 👉 ' + LINK_BASE + i.codigo + '&r=1\n\n' +
+      (v ? 'Tienen hasta el 15 de enero para responder (_y si no pueden venir, también nos ayuda saberlo_).'
+         : 'Tienes hasta el 15 de enero para responder (_y si no puedes venir, también nos ayuda saberlo_).') + '\n\n' +
+      (blackFriday ? '✈️ Un dato: estos días de Black Friday suele haber buenos precios en vuelos, por si ' + (v ? 'se animan' : 'te animas') + ' a venir.\n\n' : '') +
+      '¡Gracias! ' + (v ? 'Los' : 'Te') + ' queremos mucho.\nDaniela & Jeferson';
   }
   function abrirRecordatorio(codigo){
     var i = ultimoData.invitaciones.filter(function(x){ return x.codigo === codigo; })[0]; if(!i) return;
