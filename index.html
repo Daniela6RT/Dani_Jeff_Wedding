@@ -32,6 +32,18 @@
     if('scrollRestoration' in history) history.scrollRestoration = 'manual';
     if(location.hash) history.replaceState(null, '', location.pathname + location.search);
   }
+  // Link de recordatorio (…?i=código&r=1): sale el sobre con otro texto y, al abrirlo,
+  // la página baja sola a la confirmación. Se quita "r" de la dirección para que al
+  // recargar o compartir el link se vea la invitación normal.
+  try {
+    var params = new URLSearchParams(location.search);
+    if(params.get('r') === '1'){
+      if(d.classList.contains('con-sobre')) d.classList.add('modo-recordatorio');
+      params.delete('r');
+      var q = params.toString();
+      history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+    }
+  } catch(e) {}
 })(document.documentElement);
 </script>
 
@@ -529,6 +541,16 @@
 
   /* ---------- RSVP Form ---------- */
   .rsvp { background: var(--marfil-warm); }
+  .rsvp:focus { outline: none; } /* recibe el foco al llegar desde el link de recordatorio */
+  /* Link de recordatorio sin respuesta: la confirmación resalta sobre verde profundo */
+  .rsvp.rsvp-destacado { background: var(--verde-profundo); transition: background-color .6s ease; }
+  .rsvp-destacado .eyebrow-script { color: var(--durazno); }
+  .rsvp-destacado .section-title { color: var(--marfil); }
+  .rsvp-destacado .section-sub { color: rgba(248, 245, 238, .82); }
+  .rsvp-destacado .form-wrap { border: 1px solid #E2C08A; box-shadow: 0 0 0 2px #E2C08A, 0 0 24px rgba(226, 192, 138, .45), 0 26px 60px rgba(0, 0, 0, .25); }
+  @media (prefers-reduced-motion: no-preference) {
+    .rsvp-destacado.llego .form-wrap { animation: brilloDorado 2.4s ease-in-out 3; }
+  }
   .form-wrap { max-width: 480px; margin: 0 auto; background: #fff; border: 1px solid var(--linea); border-radius: var(--radio); padding: 36px 28px; box-shadow: var(--sombra); }
   label { display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--verde-profundo); font-weight: 600; margin: 18px 0 6px; }
   label:first-of-type { margin-top: 0; }
@@ -1552,6 +1574,7 @@
   var sobre = document.getElementById('sobre');
   window.scrollTo(0, 0);
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var recordatorio = html.classList.contains('modo-recordatorio');
   var abierto = false;
 
   function terminar(){
@@ -1562,7 +1585,8 @@
     if(abierto) return;
     abierto = true;
     clearTimeout(auto);
-    iniciarVideo(conToque === true);
+    // En el recordatorio la página baja a la confirmación: el video arranca en silencio
+    iniciarVideo(conToque === true && !recordatorio);
     if(reduce){
       sobre.classList.add('fuera');
       setTimeout(terminar, 700);
@@ -1574,11 +1598,11 @@
   }
 
   document.getElementById('sobre-env').addEventListener('click', function(){ abrir(true); });
-  // Los 8 segundos cuentan solo con la página a la vista
+  // Los 8 segundos (3 en el recordatorio) cuentan solo con la página a la vista
   var auto = null;
   function programar(){
     clearTimeout(auto);
-    if(!abierto && document.visibilityState !== 'hidden') auto = setTimeout(function(){ abrir(false); }, 8000);
+    if(!abierto && document.visibilityState !== 'hidden') auto = setTimeout(function(){ abrir(false); }, recordatorio ? 3000 : 8000);
   }
   document.addEventListener('visibilitychange', programar);
   programar();
@@ -1907,19 +1931,69 @@
     var inv = document.getElementById('sobre-invitado');
     inv.textContent = invitacion.nombre;
     inv.hidden = false;
-    document.getElementById('sobre-para').textContent = invitacion.cupos > 1 ? 'les tienen una invitación' : 'te tienen una invitación';
+    document.getElementById('sobre-para').textContent = enRecordatorio && !invitacion.respuesta
+      ? (invitacion.cupos > 1 ? 'aún esperamos su respuesta 💛' : 'aún esperamos tu respuesta 💛')
+      : (invitacion.cupos > 1 ? 'les tienen una invitación' : 'te tienen una invitación');
+  }
+
+  // Link de recordatorio: al abrir el sobre (y después de la propuesta a la corte, si la hay)
+  // la página baja suave a la confirmación. Solo una vez.
+  var enRecordatorio = document.documentElement.classList.contains('modo-recordatorio');
+  function irAlRsvp(){
+    if(!enRecordatorio) return;
+    enRecordatorio = false;
+    setTimeout(function(){
+      var rsvp = document.getElementById('rsvp');
+      rsvp.setAttribute('tabindex', '-1');
+      rsvp.focus({ preventScroll: true });
+      // al llegar, la tarjeta brilla en dorado unas veces
+      bajarDelicado(rsvp, function(){ rsvp.classList.add('llego'); });
+    }, 600);
+  }
+
+  // Desplazamiento propio (el "smooth" del navegador es muy brusco en trayectos largos):
+  // arranca y frena despacio, dura según la distancia y se detiene si la persona toca o hace scroll.
+  function bajarDelicado(el, alTerminar){
+    var nav = document.querySelector('.nav');
+    var tope = nav ? nav.offsetHeight : 65;
+    function destino(){ return Math.max(0, el.getBoundingClientRect().top + window.scrollY - tope); }
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var inicio = window.scrollY, dist = destino() - inicio;
+    var hecho = false;
+    function terminar(){ if(hecho) return; hecho = true; if(alTerminar) alTerminar(); }
+    if(reduce || Math.abs(dist) < 4){ window.scrollTo({ top: destino(), behavior: 'instant' }); terminar(); return; }
+    var dur = Math.min(3200, Math.max(1800, Math.abs(dist) * 0.35));
+    var t0 = null, parado = false;
+    function parar(){ parado = true; quitar(); }
+    function quitar(){ ['wheel', 'touchstart', 'keydown'].forEach(function(ev){ window.removeEventListener(ev, parar); }); terminar(); }
+    ['wheel', 'touchstart', 'keydown'].forEach(function(ev){ window.addEventListener(ev, parar, { passive: true }); });
+    function suave(p){ return p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
+    function paso(t){
+      if(parado) return;
+      if(t0 === null) t0 = t;
+      var p = Math.min(1, (t - t0) / dur);
+      // el destino se recalcula en cada cuadro por si cargan imágenes y cambia la altura
+      var fin = destino();
+      window.scrollTo({ top: inicio + (fin - inicio) * suave(p), behavior: 'instant' });
+      if(p < 1) requestAnimationFrame(paso); else quitar();
+    }
+    requestAnimationFrame(paso);
   }
 
   if(!codigo){
     mostrarSinCodigo();
+    cuandoSeVeaLaInvitacion(irAlRsvp);
   } else {
     rpc('obtener_invitacion', { p_codigo: codigo }).then(function(inv){
       if(!inv){
         try { localStorage.removeItem('invitacionDJ'); } catch(e) {}
         mostrarSinCodigo();
+        cuandoSeVeaLaInvitacion(irAlRsvp);
         return;
       }
       invitacion = inv;
+      // Recordatorio sin respuesta: la confirmación se destaca (fondo verde profundo y tarjeta con borde dorado)
+      if(enRecordatorio && !inv.respuesta) document.getElementById('rsvp').classList.add('rsvp-destacado');
       personalizarSobre();
       iniciarMusica();
       pintarDressCorte();
@@ -1928,6 +2002,7 @@
       else mostrarFormulario();
     }).catch(function(){
       cargando.textContent = 'No pudimos cargar su invitación. Revisen su conexión y vuelvan a abrir el link.';
+      cuandoSeVeaLaInvitacion(irAlRsvp);
     });
   }
 
@@ -1953,6 +2028,7 @@
         p_carro: attending ? carro : null,
         p_placa: attending && carro ? placaInput.value.trim() : null
       });
+      document.getElementById('rsvp').classList.remove('rsvp-destacado', 'llego');
       mostrarPase(true);
       document.getElementById('rsvp').scrollIntoView({ block: 'start' });
     } catch(err){
@@ -1997,7 +2073,8 @@
     var lista = (invitacion && invitacion.corte) || [];
     pendiente = null;
     for(var i = 0; i < lista.length; i++){ if(lista[i].acepto === null && !lista[i].pospuesto){ pendiente = lista[i]; break; } }
-    if(!pendiente) return;
+    // Sin propuestas pendientes (o ya respondidas todas): en el recordatorio, a la confirmación
+    if(!pendiente){ irAlRsvp(); return; }
     var rol = pendiente.rol, ella = rol === 'dama' || rol === 'madrina';
     var mi = pendiente.de_parte === 'ambos' ? 'nuestra' : 'mi';
     document.getElementById('propuesta-nombre').textContent = pendiente.nombre;

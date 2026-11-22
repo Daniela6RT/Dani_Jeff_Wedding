@@ -2417,7 +2417,8 @@
     var varios = i.cupos > 1;
     return '¡Hola, ' + i.nombre + '! 💛 Queremos contar ' + (varios ? 'con ustedes' : 'contigo') + ' en nuestra boda el 20 de marzo de 2027. ' +
       (varios ? 'Les recordamos confirmar su asistencia' : 'Te recordamos confirmar tu asistencia') + ' antes del 15 de enero en ' + (varios ? 'su' : 'tu') + ' invitación:\n' +
-      LINK_BASE + i.codigo + '\n\n¡Gracias! Daniela & Jeferson';
+      // &r=1: la invitación abre el sobre de recordatorio y baja sola a la confirmación
+      LINK_BASE + i.codigo + '&r=1\n\n¡Gracias! Daniela & Jeferson';
   }
   function abrirRecordatorio(codigo){
     var i = ultimoData.invitaciones.filter(function(x){ return x.codigo === codigo; })[0]; if(!i) return;
